@@ -1,0 +1,8 @@
+# data files that won't change and can be ignored
+
+tags_and_marks.csv
+titrationOutput.RData
+creelDataSet_all.RData
+"lake class predictions.csv"
+creelTitrationSummary.pdf
+exploitationRateSummary.pdf
