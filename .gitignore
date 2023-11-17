@@ -6,3 +6,7 @@ creelDataSet_all.RData
 "lake class predictions.csv"
 creelTitrationSummary.pdf
 exploitationRateSummary.pdf
+creelTitrationSummary_cache/
+creelTitrationSummary_files/
+exploitationRateSummary_cache/
+exploitationRateSummary_files/
