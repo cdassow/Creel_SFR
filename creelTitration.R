@@ -2208,400 +2208,404 @@ ggplot(ttrExp)+theme_classic()+
   geom_density(aes(log(exp.rate),fill=treat),alpha=0.2)+
   facet_wrap(~year,scales = 'free_y')+scale_fill_viridis_d()
 
-# # likelihoods to fit
-# uLL.we50=function(param){
-#   alpha=param[1]
-#   beta=param[2]
-#   
-#   us=rlnorm(nrow(tdat[tdat$treat=="we50",]),meanlog = alpha, sdlog = beta)
-#   ll=dlnorm(tdat$exp.rate[tdat$treat=="we50"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
-#   return(sum(ll))
-# }
-# uLL.wd50=function(param){
-#   alpha=param[1]
-#   beta=param[2]
-#   
-#   us=rlnorm(nrow(tdat[tdat$treat=="wd50",]),meanlog = alpha, sdlog = beta)
-#   ll=dlnorm(tdat$exp.rate[tdat$treat=="wd50"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
-#   return(sum(ll))
-# }
-# uLL.wd25=function(param){
-#   alpha=param[1]
-#   beta=param[2]
-#   
-#   us=rlnorm(nrow(tdat[tdat$treat=="wd25",]),meanlog = alpha, sdlog = beta)
-#   ll=dlnorm(tdat$exp.rate[tdat$treat=="wd25"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
-#   return(sum(ll))
-# }
-# uLL.ma=function(param){
-#   alpha=param[1]
-#   beta=param[2]
-#   
-#   us=rlnorm(nrow(tdat[tdat$treat=="mayAug",]),meanlog = alpha, sdlog = beta)
-#   ll=dlnorm(tdat$exp.rate[tdat$treat=="mayAug"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
-#   return(sum(ll))
-# }
-# uLL.nw=function(param){
-#   alpha=param[1]
-#   beta=param[2]
-#   
-#   us=rlnorm(nrow(tdat[tdat$treat=="noWinter",]),meanlog = alpha, sdlog = beta)
-#   ll=dlnorm(tdat$exp.rate[tdat$treat=="noWinter"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
-#   return(sum(ll))
-# }
-# uLL.a=function(param){
-#   alpha=param[1]
-#   beta=param[2]
-#   
-#   us=rlnorm(nrow(tdat[tdat$treat=="actual",]),meanlog = alpha, sdlog = beta)
-#   ll=dlnorm(tdat$exp.rate[tdat$treat=="actual"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
-#   return(sum(ll))
-# }
-# 
-# loopY=sort(unique(ttrExp$year))
-# 
-# bpval.comp.y=data.frame(year=NA,
-#                       scenario=NA,
-#                       coef.var.pval=NA,
-#                       sd.pval=NA)
-# 
-# bpval.self.y=data.frame(year=NA,
-#                         scenario=NA,
-#                         coef.var.pval=NA,
-#                         sd.pval=NA)
-# 
-# for(y in 1:length(loopY)){
-#   #first get to year-specific data
-#   tdat=ttrExp[ttrExp$year==loopY[y],]
-#   # removing 0s,
-#   tdat=tdat[tdat$exp.rate!=0,]
-#   # Bayesian Model Fitting
-#   #ACTUAL
-# 
-#   prior=createTruncatedNormalPrior(mean=c(mean(log(modDat$exp.rate[modDat$treat=="actual"])),sd(log(modDat$exp.rate[modDat$treat=="actual"]))), 
-#                                    sd=c(1,1),
-#                                    lower = c(-15,0),
-#                                    upper = c(15,5))
-#   
-#   setup.a=createBayesianSetup(uLL.a, prior = prior)
-#   
-#   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
-#   set.seed(10)
-#   t.a=runMCMC(bayesianSetup = setup.a, sampler = "DEzs", settings = settings)
-#   #NW
-# 
-#   prior=createTruncatedNormalPrior(mean=c(mean(log(modDat$exp.rate[modDat$treat=="noWinter"])),sd(log(modDat$exp.rate[modDat$treat=="noWinter"]))), 
-#                                    sd=c(1,1),
-#                                    lower = c(-15,0),
-#                                    upper = c(15,5))
-#   
-#   setup.nw=createBayesianSetup(uLL.nw, prior = prior)
-#   
-#   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
-#   set.seed(10)
-#   t.nw=runMCMC(bayesianSetup = setup.nw, sampler = "DEzs", settings = settings)
-#   #MA
-# 
-#   prior=createTruncatedNormalPrior(mean=c(mean(log(modDat$exp.rate[modDat$treat=="mayAug"])),sd(log(modDat$exp.rate[modDat$treat=="mayAug"]))), 
-#                                    sd=c(1,1),
-#                                    lower = c(-15,0),
-#                                    upper = c(15,5))
-#   
-#   setup.ma=createBayesianSetup(uLL.ma, prior = prior)
-#   
-#   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
-#   set.seed(10)
-#   t.ma=runMCMC(bayesianSetup = setup.ma, sampler = "DEzs", settings = settings)
-#   #WD.25
-# 
-#   prior=createTruncatedNormalPrior(mean=c(mean(log(modDat$exp.rate[modDat$treat=="wd25"])),sd(log(modDat$exp.rate[modDat$treat=="wd25"]))), 
-#                                    sd=c(1,1),
-#                                    lower = c(-15,0),
-#                                    upper = c(15,5))
-#   
-#   setup.wd25=createBayesianSetup(uLL.wd25, prior = prior)
-#   
-#   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
-#   set.seed(10)
-#   t.25wd=runMCMC(bayesianSetup = setup.wd25, sampler = "DEzs", settings = settings)
-#   #WD.50
-# 
-#   prior=createTruncatedNormalPrior(mean=c(mean(log(modDat$exp.rate[modDat$treat=="wd50"])),sd(log(modDat$exp.rate[modDat$treat=="wd50"]))), 
-#                                    sd=c(1,1),
-#                                    lower = c(-15,0),
-#                                    upper = c(15,5))
-#   
-#   setup.wd50=createBayesianSetup(uLL.wd50, prior = prior)
-#   
-#   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
-#   set.seed(10)
-#   t.50wd=runMCMC(bayesianSetup = setup.wd50, sampler = "DEzs", settings = settings)
-#   
-#   #WE.50
-# 
-#   prior=createTruncatedNormalPrior(mean=c(mean(log(modDat$exp.rate[modDat$treat=="we50"])),sd(log(modDat$exp.rate[modDat$treat=="we50"]))), 
-#                                    sd=c(1,1),
-#                                    lower = c(-15,0),
-#                                    upper = c(15,5))
-#   
-#   setup.we50=createBayesianSetup(uLL.we50, prior = prior)
-#   
-#   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
-#   set.seed(10)
-#   t.50we=runMCMC(bayesianSetup = setup.we50, sampler = "DEzs", settings = settings)
-#   
-#   ## BAYESIAN P-VALUE CALCS
-#   
-#   pars.a=getSample(t.a)
-#   pars.nw=getSample(t.nw)
-#   pars.ma=getSample(t.ma)
-#   pars.wd25=getSample(t.25wd)
-#   pars.wd50=getSample(t.50wd)
-#   pars.we50=getSample(t.50we)
-#   
-#   #### Pb ACTUAL ####
-#   pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
-#                          beta=NA,
-#                          cv=NA,
-#                          sd=NA)
-#   set.seed(10)
-#   for(i in 1:nrow(pars.a)){
-#     tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="actual"]),
-#                    meanlog = pars.a[i,1],
-#                    sdlog = pars.a[i,2])
-#     pval.actual$alpha[i]=pars.a[i,1]
-#     pval.actual$beta[i]=pars.a[i,2]
-#     pval.actual$cv[i]=sd(log(tempdat))/mean(log(tempdat))
-#     pval.actual$sd[i]=sd(log(tempdat))
-#   }
-#   
-#   # now calculate the number of times the cv or sd exceeds that of the real data
-#   
-#   pval.actual$cvExceed=0
-#   pval.actual$sdExceed=0
-#   
-#   actual.cv=sd(log(tdat$exp.rate[tdat$treat=="actual"]))/mean(log(tdat$exp.rate[tdat$treat=="actual"]))
-#   actual.sd=sd(log(tdat$exp.rate[tdat$treat=="actual"]))
-#   
-#   pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
-#   pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
-#   
-#   #### Pb NO WINTER ####
-#   pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
-#                            beta=NA,
-#                            cv=NA,
-#                            sd=NA)
-#   set.seed(10)
-#   for(i in 1:nrow(pars.nw)){
-#     tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="noWinter"]),
-#                    meanlog = pars.nw[i,1],
-#                    sdlog = pars.nw[i,2])
-#     pval.noWinter$alpha[i]=pars.nw[i,1]
-#     pval.noWinter$beta[i]=pars.nw[i,2]
-#     pval.noWinter$cv[i]=sd(log(tempdat))/mean(log(tempdat))
-#     pval.noWinter$sd[i]=sd(log(tempdat))
-#   }
-#   
-#   # now calculate the number of times the cv or sd exceeds that of the real data
-#   
-#   pval.noWinter$cvExceed=0
-#   pval.noWinter$sdExceed=0
-#   
-#   noWinter.cv=sd(log(tdat$exp.rate[tdat$treat=="noWinter"]))/mean(log(tdat$exp.rate[tdat$treat=="noWinter"]))
-#   noWinter.sd=sd(log(tdat$exp.rate[tdat$treat=="noWinter"]))
-#   
-#   pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
-#   pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
-#   
-#   #### Pb MAYAUGUST ####
-#   pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
-#                          beta=NA,
-#                          cv=NA,
-#                          sd=NA)
-#   set.seed(10)
-#   for(i in 1:nrow(pars.ma)){
-#     tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="mayAug"]),
-#                    meanlog = pars.ma[i,1],
-#                    sdlog = pars.ma[i,2])
-#     pval.mayAug$alpha[i]=pars.ma[i,1]
-#     pval.mayAug$beta[i]=pars.ma[i,2]
-#     pval.mayAug$cv[i]=sd(log(tempdat))/mean(log(tempdat))
-#     pval.mayAug$sd[i]=sd(log(tempdat))
-#   }
-#   
-#   # now calculate the number of times the cv or sd exceeds that of the real data
-#   
-#   pval.mayAug$cvExceed=0
-#   pval.mayAug$sdExceed=0
-#   
-#   mayAug.cv=sd(log(tdat$exp.rate[tdat$treat=="mayAug"]))/mean(log(tdat$exp.rate[tdat$treat=="mayAug"]))
-#   mayAug.sd=sd(log(tdat$exp.rate[tdat$treat=="mayAug"]))
-#   
-#   pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
-#   pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
-#   
-#   #### Pb WD25 ####
-#   pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
-#                        beta=NA,
-#                        cv=NA,
-#                        sd=NA)
-#   set.seed(10)
-#   for(i in 1:nrow(pars.wd25)){
-#     tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="wd25"]),
-#                    meanlog = pars.wd25[i,1],
-#                    sdlog = pars.wd25[i,2])
-#     pval.wd25$alpha[i]=pars.wd25[i,1]
-#     pval.wd25$beta[i]=pars.wd25[i,2]
-#     pval.wd25$cv[i]=sd(log(tempdat))/mean(log(tempdat))
-#     pval.wd25$sd[i]=sd(log(tempdat))
-#   }
-#   
-#   # now calculate the number of times the cv or sd exceeds that of the real data
-#   
-#   pval.wd25$cvExceed=0
-#   pval.wd25$sdExceed=0
-#   
-#   wd25.cv=sd(log(tdat$exp.rate[tdat$treat=="wd25"]))/mean(log(tdat$exp.rate[tdat$treat=="wd25"]))
-#   wd25.sd=sd(log(tdat$exp.rate[tdat$treat=="wd25"]))
-#   
-#   pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
-#   pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
-#   
-#   #### Pb WD50 ####
-#   pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
-#                        beta=NA,
-#                        cv=NA,
-#                        sd=NA)
-#   set.seed(10)
-#   for(i in 1:nrow(pars.wd50)){
-#     tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="wd50"]),
-#                    meanlog = pars.wd50[i,1],
-#                    sdlog = pars.wd50[i,2])
-#     pval.wd50$alpha[i]=pars.wd50[i,1]
-#     pval.wd50$beta[i]=pars.wd50[i,2]
-#     pval.wd50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
-#     pval.wd50$sd[i]=sd(log(tempdat))
-#   }
-#   
-#   # now calculate the number of times the cv or sd exceeds that of the real data
-#   
-#   pval.wd50$cvExceed=0
-#   pval.wd50$sdExceed=0
-#   
-#   wd50.cv=sd(log(tdat$exp.rate[tdat$treat=="wd50"]))/mean(log(tdat$exp.rate[tdat$treat=="wd50"]))
-#   wd50.sd=sd(log(tdat$exp.rate[tdat$treat=="wd50"]))
-#   
-#   pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
-#   pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
-#   
-#   #### Pb WE50 ####
-#   pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
-#                        beta=NA,
-#                        cv=NA,
-#                        sd=NA)
-#   set.seed(10)
-#   for(i in 1:nrow(pars.we50)){
-#     tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="we50"]),
-#                    meanlog = pars.we50[i,1],
-#                    sdlog = pars.we50[i,2])
-#     pval.we50$alpha[i]=pars.we50[i,1]
-#     pval.we50$beta[i]=pars.we50[i,2]
-#     pval.we50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
-#     pval.we50$sd[i]=sd(log(tempdat))
-#   }
-#   
-#   # now calculate the number of times the cv or sd exceeds that of the real data
-#   
-#   pval.we50$cvExceed=0
-#   pval.we50$sdExceed=0
-#   
-#   we50.cv=sd(log(tdat$exp.rate[tdat$treat=="we50"]))/mean(log(tdat$exp.rate[tdat$treat=="we50"]))
-#   we50.sd=sd(log(tdat$exp.rate[tdat$treat=="we50"]))
-#   
-#   pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
-#   pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
-#   
-#   #df to hold pvals for model comparison to self, a way of knowing the model fit the data well
-#   t.pself=data.frame(year=rep(loopY[y],6),
-#                      scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-#                      coef.var.pval=NA,
-#                      sd.pval=NA)
-#   # adding self comparison pvals
-#   t.pself$coef.var.pval=c(sum(pval.actual$cvExceed)/nrow(pval.actual),
-#                           sum(pval.noWinter$cvExceed)/nrow(pval.noWinter),
-#                           sum(pval.mayAug$cvExceed)/nrow(pval.mayAug),
-#                           sum(pval.wd25$cvExceed)/nrow(pval.wd25),
-#                           sum(pval.wd50$cvExceed)/nrow(pval.wd50),
-#                           sum(pval.we50$cvExceed)/nrow(pval.we50))
-#   t.pself$sd.pval=c(sum(pval.actual$sdExceed)/nrow(pval.actual),
-#                           sum(pval.noWinter$sdExceed)/nrow(pval.noWinter),
-#                           sum(pval.mayAug$sdExceed)/nrow(pval.mayAug),
-#                           sum(pval.wd25$sdExceed)/nrow(pval.wd25),
-#                           sum(pval.wd50$sdExceed)/nrow(pval.wd50),
-#                           sum(pval.we50$sdExceed)/nrow(pval.we50))
-#   bpval.self.y=rbind(bpval.self.y,t.pself)
-#   ## p-value tests comparing the scenarios to actual to show that some scenarios approximate the actual quite well.
-#   
-#   t.pcomp=data.frame(year=rep(loopY[y],6),
-#                      scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-#                      coef.var.pval=NA,
-#                      sd.pval=NA)
-#   
-#   pval.actual$cvComp=0
-#   pval.actual$sdComp=0
-#   pval.actual$cvComp[pval.actual$cv>actual.cv]=1
-#   pval.actual$sdComp[pval.actual$sd>actual.sd]=1
-#   
-#   pval.noWinter$cvComp=0
-#   pval.noWinter$sdComp=0
-#   pval.noWinter$cvComp[pval.noWinter$cv>actual.cv]=1
-#   pval.noWinter$sdComp[pval.noWinter$sd>actual.sd]=1
-#   
-#   pval.mayAug$cvComp=0
-#   pval.mayAug$sdComp=0
-#   pval.mayAug$cvComp[pval.mayAug$cv>actual.cv]=1
-#   pval.mayAug$sdComp[pval.mayAug$sd>actual.sd]=1
-#   
-#   pval.wd25$cvComp=0
-#   pval.wd25$sdComp=0
-#   pval.wd25$cvComp[pval.wd25$cv>actual.cv]=1
-#   pval.wd25$sdComp[pval.wd25$sd>actual.sd]=1
-#   
-#   pval.wd50$cvComp=0
-#   pval.wd50$sdComp=0
-#   pval.wd50$cvComp[pval.wd50$cv>actual.cv]=1
-#   pval.wd50$sdComp[pval.wd50$sd>actual.sd]=1
-#   
-#   pval.we50$cvComp=0
-#   pval.we50$sdComp=0
-#   pval.we50$cvComp[pval.we50$cv>actual.cv]=1
-#   pval.we50$sdComp[pval.we50$sd>actual.sd]=1
-#   
-#   t.pcomp$coef.var.pval=c(sum(pval.actual$cvComp)/nrow(pval.actual),
-#                              sum(pval.noWinter$cvComp)/nrow(pval.noWinter),
-#                              sum(pval.mayAug$cvComp)/nrow(pval.mayAug),
-#                              sum(pval.wd25$cvComp)/nrow(pval.wd25),
-#                              sum(pval.wd50$cvComp)/nrow(pval.wd50),
-#                              sum(pval.we50$cvComp)/nrow(pval.we50))
-#   
-#   t.pcomp$sd.pval=c(sum(pval.actual$sdComp)/nrow(pval.actual),
-#                        sum(pval.noWinter$sdComp)/nrow(pval.noWinter),
-#                        sum(pval.mayAug$sdComp)/nrow(pval.mayAug),
-#                        sum(pval.wd25$sdComp)/nrow(pval.wd25),
-#                        sum(pval.wd50$sdComp)/nrow(pval.wd50),
-#                        sum(pval.we50$sdComp)/nrow(pval.we50))
-#   bpval.comp.y=rbind(bpval.comp.y,t.pcomp)
-# }
-# 
-# # now to look at the output
-# bpval.self.y=bpval.self.y[!is.na(bpval.self.y$year),]
-# bpval.comp.y=bpval.comp.y[!is.na(bpval.comp.y$year),]
-# # saving big loop's output since it takes a while to run
-# yearLoopOutput=list(bpval.self.y,bpval.comp.y)
-# saveRDS(yearLoopOutput, file = "yearLoopOutput.RData")
+# likelihoods to fit
+uLL.we50=function(param){
+  alpha=param[1]
+  beta=param[2]
+
+  us=rlnorm(nrow(tdat[tdat$treat=="we50",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$exp.rate[tdat$treat=="we50"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
+  return(sum(ll))
+}
+uLL.wd50=function(param){
+  alpha=param[1]
+  beta=param[2]
+
+  us=rlnorm(nrow(tdat[tdat$treat=="wd50",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$exp.rate[tdat$treat=="wd50"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
+  return(sum(ll))
+}
+uLL.wd25=function(param){
+  alpha=param[1]
+  beta=param[2]
+
+  us=rlnorm(nrow(tdat[tdat$treat=="wd25",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$exp.rate[tdat$treat=="wd25"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
+  return(sum(ll))
+}
+uLL.ma=function(param){
+  alpha=param[1]
+  beta=param[2]
+
+  us=rlnorm(nrow(tdat[tdat$treat=="mayAug",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$exp.rate[tdat$treat=="mayAug"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
+  return(sum(ll))
+}
+uLL.nw=function(param){
+  alpha=param[1]
+  beta=param[2]
+
+  us=rlnorm(nrow(tdat[tdat$treat=="noWinter",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$exp.rate[tdat$treat=="noWinter"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
+  return(sum(ll))
+}
+uLL.a=function(param){
+  alpha=param[1]
+  beta=param[2]
+
+  us=rlnorm(nrow(tdat[tdat$treat=="actual",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$exp.rate[tdat$treat=="actual"], meanlog = mean(log(us)), sdlog = sd(log(us)), log = T)
+  return(sum(ll))
+}
+
+# removing 0s
+ttrExp=ttrExp[ttrExp$exp.rate!=0,]
+loopY=sort(unique(ttrExp$year))
+
+bpval.comp.y=data.frame(year=NA,
+                      scenario=NA,
+                      coef.var.pval=NA,
+                      sd.pval=NA)
+
+bpval.self.y=data.frame(year=NA,
+                        scenario=NA,
+                        coef.var.pval=NA,
+                        sd.pval=NA)
+
+for(y in 1:length(loopY)){
+  #first get to year-specific data
+  tdat=ttrExp[ttrExp$year==loopY[y],]
+  # removing 0s,
+  tdat=tdat[tdat$exp.rate!=0,]
+  # Bayesian Model Fitting
+  #ACTUAL
+
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$exp.rate[ttrExp$treat=="actual"])),sd(log(ttrExp$exp.rate[ttrExp$treat=="actual"]))),
+                                   sd=c(1,1),
+                                   lower = c(-15,0),
+                                   upper = c(15,5))
+
+  setup.a=createBayesianSetup(uLL.a, prior = prior)
+
+  settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
+  set.seed(10)
+  t.a=runMCMC(bayesianSetup = setup.a, sampler = "DEzs", settings = settings)
+  #NW
+
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$exp.rate[ttrExp$treat=="noWinter"])),sd(log(ttrExp$exp.rate[ttrExp$treat=="noWinter"]))),
+                                   sd=c(1,1),
+                                   lower = c(-15,0),
+                                   upper = c(15,5))
+
+  setup.nw=createBayesianSetup(uLL.nw, prior = prior)
+
+  settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
+  set.seed(10)
+  t.nw=runMCMC(bayesianSetup = setup.nw, sampler = "DEzs", settings = settings)
+  #MA
+
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$exp.rate[ttrExp$treat=="mayAug"])),sd(log(ttrExp$exp.rate[ttrExp$treat=="mayAug"]))),
+                                   sd=c(1,1),
+                                   lower = c(-15,0),
+                                   upper = c(15,5))
+
+  setup.ma=createBayesianSetup(uLL.ma, prior = prior)
+
+  settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
+  set.seed(10)
+  t.ma=runMCMC(bayesianSetup = setup.ma, sampler = "DEzs", settings = settings)
+  #WD.25
+
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$exp.rate[ttrExp$treat=="wd25"])),sd(log(ttrExp$exp.rate[ttrExp$treat=="wd25"]))),
+                                   sd=c(1,1),
+                                   lower = c(-15,0),
+                                   upper = c(15,5))
+
+  setup.wd25=createBayesianSetup(uLL.wd25, prior = prior)
+
+  settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
+  set.seed(10)
+  t.25wd=runMCMC(bayesianSetup = setup.wd25, sampler = "DEzs", settings = settings)
+  #WD.50
+
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$exp.rate[ttrExp$treat=="wd50"])),sd(log(ttrExp$exp.rate[ttrExp$treat=="wd50"]))),
+                                   sd=c(1,1),
+                                   lower = c(-15,0),
+                                   upper = c(15,5))
+
+  setup.wd50=createBayesianSetup(uLL.wd50, prior = prior)
+
+  settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
+  set.seed(10)
+  t.50wd=runMCMC(bayesianSetup = setup.wd50, sampler = "DEzs", settings = settings)
+
+  #WE.50
+
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$exp.rate[ttrExp$treat=="we50"])),sd(log(ttrExp$exp.rate[ttrExp$treat=="we50"]))),
+                                   sd=c(1,1),
+                                   lower = c(-15,0),
+                                   upper = c(15,5))
+
+  setup.we50=createBayesianSetup(uLL.we50, prior = prior)
+
+  settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
+  set.seed(10)
+  t.50we=runMCMC(bayesianSetup = setup.we50, sampler = "DEzs", settings = settings)
+
+  ## BAYESIAN P-VALUE CALCS
+
+  pars.a=getSample(t.a)
+  pars.nw=getSample(t.nw)
+  pars.ma=getSample(t.ma)
+  pars.wd25=getSample(t.25wd)
+  pars.wd50=getSample(t.50wd)
+  pars.we50=getSample(t.50we)
+
+  #### Pb ACTUAL ####
+  pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
+                         beta=NA,
+                         cv=NA,
+                         sd=NA)
+  set.seed(10)
+  for(i in 1:nrow(pars.a)){
+    tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="actual"]),
+                   meanlog = pars.a[i,1],
+                   sdlog = pars.a[i,2])
+    pval.actual$alpha[i]=pars.a[i,1]
+    pval.actual$beta[i]=pars.a[i,2]
+    pval.actual$cv[i]=sd(log(tempdat))/mean(log(tempdat))
+    pval.actual$sd[i]=sd(log(tempdat))
+  }
+
+  # now calculate the number of times the cv or sd exceeds that of the real data
+
+  pval.actual$cvExceed=0
+  pval.actual$sdExceed=0
+
+  actual.cv=sd(log(tdat$exp.rate[tdat$treat=="actual"]))/mean(log(tdat$exp.rate[tdat$treat=="actual"]))
+  actual.sd=sd(log(tdat$exp.rate[tdat$treat=="actual"]))
+
+  pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
+  pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
+
+  #### Pb NO WINTER ####
+  pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
+                           beta=NA,
+                           cv=NA,
+                           sd=NA)
+  set.seed(10)
+  for(i in 1:nrow(pars.nw)){
+    tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="noWinter"]),
+                   meanlog = pars.nw[i,1],
+                   sdlog = pars.nw[i,2])
+    pval.noWinter$alpha[i]=pars.nw[i,1]
+    pval.noWinter$beta[i]=pars.nw[i,2]
+    pval.noWinter$cv[i]=sd(log(tempdat))/mean(log(tempdat))
+    pval.noWinter$sd[i]=sd(log(tempdat))
+  }
+
+  # now calculate the number of times the cv or sd exceeds that of the real data
+
+  pval.noWinter$cvExceed=0
+  pval.noWinter$sdExceed=0
+
+  noWinter.cv=sd(log(tdat$exp.rate[tdat$treat=="noWinter"]))/mean(log(tdat$exp.rate[tdat$treat=="noWinter"]))
+  noWinter.sd=sd(log(tdat$exp.rate[tdat$treat=="noWinter"]))
+
+  pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
+  pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
+
+  #### Pb MAYAUGUST ####
+  pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
+                         beta=NA,
+                         cv=NA,
+                         sd=NA)
+  set.seed(10)
+  for(i in 1:nrow(pars.ma)){
+    tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="mayAug"]),
+                   meanlog = pars.ma[i,1],
+                   sdlog = pars.ma[i,2])
+    pval.mayAug$alpha[i]=pars.ma[i,1]
+    pval.mayAug$beta[i]=pars.ma[i,2]
+    pval.mayAug$cv[i]=sd(log(tempdat))/mean(log(tempdat))
+    pval.mayAug$sd[i]=sd(log(tempdat))
+  }
+
+  # now calculate the number of times the cv or sd exceeds that of the real data
+
+  pval.mayAug$cvExceed=0
+  pval.mayAug$sdExceed=0
+
+  mayAug.cv=sd(log(tdat$exp.rate[tdat$treat=="mayAug"]))/mean(log(tdat$exp.rate[tdat$treat=="mayAug"]))
+  mayAug.sd=sd(log(tdat$exp.rate[tdat$treat=="mayAug"]))
+
+  pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
+  pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
+
+  #### Pb WD25 ####
+  pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
+                       beta=NA,
+                       cv=NA,
+                       sd=NA)
+  set.seed(10)
+  for(i in 1:nrow(pars.wd25)){
+    tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="wd25"]),
+                   meanlog = pars.wd25[i,1],
+                   sdlog = pars.wd25[i,2])
+    pval.wd25$alpha[i]=pars.wd25[i,1]
+    pval.wd25$beta[i]=pars.wd25[i,2]
+    pval.wd25$cv[i]=sd(log(tempdat))/mean(log(tempdat))
+    pval.wd25$sd[i]=sd(log(tempdat))
+  }
+
+  # now calculate the number of times the cv or sd exceeds that of the real data
+
+  pval.wd25$cvExceed=0
+  pval.wd25$sdExceed=0
+
+  wd25.cv=sd(log(tdat$exp.rate[tdat$treat=="wd25"]))/mean(log(tdat$exp.rate[tdat$treat=="wd25"]))
+  wd25.sd=sd(log(tdat$exp.rate[tdat$treat=="wd25"]))
+
+  pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
+  pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
+
+  #### Pb WD50 ####
+  pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
+                       beta=NA,
+                       cv=NA,
+                       sd=NA)
+  set.seed(10)
+  for(i in 1:nrow(pars.wd50)){
+    tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="wd50"]),
+                   meanlog = pars.wd50[i,1],
+                   sdlog = pars.wd50[i,2])
+    pval.wd50$alpha[i]=pars.wd50[i,1]
+    pval.wd50$beta[i]=pars.wd50[i,2]
+    pval.wd50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
+    pval.wd50$sd[i]=sd(log(tempdat))
+  }
+
+  # now calculate the number of times the cv or sd exceeds that of the real data
+
+  pval.wd50$cvExceed=0
+  pval.wd50$sdExceed=0
+
+  wd50.cv=sd(log(tdat$exp.rate[tdat$treat=="wd50"]))/mean(log(tdat$exp.rate[tdat$treat=="wd50"]))
+  wd50.sd=sd(log(tdat$exp.rate[tdat$treat=="wd50"]))
+
+  pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
+  pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
+
+  #### Pb WE50 ####
+  pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
+                       beta=NA,
+                       cv=NA,
+                       sd=NA)
+  set.seed(10)
+  for(i in 1:nrow(pars.we50)){
+    tempdat=rlnorm(n=length(tdat$exp.rate[tdat$treat=="we50"]),
+                   meanlog = pars.we50[i,1],
+                   sdlog = pars.we50[i,2])
+    pval.we50$alpha[i]=pars.we50[i,1]
+    pval.we50$beta[i]=pars.we50[i,2]
+    pval.we50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
+    pval.we50$sd[i]=sd(log(tempdat))
+  }
+
+  # now calculate the number of times the cv or sd exceeds that of the real data
+
+  pval.we50$cvExceed=0
+  pval.we50$sdExceed=0
+
+  we50.cv=sd(log(tdat$exp.rate[tdat$treat=="we50"]))/mean(log(tdat$exp.rate[tdat$treat=="we50"]))
+  we50.sd=sd(log(tdat$exp.rate[tdat$treat=="we50"]))
+
+  pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
+  pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
+
+  #df to hold pvals for model comparison to self, a way of knowing the model fit the data well
+  t.pself=data.frame(year=rep(loopY[y],6),
+                     scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
+                     coef.var.pval=NA,
+                     sd.pval=NA)
+  # adding self comparison pvals
+  t.pself$coef.var.pval=c(sum(pval.actual$cvExceed)/nrow(pval.actual),
+                          sum(pval.noWinter$cvExceed)/nrow(pval.noWinter),
+                          sum(pval.mayAug$cvExceed)/nrow(pval.mayAug),
+                          sum(pval.wd25$cvExceed)/nrow(pval.wd25),
+                          sum(pval.wd50$cvExceed)/nrow(pval.wd50),
+                          sum(pval.we50$cvExceed)/nrow(pval.we50))
+  t.pself$sd.pval=c(sum(pval.actual$sdExceed)/nrow(pval.actual),
+                          sum(pval.noWinter$sdExceed)/nrow(pval.noWinter),
+                          sum(pval.mayAug$sdExceed)/nrow(pval.mayAug),
+                          sum(pval.wd25$sdExceed)/nrow(pval.wd25),
+                          sum(pval.wd50$sdExceed)/nrow(pval.wd50),
+                          sum(pval.we50$sdExceed)/nrow(pval.we50))
+  bpval.self.y=rbind(bpval.self.y,t.pself)
+  ## p-value tests comparing the scenarios to actual to show that some scenarios approximate the actual quite well.
+
+  t.pcomp=data.frame(year=rep(loopY[y],6),
+                     scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
+                     coef.var.pval=NA,
+                     sd.pval=NA)
+
+  pval.actual$cvComp=0
+  pval.actual$sdComp=0
+  pval.actual$cvComp[pval.actual$cv>actual.cv]=1
+  pval.actual$sdComp[pval.actual$sd>actual.sd]=1
+
+  pval.noWinter$cvComp=0
+  pval.noWinter$sdComp=0
+  pval.noWinter$cvComp[pval.noWinter$cv>actual.cv]=1
+  pval.noWinter$sdComp[pval.noWinter$sd>actual.sd]=1
+
+  pval.mayAug$cvComp=0
+  pval.mayAug$sdComp=0
+  pval.mayAug$cvComp[pval.mayAug$cv>actual.cv]=1
+  pval.mayAug$sdComp[pval.mayAug$sd>actual.sd]=1
+
+  pval.wd25$cvComp=0
+  pval.wd25$sdComp=0
+  pval.wd25$cvComp[pval.wd25$cv>actual.cv]=1
+  pval.wd25$sdComp[pval.wd25$sd>actual.sd]=1
+
+  pval.wd50$cvComp=0
+  pval.wd50$sdComp=0
+  pval.wd50$cvComp[pval.wd50$cv>actual.cv]=1
+  pval.wd50$sdComp[pval.wd50$sd>actual.sd]=1
+
+  pval.we50$cvComp=0
+  pval.we50$sdComp=0
+  pval.we50$cvComp[pval.we50$cv>actual.cv]=1
+  pval.we50$sdComp[pval.we50$sd>actual.sd]=1
+
+  t.pcomp$coef.var.pval=c(sum(pval.actual$cvComp)/nrow(pval.actual),
+                             sum(pval.noWinter$cvComp)/nrow(pval.noWinter),
+                             sum(pval.mayAug$cvComp)/nrow(pval.mayAug),
+                             sum(pval.wd25$cvComp)/nrow(pval.wd25),
+                             sum(pval.wd50$cvComp)/nrow(pval.wd50),
+                             sum(pval.we50$cvComp)/nrow(pval.we50))
+
+  t.pcomp$sd.pval=c(sum(pval.actual$sdComp)/nrow(pval.actual),
+                       sum(pval.noWinter$sdComp)/nrow(pval.noWinter),
+                       sum(pval.mayAug$sdComp)/nrow(pval.mayAug),
+                       sum(pval.wd25$sdComp)/nrow(pval.wd25),
+                       sum(pval.wd50$sdComp)/nrow(pval.wd50),
+                       sum(pval.we50$sdComp)/nrow(pval.we50))
+  bpval.comp.y=rbind(bpval.comp.y,t.pcomp)
+}
+
+# now to look at the output
+bpval.self.y=bpval.self.y[!is.na(bpval.self.y$year),]
+bpval.comp.y=bpval.comp.y[!is.na(bpval.comp.y$year),]
+# saving big loop's output since it takes a while to run
+yearLoopOutput=list(bpval.self.y,bpval.comp.y)
+saveRDS(yearLoopOutput, file = "yearLoopOutput.RData")
 
 # reading in model object from above
 yearLoopOutput=readRDS("yearLoopOutput.RData")
+bpval.self.y=yearLoopOutput[[1]]
+bpval.comp.y=yearLoopOutput[[2]]
 
 #model fit 
 ggplot(bpval.self.y)+theme_classic()+
