@@ -23,8 +23,7 @@ library(lubridate)
 library(knitr)
 library(BayesianTools)
 
-setwd("C:/Users/dassocju/OneDrive - State of Wisconsin/Office_of_Applied_Science/Creel_SFR")
-
+setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 #reading in objects that take a long time to produce to improve rendering speed of this document
 call=readRDS("creelDataSet_all.RData")
 # unlist, etc. to get back to individual dfs

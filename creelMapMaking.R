@@ -26,3 +26,13 @@ wiscCty
 ggplot()+theme_void()+
   geom_sf(data=wisc,fill=NA)+
   geom_sf(data=ctBounds,fill="grey")
+
+
+ggplot()+theme_void()+
+  geom_sf(data=wisc,fill=NA)+
+  geom_sf(data=ctBounds,fill=NA)+
+  geom_sf(data=hdro[hdro$WATERBOD_2%in%lchar$wbic[lchar$trtystat!=0],],fill=NA)+
+  geom_sf(data=tribalBounds, fill="orange")+
+  coord_sf(ylim = c(44.5,47),crs = "+proj=longlat")
+
+
