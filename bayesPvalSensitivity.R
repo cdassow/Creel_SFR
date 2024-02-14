@@ -699,19 +699,19 @@ for(i in 1:nrow(pars.a)){
   pval.actual$med[i]=median(log(tempdat))
   pval.actual$kurt[i]=kurtosis(log(tempdat))
   ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="actual"], rescale.p = T)
-  pval.actual$x2[i]=ct$statistic
+  pval.actual$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="actual"]))
   pval.actual$f[i]=f.test$statistic
   
 }
 
-# now calculate the number of times the cv or sd exceeds that of the real data
+# now calculate the number of times the test statistic exceeds that of the real data
 
 pval.actual$cvExceed=0
 pval.actual$sdExceed=0
 pval.actual$medExceed=0
 pval.actual$kurtExceed=0
-pval.actual$x2StatExceed=0
+pval.actual$x2SigDiff=0
 pval.actual$fStatExceed=0
 
 
@@ -726,7 +726,7 @@ pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
 pval.actual$medExceed[pval.actual$med>actual.med]=1
 pval.actual$kurtExceed[pval.actual$kurt>actual.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.actual$x2StatExceed[pval.actual$x2>actual.x2$statistic]=1 # looking at how often the test statistic is bigger than the actual
+pval.actual$x2SigDiff[pval.actual$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the actual data
 pval.actual$fStatExceed[pval.actual$f>actual.f$statistic]=1 # how often the f statistic is bigger than the actual
 
 # # this is just random stuff to work with the x2 test to make sure I did it right
@@ -734,12 +734,16 @@ pval.actual$fStatExceed[pval.actual$f>actual.f$statistic]=1 # how often the f st
 # hist(plnorm(tempdat, meanlog = mean(log(tempdat)), sdlog = sd(log(tempdat))))
 # df=data.frame(tempdat=tempdat,
 #               pdist=plnorm(tempdat,
-#                            meanlog = mean(log(modDat$exp.rate[modDat$treat=="actual"])), 
+#                            meanlog = mean(log(modDat$exp.rate[modDat$treat=="actual"])),
 #                            sdlog = sd(log(modDat$exp.rate[modDat$treat=="actual"]))),
 #               actual=modDat$exp.rate[modDat$treat=="actual"],
 #               actualP=plnorm(modDat$exp.rate[modDat$treat=="actual"],
-#                                    meanlog = mean(log(modDat$exp.rate[modDat$treat=="actual"])), 
+#                                    meanlog = mean(log(modDat$exp.rate[modDat$treat=="actual"])),
 #                                    sdlog = sd(log(modDat$exp.rate[modDat$treat=="actual"]))))
+# simD=rlnorm(n=length(modDat$exp.rate[modDat$treat=="actual"]),meanlog = median(pars.a[,1]), sdlog = median(pars.a[,2]))
+# realD=modDat$exp.rate[modDat$treat=="actual"]
+# probs=plnorm(realD,meanlog = mean(log(realD)), sdlog = sd(log(realD)))
+# x2=chisq.test(simD, p=probs,rescale.p = T,simulate.p.value = T)
 
 #### Pb NoWinter ####
 pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
@@ -762,7 +766,7 @@ for(i in 1:nrow(pars.nw)){
   pval.noWinter$med[i]=median(log(tempdat))
   pval.noWinter$kurt[i]=kurtosis(log(tempdat))
   ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="noWinter"], rescale.p = T)
-  pval.noWinter$x2[i]=ct$statistic
+  pval.noWinter$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="noWinter"]))
   pval.noWinter$f[i]=f.test$statistic
   
@@ -774,7 +778,7 @@ pval.noWinter$cvExceed=0
 pval.noWinter$sdExceed=0
 pval.noWinter$medExceed=0
 pval.noWinter$kurtExceed=0
-pval.noWinter$x2StatExceed=0
+pval.noWinter$x2SigDiff=0
 pval.noWinter$fStatExceed=0
 
 
@@ -789,7 +793,7 @@ pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
 pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
 pval.noWinter$medExceed[pval.noWinter$med>noWinter.med]=1
 pval.noWinter$kurtExceed[pval.noWinter$kurt>noWinter.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.noWinter$x2StatExceed[pval.noWinter$x2>noWinter.x2$statistic]=1 # looking at how often the test statistic is bigger than the noWinter
+pval.noWinter$x2SigDiff[pval.noWinter$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the noWinter data
 pval.noWinter$fStatExceed[pval.noWinter$f>noWinter.f$statistic]=1 # how often the f statistic is bigger than the noWinter
 
 #### Pb MayAug ####
@@ -813,7 +817,7 @@ for(i in 1:nrow(pars.ma)){
   pval.mayAug$med[i]=median(log(tempdat))
   pval.mayAug$kurt[i]=kurtosis(log(tempdat))
   ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="mayAug"], rescale.p = T)
-  pval.mayAug$x2[i]=ct$statistic
+  pval.mayAug$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="mayAug"]))
   pval.mayAug$f[i]=f.test$statistic
   
@@ -825,7 +829,7 @@ pval.mayAug$cvExceed=0
 pval.mayAug$sdExceed=0
 pval.mayAug$medExceed=0
 pval.mayAug$kurtExceed=0
-pval.mayAug$x2StatExceed=0
+pval.mayAug$x2SigDiff=0
 pval.mayAug$fStatExceed=0
 
 
@@ -840,7 +844,7 @@ pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
 pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
 pval.mayAug$medExceed[pval.mayAug$med>mayAug.med]=1
 pval.mayAug$kurtExceed[pval.mayAug$kurt>mayAug.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.mayAug$x2StatExceed[pval.mayAug$x2>mayAug.x2$statistic]=1 # looking at how often the test statistic is bigger than the mayAug
+pval.mayAug$x2SigDiff[pval.mayAug$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the mayAug data
 pval.mayAug$fStatExceed[pval.mayAug$f>mayAug.f$statistic]=1 # how often the f statistic is bigger than the mayAug
 
 #### Pb WD25 ####
@@ -864,7 +868,7 @@ for(i in 1:nrow(pars.wd25)){
   pval.wd25$med[i]=median(log(tempdat))
   pval.wd25$kurt[i]=kurtosis(log(tempdat))
   ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="wd25"], rescale.p = T)
-  pval.wd25$x2[i]=ct$statistic
+  pval.wd25$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="wd25"]))
   pval.wd25$f[i]=f.test$statistic
   
@@ -876,7 +880,7 @@ pval.wd25$cvExceed=0
 pval.wd25$sdExceed=0
 pval.wd25$medExceed=0
 pval.wd25$kurtExceed=0
-pval.wd25$x2StatExceed=0
+pval.wd25$x2SigDiff=0
 pval.wd25$fStatExceed=0
 
 
@@ -891,7 +895,7 @@ pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
 pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
 pval.wd25$medExceed[pval.wd25$med>wd25.med]=1
 pval.wd25$kurtExceed[pval.wd25$kurt>wd25.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.wd25$x2StatExceed[pval.wd25$x2>wd25.x2$statistic]=1 # looking at how often the test statistic is bigger than the wd25
+pval.wd25$x2SigDiff[pval.wd25$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the wd25 data
 pval.wd25$fStatExceed[pval.wd25$f>wd25.f$statistic]=1 # how often the f statistic is bigger than the wd25
 
 #### Pb WD50 ####
@@ -915,7 +919,7 @@ for(i in 1:nrow(pars.wd50)){
   pval.wd50$med[i]=median(log(tempdat))
   pval.wd50$kurt[i]=kurtosis(log(tempdat))
   ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="wd50"], rescale.p = T)
-  pval.wd50$x2[i]=ct$statistic
+  pval.wd50$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="wd50"]))
   pval.wd50$f[i]=f.test$statistic
   
@@ -927,7 +931,7 @@ pval.wd50$cvExceed=0
 pval.wd50$sdExceed=0
 pval.wd50$medExceed=0
 pval.wd50$kurtExceed=0
-pval.wd50$x2StatExceed=0
+pval.wd50$x2SigDiff=0
 pval.wd50$fStatExceed=0
 
 
@@ -942,7 +946,7 @@ pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
 pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
 pval.wd50$medExceed[pval.wd50$med>wd50.med]=1
 pval.wd50$kurtExceed[pval.wd50$kurt>wd50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.wd50$x2StatExceed[pval.wd50$x2>wd50.x2$statistic]=1 # looking at how often the test statistic is bigger than the wd50
+pval.wd50$x2SigDiff[pval.wd50$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the wd50 data
 pval.wd50$fStatExceed[pval.wd50$f>wd50.f$statistic]=1 # how often the f statistic is bigger than the wd50
 
 #### Pb WE50 ####
@@ -966,7 +970,7 @@ for(i in 1:nrow(pars.we50)){
   pval.we50$med[i]=median(log(tempdat))
   pval.we50$kurt[i]=kurtosis(log(tempdat))
   ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="we50"], rescale.p = T)
-  pval.we50$x2[i]=ct$statistic
+  pval.we50$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="we50"]))
   pval.we50$f[i]=f.test$statistic
   
@@ -978,7 +982,7 @@ pval.we50$cvExceed=0
 pval.we50$sdExceed=0
 pval.we50$medExceed=0
 pval.we50$kurtExceed=0
-pval.we50$x2StatExceed=0
+pval.we50$x2SigDiff=0
 pval.we50$fStatExceed=0
 
 
@@ -993,7 +997,7 @@ pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
 pval.we50$medExceed[pval.we50$med>we50.med]=1
 pval.we50$kurtExceed[pval.we50$kurt>we50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.we50$x2StatExceed[pval.we50$x2>we50.x2$statistic]=1 # looking at how often the test statistic is bigger than the we50
+pval.we50$x2SigDiff[pval.we50$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the we50 data
 pval.we50$fStatExceed[pval.we50$f>we50.f$statistic]=1 # how often the f statistic is bigger than the we50
 
 
@@ -1015,7 +1019,7 @@ for(i in 1:length(self.pvals)){
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="sd"]=sum(tp$sdExceed==1)/nrow(tp)
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="med"]=sum(tp$medExceed==1)/nrow(tp)
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="kurt"]=sum(tp$kurtExceed==1)/nrow(tp)
-  all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="x2Sig"]=sum(tp$x2StatExceed==1)/nrow(tp)
+  all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="x2Sig"]=sum(tp$x2SigDiff==1)/nrow(tp)
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="f"]=sum(tp$fStatExceed==1)/nrow(tp)
 }
 

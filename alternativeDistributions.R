@@ -410,6 +410,21 @@ ggplot(ttrExp)+theme_classic()+
 
 modDat=ttrExp[ttrExp$exp.rate!=0,] # version of the above without 0s, models don't fit with 0s in there
 
+# creating some generic density plots of each distribution to show their general shape in presentations
+mu=mean(modDat$exp.rate[modDat$treat=="actual"])
+sigma2=var(modDat$exp.rate[modDat$treat=="actual"])
+
+genDat=data.frame(dist=c(rep("lnorm",1000),rep("gamma",1000),rep("beta",1000)),
+                  value=c(rlnorm(1000, meanlog = mean(log(modDat$exp.rate[modDat$treat=="actual"])),sdlog = sd(log(modDat$exp.rate[modDat$treat=="actual"]))),
+                          rgamma(1000, shape = mu^2/sigma2, rate = mu/sigma2),
+                          rbeta(1000, shape1 = ((mu^2)-(mu^3)-(mu*sigma2))/sigma2, shape2 = (mu-(2*(mu^2))+(mu^3)-(sigma2+(mu*sigma2)))/sigma2)))
+                  
+ggplot(genDat)+theme_classic()+
+  geom_density(aes(x=value, fill=dist), alpha=0.2)+
+  scale_fill_viridis_d()+theme(legend.position = c(0.75, 0.75))+
+  labs(x="Value",y="Density",fill="Distribution")
+
+
 uLL.a.beta=function(param){
   alpha=param[1]
   beta=param[2]
