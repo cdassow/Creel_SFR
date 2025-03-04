@@ -2271,6 +2271,11 @@ bpval.self.y=data.frame(year=NA,
                         scenario=NA,
                         coef.var.pval=NA,
                         sd.pval=NA)
+grMetrics.y=data.frame(year=NA,
+                       scenario=NA,
+                       gr.prsf=NA,
+                       gr.par1=NA,
+                       gr.par2=NA)
 
 for(y in 1:length(loopY)){
   #first get to year-specific data
@@ -2351,8 +2356,17 @@ for(y in 1:length(loopY)){
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
   t.50we=runMCMC(bayesianSetup = setup.we50, sampler = "DEzs", settings = settings)
-
-  ## BAYESIAN P-VALUE CALCS
+  
+  ## GR Diagnostics
+  
+  gr.a=gelmanDiagnostics(t.a)
+  gr.ma=gelmanDiagnostics(t.ma)
+  gr.nw=gelmanDiagnostics(t.nw)
+  gr.wd25=gelmanDiagnostics(t.25.wd)
+  gr.wd50=gelmanDiagnostics(t.50wd)
+  gr.we50=gelmanDiagnostics(t.50we)
+  
+    ## BAYESIAN P-VALUE CALCS
 
   pars.a=getSample(t.a)
   pars.nw=getSample(t.nw)
@@ -2593,6 +2607,14 @@ for(y in 1:length(loopY)){
                        sum(pval.wd50$sdComp)/nrow(pval.wd50),
                        sum(pval.we50$sdComp)/nrow(pval.we50))
   bpval.comp.y=rbind(bpval.comp.y,t.pcomp)
+  
+  # adding GR results to the output dataframe
+  t.gr=data.frame(year=rep(loopY[y],6),
+                  scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
+                  gr.prsf=c(gr.a[[2]],gr.nw[[2]],gr.ma[[2]],gr.wd25[[2]],gr.wd50[[2]],gr.we50[[2]]),
+                  gr.par1=c(gr.a[[1]][1,1],gr.nw[[1]][1,1],gr.ma[[1]][1,1],gr.wd25[[1]][1,1],gr.wd50[[1]][1,1],gr.we50[[1]][1,1]),
+                  gr.par2=c(gr.a[[1]][2,1],gr.nw[[1]][2,1],gr.ma[[1]][2,1],gr.wd25[[1]][2,1],gr.wd50[[1]][2,1],gr.we50[[1]][2,1]))
+  grMetrics.y=rbind(grMetrics.y,t.gr)
 }
 
 # now to look at the output
