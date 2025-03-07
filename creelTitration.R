@@ -637,12 +637,12 @@ summary(out$harvR.sigDiff)
 
 # first how is the data distributed for each metric
 
-# effort lognormally distributed
-ggplot(yrSum)+theme_classic()+
-  geom_density(aes(x=sumEff,fill=treat),alpha=0.2)
-
-ggplot(yrSum)+theme_classic()+
-  geom_density(aes(x=log(sumEff),fill=treat),alpha=0.2)
+# # effort lognormally distributed
+# ggplot(yrSum)+theme_classic()+
+#   geom_density(aes(x=sumEff,fill=treat),alpha=0.2)
+# 
+# ggplot(yrSum)+theme_classic()+
+#   geom_density(aes(x=log(sumEff),fill=treat),alpha=0.2)
 
 
 # catch appears lognormally distributed for most species, brown trout may be an exception and would maybe need beta distribution. Lots of 0s though, try poisson instead of lognormal since it's discrete intergers.
@@ -1653,6 +1653,8 @@ zeros.we50=sum(modDat$exp.rate[modDat$treat=="we50"]==0)
 
 modDat=modDat[modDat$exp.rate!=0,]
 
+
+
 #### ACTUAL ####
 uLL.a=function(param){
   alpha=param[1]
@@ -2362,7 +2364,7 @@ for(y in 1:length(loopY)){
   gr.a=gelmanDiagnostics(t.a)
   gr.ma=gelmanDiagnostics(t.ma)
   gr.nw=gelmanDiagnostics(t.nw)
-  gr.wd25=gelmanDiagnostics(t.25.wd)
+  gr.wd25=gelmanDiagnostics(t.25wd)
   gr.wd50=gelmanDiagnostics(t.50wd)
   gr.we50=gelmanDiagnostics(t.50we)
   
@@ -2618,16 +2620,15 @@ for(y in 1:length(loopY)){
 }
 
 # now to look at the output
-bpval.self.y=bpval.self.y[!is.na(bpval.self.y$year),]
-bpval.comp.y=bpval.comp.y[!is.na(bpval.comp.y$year),]
 # saving big loop's output since it takes a while to run
-yearLoopOutput=list(bpval.self.y,bpval.comp.y)
-saveRDS(yearLoopOutput, file = "yearLoopOutput.RData")
+yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
+saveRDS(yearLoopOutput, file = "yearLoopOutput_3.6.25.RData")
 
 # reading in model object from above
 yearLoopOutput=readRDS("yearLoopOutput.RData")
 bpval.self.y=yearLoopOutput[[1]]
 bpval.comp.y=yearLoopOutput[[2]]
+grMetrics.y=yearLoopOutput[[3]]
 
 #model fit 
 ggplot(bpval.self.y)+theme_classic()+
@@ -2666,5 +2667,11 @@ ggplot(bpval.comp.y)+theme_classic()+
   scale_color_viridis_d()+
   coord_cartesian(ylim=c(0,1))
 
+# model convergence
+ggplot(grMetrics.y[!is.na(grMetrics.y$scenario),])+theme_classic()+
+  geom_point(aes(x=year, y=gr.prsf))+facet_wrap(~scenario)+
+  coord_cartesian(ylim=c(1,1.2))+
+  geom_hline(yintercept = 1.1, color='red')+
+  labs(y='Gelman-Rubin Score',x='Year')
 
 # from steph, are angler harvest, effort, exploitation rate, etc. related to tribal harvest? Does knowing tribal harvest occurred draw anglers in or keep them away? Look at a few tribal harvest metrics, harvest/acre, % of declaration filled, etc.
