@@ -2674,4 +2674,10 @@ ggplot(grMetrics.y[!is.na(grMetrics.y$scenario),])+theme_classic()+
   geom_hline(yintercept = 1.1, color='red')+
   labs(y='Gelman-Rubin Score',x='Year')
 
+## percentage of significant diffs in each scenario
+sigSum=bpval.comp.y%>%
+  filter(!is.na(scenario))%>%
+  group_by(scenario)%>%
+  summarize(noSigDiff=sum(coef.var.pval>=0.1 & coef.var.pval<=0.9)/n())
+            
 # from steph, are angler harvest, effort, exploitation rate, etc. related to tribal harvest? Does knowing tribal harvest occurred draw anglers in or keep them away? Look at a few tribal harvest metrics, harvest/acre, % of declaration filled, etc.
