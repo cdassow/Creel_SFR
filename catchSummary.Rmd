@@ -47,14 +47,14 @@ ctwiWBIC.creel=ctwiWBIC$wbic[ctwiWBIC$wbic%in%cserv$wbic] # wbics in CTWI that h
 
 The main question this analysis seeks to answer:
 
-> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce exploitation rate (**$u$) estimates that are NOT significantly different from exploitation rates obtained using the current creel survey design?
+> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce catch estimates that are NOT significantly different from exploitation rates obtained using the current creel survey design?**
 
 The data informing these analyses has all been pulled from the Fisheries Management Information System (FMIS) using the `wdnr.fmdb` `R` package built to interface with this database.
 All analyses were conducted in `R` using `r version$version.string`.
 
 ## Current Creel Data as Baseline
 
-DNR has amassed a large amount of inland creel information over many decades (`r range(1984-2023)`) across many waterbodies (n=`r length(unique(cserv$wbic))`).
+DNR has amassed a large amount of inland creel information over many decades (`r range(cserv$year)`) across many waterbodies (n=`r length(unique(cserv$wbic))`).
 Using this data and functionality of `wdnr.fmdb` it is possible to calculate effort, catch, harvest, and harvest rate for multiple species for each unique creel survey conducted.
 This information can be further grouped by month, season, day type, etc. to provide insight into important temporal patterns in the fisheries metrics of interest.
 These calculations are accomplished fairly easily using the following code:
@@ -1156,12 +1156,12 @@ kable(bpval.comp, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value
 
 ### Year Specific Analyses
 
-Instead of modeling the full population of annual effort estimates as was done above, here I have done the model fitting on individual creel-years so that I can see how the removal of data for a creel-year (which is a comparatively large amount of missing data since only 16-20 lakes are creeled each year) impacts the annual effort per acre estimated that year.
+Instead of modeling the full population of annual catch estimates as was done above, here I have done the model fitting on individual creel-years so that I can see how the removal of data for a creel-year (which is a comparatively large amount of missing data since only 16-20 lakes are creeled each year) impacts the annual effort per acre estimated that year.
 This analysis will follow the same routine as the whole-population analyses above but only consider one creel-year at a time.
 
-I first started with some basic analyses of the data on a year by year basis to understand how the data changes from year to year and if any lake characteristics explained variation (if there is any) in annual effort per acre estimates across data reduction scenarios for specific creel-years (Figure \@ref(fig:yearAnalysisExampleLakes)).
+I first started with some basic analyses of the data on a year by year basis to understand how the data changes from year to year and if any lake characteristics explained variation (if there is any) in annual catch per acre estimates across data reduction scenarios for specific creel-years (Figure \@ref(fig:yearAnalysisExampleLakes)).
 
-```{r yearAnalysisExampleLakes, fig.width=8,fig.cap="Comparison of the annual effort per acre estimated from the reduced data for a handful of creel surveys. Most data reductions do not result in annual effort per acre estimates that are much different from the actual data (most are within 1 SD of the effort estimate for that treatment). Colors represent data reduction scenarios, points are mean annual effort per acre estimates across all months of that creel survey and vertical lines represent 1 standard deviation."}
+```{r yearAnalysisExampleLakes, fig.width=8,fig.cap="Comparison of the annual catch per acre estimated from the reduced data for a handful of creel surveys. Most data reductions do not result in annual catch per acre estimates that are much different from the actual data (most are within 1 SD of the effort estimate for that treatment). Colors represent data reduction scenarios, points are mean annual effort per acre estimates across all months of that creel survey and vertical lines represent 1 standard deviation."}
 ttrExp=ttrExp%>%
   left_join(cserv[,2:5])%>%
   left_join(lchar[,c(1:3,15)])
@@ -1169,16 +1169,16 @@ ttrExp=ttrExp%>%
 pdat=ttrExp[ttrExp$year%in%c(2015,2019,2022),]
 ggplot(pdat)+theme_classic()+
   geom_pointrange(aes(x=paste(year,waterbody.name,sep = "_"), 
-                      y=total.eff, ymin=total.eff-sd(total.eff), 
-                      ymax=total.eff+sd(total.eff), color=treat), 
+                      y=total.catch, ymin=total.catch-sd(total.catch), 
+                      ymax=total.catch+sd(total.catch), color=treat), 
                   position = position_dodge(width = 1))+
   theme(axis.text.x = element_text(angle=45,hjust=1), legend.position = c(.75,.75))+
-  labs(x="Lake-Year",y="Annual Effort per Acre (+/- 1 SD)",color="Scenario")+
+  labs(x="Lake-Year",y="Annual Catch per Acre (+/- 1 SD)",color="Scenario")+
   scale_color_viridis_d()
 
 ```
 
-```{r year-analysis-diff-actual, fig.cap="Boxplot of the difference between the actual annual effort per acre estimate and the data-reduced annual effort per acre estimate for each creel survey in the creel dataset. Most of the data exhibits differences very near 0 except the seasonal reductions, dots represent outliers (x<|> x's percentile-1.5*interquartile range)"}
+```{r year-analysis-diff-actual, fig.cap="Boxplot of the difference between the actual annual catch per acre estimate and the data-reduced annual effort per acre estimate for each creel survey in the creel dataset. Most of the data exhibits differences very near 0 except the seasonal reductions, dots represent outliers (x<|> x's percentile-1.5*interquartile range)"}
 
 # metrics comparing differences in individual lake estimates
 
@@ -1187,8 +1187,8 @@ trLake$a.diff=NA
 trLake$a.exceed=NA
 
 for(i in 1:nrow(trLake)){
-  trLake$a.diff[i]=trLake$total.eff[trLake$treat=="actual" & trLake$survey.seq.no==trLake$survey.seq.no[i]]-trLake$total.eff[i]
-  trLake$a.exceed[i]=trLake$a.diff[i]>=sd(trLake$total.eff[trLake$treat=="actual"])
+  trLake$a.diff[i]=trLake$total.catch[trLake$treat=="actual" & trLake$survey.seq.no==trLake$survey.seq.no[i]]-trLake$total.catch[i]
+  trLake$a.exceed[i]=trLake$a.diff[i]>=sd(trLake$total.catch[trLake$treat=="actual"])
 }
 
 ggplot(trLake)+theme_classic()+
@@ -1204,12 +1204,12 @@ exceedSummary=trLake%>%
             nFalse=sum(a.exceed==F,na.rm = T),
             nNA=sum(is.na(a.exceed)))
 kable(exceedSummary,
-      col.names = c("Data Reduction Scenario","effort estimates exceeding actual","effort estimates not exceeding actual","NAs"),
-      caption = "Counts of the number of times the annual effort per acre estimate for the reduced data scenario differs from the actual annual effort per acre estimate for that treatment by more than 1 standard deviation. NAs ocurred where there was no variance in the effort estimate and thus no standard deviation could be calculated for the actual data.")
+      col.names = c("Data Reduction Scenario","Catch estimates exceeding actual","Catch estimates not exceeding actual","NAs"),
+      caption = "Counts of the number of times the annual catch per acre estimate for the reduced data scenario differs from the actual annual catch per acre estimate for that treatment by more than 1 standard deviation. NAs ocurred where there was no variance in the catch estimate and thus no standard deviation could be calculated for the actual data.")
 
 ```
 
-```{r yearAnalysisRecCode, fig.cap="Comparison of the magnitutde of the difference between the mean actual annual effort per acre estimate and the estimate derived from each reduced data set. Vertical lines represent 1 standard deviation. Walleye recruitment codes are along the x axis. Note the y-axis scale, many of the differences are small."}
+```{r yearAnalysisRecCode, fig.cap="Comparison of the magnitutde of the difference between the mean actual annual catch per acre estimate and the estimate derived from each reduced data set. Vertical lines represent 1 standard deviation. Walleye recruitment codes are along the x axis. Note the y-axis scale, many of the differences are small."}
 
 # walleye recruitment class from lchar
 # current lake classes
@@ -1228,11 +1228,11 @@ ggplot(stClass)+theme_classic()+
   geom_pointrange(aes(x=wae.code,y=meanDiff,ymin=meanDiff-sdDiff,ymax=meanDiff+sdDiff,color=treat),position = position_dodge(width = 1))+
   scale_color_viridis_d()+theme(legend.position = c(0.7,0.8))+
   coord_cartesian(ylim = c(-10,200))+
-  labs(x="WAE Recruitment Code",y="Mean Difference from Actual Exploitation Rate",color="Scenario")
+  labs(x="WAE Recruitment Code",y="Mean Difference from Actual Annual Catch Estimate",color="Scenario")
 
 
 ```
-```{r yearAnalysisLakeClass,fig.cap="Comparison of the magnitude of the difference between the mean actual annual effort per acre estimate and the estimate derived from each reduced data set. Vertical lines represent 1 standard deviation. Note the y-axis scale, many of the differences are very small."}
+```{r yearAnalysisLakeClass,fig.cap="Comparison of the magnitude of the difference between the mean actual annual catch per acre estimate and the estimate derived from each reduced data set. Vertical lines represent 1 standard deviation. Note the y-axis scale, many of the differences are very small."}
 lcSum=trLake_chars%>%
   group_by(LakeClass,treat)%>%
   summarise(meanDiff=mean(a.diff,na.rm = T),
@@ -1241,7 +1241,7 @@ ggplot(lcSum)+theme_classic()+
   geom_pointrange(aes(x=LakeClass,y=meanDiff, ymin=meanDiff-sdDiff,ymax=meanDiff+sdDiff,color=treat),position = position_dodge(width = 1))+
   scale_color_viridis_d()+
   theme(axis.text.x = element_text(angle=45,hjust = 1), legend.position = c(0.8,0.75))+
-  labs(x="Lake Class",y="Mean Difference from Actual Exploitation Rate", color="Scenario")
+  labs(x="Lake Class",y="Mean Difference from Actual Annual Catch Estimate", color="Scenario")
 ```
 
 
@@ -1249,57 +1249,57 @@ ggplot(lcSum)+theme_classic()+
 # MODELING EFFECTS OF DATA REDUCTION ON INDIVIDUAL YEARS
 
 # likelihoods to fit
-effLL.we50=function(param){
+catchLL.we50=function(param){
   alpha=param[1]
   beta=param[2]
   
-  efs=rlnorm(nrow(tdat[tdat$treat=="we50",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(tdat$total.eff[tdat$treat=="we50"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(tdat[tdat$treat=="we50",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$total.catch[tdat$treat=="we50"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
-effLL.wd50=function(param){
+catchLL.wd50=function(param){
   alpha=param[1]
   beta=param[2]
   
-  efs=rlnorm(nrow(tdat[tdat$treat=="wd50",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(tdat$total.eff[tdat$treat=="wd50"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(tdat[tdat$treat=="wd50",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$total.catch[tdat$treat=="wd50"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
-effLL.wd25=function(param){
+catchLL.wd25=function(param){
   alpha=param[1]
   beta=param[2]
   
-  efs=rlnorm(nrow(tdat[tdat$treat=="wd25",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(tdat$total.eff[tdat$treat=="wd25"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(tdat[tdat$treat=="wd25",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$total.catch[tdat$treat=="wd25"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
-effLL.ma=function(param){
+catchLL.ma=function(param){
   alpha=param[1]
   beta=param[2]
   
-  efs=rlnorm(nrow(tdat[tdat$treat=="mayAug",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(tdat$total.eff[tdat$treat=="mayAug"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(tdat[tdat$treat=="mayAug",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$total.catch[tdat$treat=="mayAug"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
-effLL.nw=function(param){
+catchLL.nw=function(param){
   alpha=param[1]
   beta=param[2]
   
-  efs=rlnorm(nrow(tdat[tdat$treat=="noWinter",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(tdat$total.eff[tdat$treat=="noWinter"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(tdat[tdat$treat=="noWinter",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$total.catch[tdat$treat=="noWinter"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
-effLL.a=function(param){
+catchLL.a=function(param){
   alpha=param[1]
   beta=param[2]
 
-  efs=rlnorm(nrow(tdat[tdat$treat=="actual",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(tdat$total.eff[tdat$treat=="actual"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(tdat[tdat$treat=="actual",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(tdat$total.catch[tdat$treat=="actual"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
 
 # removing 0s
-ttrExp=ttrExp[ttrExp$total.eff!=0,]
+ttrExp=ttrExp[ttrExp$total.catch!=0,]
 loopY=sort(unique(ttrExp$year))
 
 bpval.comp.y=data.frame(year=NA,
@@ -1323,60 +1323,60 @@ for(y in 1:length(loopY)){
   # Bayesian Model Fitting
   #ACTUAL
 
-  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="actual"])),sd(log(ttrExp$total.eff[ttrExp$treat=="actual"]))),
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="actual"])),sd(log(ttrExp$total.catch[ttrExp$treat=="actual"]))),
                                    sd=c(1,1),
                                    lower = c(-15,0),
                                    upper = c(15,5))
 
-  setup.a=createBayesianSetup(effLL.a, prior = prior)
+  setup.a=createBayesianSetup(catchLL.a, prior = prior)
 
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
   t.a=runMCMC(bayesianSetup = setup.a, sampler = "DEzs", settings = settings)
   #NW
 
-  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="noWinter"])),sd(log(ttrExp$total.eff[ttrExp$treat=="noWinter"]))),
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="noWinter"])),sd(log(ttrExp$total.catch[ttrExp$treat=="noWinter"]))),
                                    sd=c(1,1),
                                    lower = c(-15,0),
                                    upper = c(15,5))
 
-  setup.nw=createBayesianSetup(effLL.nw, prior = prior)
+  setup.nw=createBayesianSetup(catchLL.nw, prior = prior)
 
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
   t.nw=runMCMC(bayesianSetup = setup.nw, sampler = "DEzs", settings = settings)
   #MA
 
-  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="mayAug"])),sd(log(ttrExp$total.eff[ttrExp$treat=="mayAug"]))),
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="mayAug"])),sd(log(ttrExp$total.catch[ttrExp$treat=="mayAug"]))),
                                    sd=c(1,1),
                                    lower = c(-15,0),
                                    upper = c(15,5))
 
-  setup.ma=createBayesianSetup(effLL.ma, prior = prior)
+  setup.ma=createBayesianSetup(catchLL.ma, prior = prior)
 
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
   t.ma=runMCMC(bayesianSetup = setup.ma, sampler = "DEzs", settings = settings)
   #WD.25
 
-  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="wd25"])),sd(log(ttrExp$total.eff[ttrExp$treat=="wd25"]))),
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="wd25"])),sd(log(ttrExp$total.catch[ttrExp$treat=="wd25"]))),
                                    sd=c(1,1),
                                    lower = c(-15,0),
                                    upper = c(15,5))
 
-  setup.wd25=createBayesianSetup(effLL.wd25, prior = prior)
+  setup.wd25=createBayesianSetup(catchLL.wd25, prior = prior)
 
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
   t.25wd=runMCMC(bayesianSetup = setup.wd25, sampler = "DEzs", settings = settings)
   #WD.50
 
-  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="wd50"])),sd(log(ttrExp$total.eff[ttrExp$treat=="wd50"]))),
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="wd50"])),sd(log(ttrExp$total.catch[ttrExp$treat=="wd50"]))),
                                    sd=c(1,1),
                                    lower = c(-15,0),
                                    upper = c(15,5))
 
-  setup.wd50=createBayesianSetup(effLL.wd50, prior = prior)
+  setup.wd50=createBayesianSetup(catchLL.wd50, prior = prior)
 
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
@@ -1384,12 +1384,12 @@ for(y in 1:length(loopY)){
 
   #WE.50
 
-  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="we50"])),sd(log(ttrExp$total.eff[ttrExp$treat=="we50"]))),
+  prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="we50"])),sd(log(ttrExp$total.catch[ttrExp$treat=="we50"]))),
                                    sd=c(1,1),
                                    lower = c(-15,0),
                                    upper = c(15,5))
 
-  setup.we50=createBayesianSetup(effLL.we50, prior = prior)
+  setup.we50=createBayesianSetup(catchLL.we50, prior = prior)
 
   settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
   set.seed(10)
@@ -1420,7 +1420,7 @@ for(y in 1:length(loopY)){
                          sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.a)){
-    tempdat=rlnorm(n=length(tdat$total.eff[tdat$treat=="actual"]),
+    tempdat=rlnorm(n=length(tdat$total.catch[tdat$treat=="actual"]),
                    meanlog = pars.a[i,1],
                    sdlog = pars.a[i,2])
     pval.actual$alpha[i]=pars.a[i,1]
@@ -1434,8 +1434,8 @@ for(y in 1:length(loopY)){
   pval.actual$cvExceed=0
   pval.actual$sdExceed=0
 
-  actual.cv=sd(log(tdat$total.eff[tdat$treat=="actual"]))/mean(log(tdat$total.eff[tdat$treat=="actual"]))
-  actual.sd=sd(log(tdat$total.eff[tdat$treat=="actual"]))
+  actual.cv=sd(log(tdat$total.catch[tdat$treat=="actual"]))/mean(log(tdat$total.catch[tdat$treat=="actual"]))
+  actual.sd=sd(log(tdat$total.catch[tdat$treat=="actual"]))
 
   pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
   pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
@@ -1447,7 +1447,7 @@ for(y in 1:length(loopY)){
                            sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.nw)){
-    tempdat=rlnorm(n=length(tdat$total.eff[tdat$treat=="noWinter"]),
+    tempdat=rlnorm(n=length(tdat$total.catch[tdat$treat=="noWinter"]),
                    meanlog = pars.nw[i,1],
                    sdlog = pars.nw[i,2])
     pval.noWinter$alpha[i]=pars.nw[i,1]
@@ -1461,8 +1461,8 @@ for(y in 1:length(loopY)){
   pval.noWinter$cvExceed=0
   pval.noWinter$sdExceed=0
 
-  noWinter.cv=sd(log(tdat$total.eff[tdat$treat=="noWinter"]))/mean(log(tdat$total.eff[tdat$treat=="noWinter"]))
-  noWinter.sd=sd(log(tdat$total.eff[tdat$treat=="noWinter"]))
+  noWinter.cv=sd(log(tdat$total.catch[tdat$treat=="noWinter"]))/mean(log(tdat$total.catch[tdat$treat=="noWinter"]))
+  noWinter.sd=sd(log(tdat$total.catch[tdat$treat=="noWinter"]))
 
   pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
   pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
@@ -1474,7 +1474,7 @@ for(y in 1:length(loopY)){
                          sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.ma)){
-    tempdat=rlnorm(n=length(tdat$total.eff[tdat$treat=="mayAug"]),
+    tempdat=rlnorm(n=length(tdat$total.catch[tdat$treat=="mayAug"]),
                    meanlog = pars.ma[i,1],
                    sdlog = pars.ma[i,2])
     pval.mayAug$alpha[i]=pars.ma[i,1]
@@ -1488,8 +1488,8 @@ for(y in 1:length(loopY)){
   pval.mayAug$cvExceed=0
   pval.mayAug$sdExceed=0
 
-  mayAug.cv=sd(log(tdat$total.eff[tdat$treat=="mayAug"]))/mean(log(tdat$total.eff[tdat$treat=="mayAug"]))
-  mayAug.sd=sd(log(tdat$total.eff[tdat$treat=="mayAug"]))
+  mayAug.cv=sd(log(tdat$total.catch[tdat$treat=="mayAug"]))/mean(log(tdat$total.catch[tdat$treat=="mayAug"]))
+  mayAug.sd=sd(log(tdat$total.catch[tdat$treat=="mayAug"]))
 
   pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
   pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
@@ -1501,7 +1501,7 @@ for(y in 1:length(loopY)){
                        sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.wd25)){
-    tempdat=rlnorm(n=length(tdat$total.eff[tdat$treat=="wd25"]),
+    tempdat=rlnorm(n=length(tdat$total.catch[tdat$treat=="wd25"]),
                    meanlog = pars.wd25[i,1],
                    sdlog = pars.wd25[i,2])
     pval.wd25$alpha[i]=pars.wd25[i,1]
@@ -1515,8 +1515,8 @@ for(y in 1:length(loopY)){
   pval.wd25$cvExceed=0
   pval.wd25$sdExceed=0
 
-  wd25.cv=sd(log(tdat$total.eff[tdat$treat=="wd25"]))/mean(log(tdat$total.eff[tdat$treat=="wd25"]))
-  wd25.sd=sd(log(tdat$total.eff[tdat$treat=="wd25"]))
+  wd25.cv=sd(log(tdat$total.catch[tdat$treat=="wd25"]))/mean(log(tdat$total.catch[tdat$treat=="wd25"]))
+  wd25.sd=sd(log(tdat$total.catch[tdat$treat=="wd25"]))
 
   pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
   pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
@@ -1528,7 +1528,7 @@ for(y in 1:length(loopY)){
                        sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.wd50)){
-    tempdat=rlnorm(n=length(tdat$total.eff[tdat$treat=="wd50"]),
+    tempdat=rlnorm(n=length(tdat$total.catch[tdat$treat=="wd50"]),
                    meanlog = pars.wd50[i,1],
                    sdlog = pars.wd50[i,2])
     pval.wd50$alpha[i]=pars.wd50[i,1]
@@ -1542,8 +1542,8 @@ for(y in 1:length(loopY)){
   pval.wd50$cvExceed=0
   pval.wd50$sdExceed=0
 
-  wd50.cv=sd(log(tdat$total.eff[tdat$treat=="wd50"]))/mean(log(tdat$total.eff[tdat$treat=="wd50"]))
-  wd50.sd=sd(log(tdat$total.eff[tdat$treat=="wd50"]))
+  wd50.cv=sd(log(tdat$total.catch[tdat$treat=="wd50"]))/mean(log(tdat$total.catch[tdat$treat=="wd50"]))
+  wd50.sd=sd(log(tdat$total.catch[tdat$treat=="wd50"]))
 
   pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
   pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
@@ -1555,7 +1555,7 @@ for(y in 1:length(loopY)){
                        sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.we50)){
-    tempdat=rlnorm(n=length(tdat$total.eff[tdat$treat=="we50"]),
+    tempdat=rlnorm(n=length(tdat$total.catch[tdat$treat=="we50"]),
                    meanlog = pars.we50[i,1],
                    sdlog = pars.we50[i,2])
     pval.we50$alpha[i]=pars.we50[i,1]
@@ -1569,8 +1569,8 @@ for(y in 1:length(loopY)){
   pval.we50$cvExceed=0
   pval.we50$sdExceed=0
 
-  we50.cv=sd(log(tdat$total.eff[tdat$treat=="we50"]))/mean(log(tdat$total.eff[tdat$treat=="we50"]))
-  we50.sd=sd(log(tdat$total.eff[tdat$treat=="we50"]))
+  we50.cv=sd(log(tdat$total.catch[tdat$treat=="we50"]))/mean(log(tdat$total.catch[tdat$treat=="we50"]))
+  we50.sd=sd(log(tdat$total.catch[tdat$treat=="we50"]))
 
   pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
   pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
@@ -1657,7 +1657,7 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-saveRDS(yearLoopOutput, file = "yearLoopOutput_effort_3.13.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_catch_3.18.25.RData")
 
 
 ```
@@ -1665,7 +1665,7 @@ saveRDS(yearLoopOutput, file = "yearLoopOutput_effort_3.13.25.RData")
 ```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of exploitation rates across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_effort_3.13.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_catch_3.18.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]
@@ -1674,10 +1674,10 @@ bpval.comp.y=bpval.comp.y[!is.na(bpval.comp.y$scenario),]
 grMetrics.y=yearLoopOutput[[3]]
 grMetrics.y=grMetrics.y[!is.na(grMetrics.y$scenario),]
 ggplot(ttrExp)+theme_classic()+
-  geom_density(aes(log(total.eff),fill=treat),alpha=0.2)+
+  geom_density(aes(log(total.catch),fill=treat),alpha=0.2)+
   facet_wrap(~year,scales = 'free_y')+scale_fill_viridis_d()+
   theme(legend.position = "bottom")+
-  labs(y="Density",x="Log(Annual Effort per Acre)", fill="Scenario")
+  labs(y="Density",x="Log(Annual Catch per Acre)", fill="Scenario")
 ```
 
 ```{r year-loop-model-fit, fig.cap="Comparison of coefficient of variations for bayesian p-values comparing the actual data to the simulated data for the creel year and data reduction scenario."}
@@ -1746,255 +1746,255 @@ All comparisons presented in this analysis are comparing a model's ability to fi
 ## FITTING ALTERNATIVE DISTRIBUTIONS ####
 # combining actual and reduced dataframes into one big one for plotting
 
-ttrExp=rbind(cbind(eff.surv.a,treat=rep("actual",nrow(eff.surv.a))),
-             cbind(eff.surv.nw, treat=rep("noWinter",nrow(eff.surv.nw))),
-             cbind(eff.surv.ma, treat=rep("mayAug",nrow(eff.surv.ma))),
-             cbind(eff.surv.25wd, treat=rep("wd25",nrow(eff.surv.25wd))),
-             cbind(eff.surv.50wd, treat=rep("wd50",nrow(eff.surv.50wd))),
-             cbind(eff.surv.50we, treat=rep("we50",nrow(eff.surv.50we))))
+ttrExp=rbind(cbind(catch.surv.a,treat=rep("actual",nrow(catch.surv.a))),
+             cbind(catch.surv.nw, treat=rep("noWinter",nrow(catch.surv.nw))),
+             cbind(catch.surv.ma, treat=rep("mayAug",nrow(catch.surv.ma))),
+             cbind(catch.surv.25wd, treat=rep("wd25",nrow(catch.surv.25wd))),
+             cbind(catch.surv.50wd, treat=rep("wd50",nrow(catch.surv.50wd))),
+             cbind(catch.surv.50we, treat=rep("we50",nrow(catch.surv.50we))))
 
 # removing 0s, not necessary for gamma fit, but is for lognormal fit
-ttrExp=ttrExp[ttrExp$total.eff!=0,]
+ttrExp=ttrExp[ttrExp$total.catch!=0,]
 ggplot(ttrExp)+theme_classic()+
-  geom_density(aes(x=total.eff, fill=treat),alpha=0.2)
+  geom_density(aes(x=total.catch, fill=treat),alpha=0.2)
 
-effLL.a.gamma=function(param){
+catchLL.a.gamma=function(param){
   shape=param[1]
   rate=param[2]
 
-  efs=rgamma(nrow(ttrExp[ttrExp$treat=="actual",]), shape = shape, rate = rate)
-  mu=mean(efs,na.rm = T)
-  sigma2=var(efs,na.rm = T)
+  cas=rgamma(nrow(ttrExp[ttrExp$treat=="actual",]), shape = shape, rate = rate)
+  mu=mean(cas,na.rm = T)
+  sigma2=var(cas,na.rm = T)
   
-  ll=dgamma(ttrExp$total.eff[ttrExp$treat=="actual"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
+  ll=dgamma(ttrExp$total.catch[ttrExp$treat=="actual"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
   return(sum(ll))
 }
 
-prior=createUniformPrior(lower=c(0,0), upper = c(3000,4000))
-setup.actual=createBayesianSetup(effLL.a.gamma, prior = prior)
+prior.gamma=createUniformPrior(lower=c(0,0), upper = c(5,5))
+setup.actual=createBayesianSetup(catchLL.a.gamma, prior = prior.gamma)
 
-settings=list(iterations=50000, nrChains=3, message=F, burnin=10000)
+settings=list(iterations=20000, nrChains=3, message=F, burnin=5000)
 
 startT=Sys.time()
 set.seed(10)
-eff.actual.gamma=runMCMC(bayesianSetup = setup.actual, sampler = "DEzs", settings = settings)
+catch.actual.gamma=runMCMC(bayesianSetup = setup.actual, sampler = "DEzs", settings = settings)
 endT=Sys.time() # takes about 10 sec
 
-effLL.a=function(param){
+catchLL.a=function(param){
   alpha=param[1]
   beta=param[2]
 
-  efs=rlnorm(nrow(ttrExp[ttrExp$treat=="actual",]),meanlog = alpha, sdlog = beta)
-  ll=dlnorm(ttrExp$total.eff[ttrExp$treat=="actual"], meanlog = mean(log(efs)), sdlog = sd(log(efs)), log = T)
+  cas=rlnorm(nrow(ttrExp[ttrExp$treat=="actual",]),meanlog = alpha, sdlog = beta)
+  ll=dlnorm(ttrExp$total.catch[ttrExp$treat=="actual"], meanlog = mean(log(cas)), sdlog = sd(log(cas)), log = T)
   return(sum(ll))
 }
 
-prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.eff[ttrExp$treat=="actual"])),sd(log(ttrExp$total.eff[ttrExp$treat=="actual"]))),
+prior=createTruncatedNormalPrior(mean=c(mean(log(ttrExp$total.catch[ttrExp$treat=="actual"])),sd(log(ttrExp$total.catch[ttrExp$treat=="actual"]))),
                                  sd=c(1,1),
                                  lower = c(-15,0),
                                  upper = c(15,5))
 
-setup.actual=createBayesianSetup(effLL.a, prior = prior)
+setup.actual=createBayesianSetup(catchLL.a, prior = prior)
 
 settings=list(iterations=10000, nrChains=3, message=F, burnin=5000)
 set.seed(10)
-eff.actual=runMCMC(bayesianSetup = setup.actual, sampler = "DEzs", settings = settings) # takes about 10 seconds
+catch.actual=runMCMC(bayesianSetup = setup.actual, sampler = "DEzs", settings = settings) # takes about 10 seconds
 
 
 # working through rest of the reduced data sets and then calculating pvalues
 #### NW ####
-effLL.nw.gamma=function(param){
+catchLL.nw.gamma=function(param){
   shape=param[1]
   rate=param[2]
 
-  efs=rgamma(nrow(ttrExp[ttrExp$treat=="noWinter",]), shape = shape, rate = rate)
-  mu=mean(efs,na.rm = T)
-  sigma2=var(efs,na.rm = T)
+  cas=rgamma(nrow(ttrExp[ttrExp$treat=="noWinter",]), shape = shape, rate = rate)
+  mu=mean(cas,na.rm = T)
+  sigma2=var(cas,na.rm = T)
   
-  ll=dgamma(ttrExp$total.eff[ttrExp$treat=="noWinter"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
+  ll=dgamma(ttrExp$total.catch[ttrExp$treat=="noWinter"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
   return(sum(ll))
 }
 
-prior=createUniformPrior(lower=c(0,0), upper = c(3000,4000))
-setup.nw.gamma=createBayesianSetup(effLL.nw.gamma, prior = prior.gamma)
+prior.gamma=createUniformPrior(lower=c(0,0), upper = c(5,5))
+setup.nw.gamma=createBayesianSetup(catchLL.nw.gamma, prior = prior.gamma)
 
-settings=list(iterations=50000, nrChains=3, message=F, burnin=10000)
+settings=list(iterations=20000, nrChains=3, message=F, burnin=5000)
 
 set.seed(10)
-eff.nw.gamma=runMCMC(bayesianSetup = setup.nw.gamma, sampler = "DEzs", settings = settings)
+catch.nw.gamma=runMCMC(bayesianSetup = setup.nw.gamma, sampler = "DEzs", settings = settings)
 
 #### MA ####
 
-effLL.ma.gamma=function(param){
+catchLL.ma.gamma=function(param){
   shape=param[1]
   rate=param[2]
 
-  efs=rgamma(nrow(ttrExp[ttrExp$treat=="mayAug",]), shape = shape, rate = rate)
-  mu=mean(efs,na.rm = T)
-  sigma2=var(efs,na.rm = T)
+  cas=rgamma(nrow(ttrExp[ttrExp$treat=="mayAug",]), shape = shape, rate = rate)
+  mu=mean(cas,na.rm = T)
+  sigma2=var(cas,na.rm = T)
   
-  ll=dgamma(ttrExp$total.eff[ttrExp$treat=="mayAug"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
+  ll=dgamma(ttrExp$total.catch[ttrExp$treat=="mayAug"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
   return(sum(ll))
 }
 
-prior=createUniformPrior(lower=c(0,0), upper = c(3000,4000))
-setup.ma.gamma=createBayesianSetup(effLL.ma.gamma, prior = prior.gamma)
+prior.gamma=createUniformPrior(lower=c(0,0), upper = c(5,5))
+setup.ma.gamma=createBayesianSetup(catchLL.ma.gamma, prior = prior.gamma)
 
-settings=list(iterations=50000, nrChains=3, message=F, burnin=10000)
+settings=list(iterations=20000, nrChains=3, message=F, burnin=5000)
 
 set.seed(10)
-eff.ma.gamma=runMCMC(bayesianSetup = setup.ma.gamma, sampler = "DEzs", settings = settings)
+catch.ma.gamma=runMCMC(bayesianSetup = setup.ma.gamma, sampler = "DEzs", settings = settings)
 
 #### WD25 ####
 
-effLL.wd25.gamma=function(param){
+catchLL.wd25.gamma=function(param){
   shape=param[1]
   rate=param[2]
 
-  efs=rgamma(nrow(ttrExp[ttrExp$treat=="wd25",]), shape = shape, rate = rate)
-  mu=mean(efs,na.rm = T)
-  sigma2=var(efs,na.rm = T)
+  cas=rgamma(nrow(ttrExp[ttrExp$treat=="wd25",]), shape = shape, rate = rate)
+  mu=mean(cas,na.rm = T)
+  sigma2=var(cas,na.rm = T)
   
-  ll=dgamma(ttrExp$total.eff[ttrExp$treat=="wd25"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
+  ll=dgamma(ttrExp$total.catch[ttrExp$treat=="wd25"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
   return(sum(ll))
 }
 
-prior=createUniformPrior(lower=c(0,0), upper = c(3000,4000))
-setup.wd25.gamma=createBayesianSetup(effLL.wd25.gamma, prior = prior.gamma)
+prior.gamma=createUniformPrior(lower=c(0,0), upper = c(5,5))
+setup.wd25.gamma=createBayesianSetup(catchLL.wd25.gamma, prior = prior.gamma)
 
-settings=list(iterations=50000, nrChains=3, message=F, burnin=10000)
+settings=list(iterations=20000, nrChains=3, message=F, burnin=5000)
 set.seed(10)
-eff.25wd.gamma=runMCMC(bayesianSetup = setup.wd25.gamma, sampler = "DEzs", settings = settings)
+catch.25wd.gamma=runMCMC(bayesianSetup = setup.wd25.gamma, sampler = "DEzs", settings = settings)
 
 #### WD50 ####
-effLL.wd50.gamma=function(param){
+catchLL.wd50.gamma=function(param){
   shape=param[1]
   rate=param[2]
 
-  efs=rgamma(nrow(ttrExp[ttrExp$treat=="wd50",]), shape = shape, rate = rate)
-  mu=mean(efs,na.rm = T)
-  sigma2=var(efs,na.rm = T)
+  cas=rgamma(nrow(ttrExp[ttrExp$treat=="wd50",]), shape = shape, rate = rate)
+  mu=mean(cas,na.rm = T)
+  sigma2=var(cas,na.rm = T)
   
-  ll=dgamma(ttrExp$total.eff[ttrExp$treat=="wd50"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
+  ll=dgamma(ttrExp$total.catch[ttrExp$treat=="wd50"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
   return(sum(ll))
 }
 
-prior=createUniformPrior(lower=c(0,0), upper = c(3000,4000))
-setup.wd50.gamma=createBayesianSetup(effLL.wd50.gamma, prior = prior.gamma)
+prior.gamma=createUniformPrior(lower=c(0,0), upper = c(5,5))
+setup.wd50.gamma=createBayesianSetup(catchLL.wd50.gamma, prior = prior.gamma)
 
-settings=list(iterations=50000, nrChains=3, message=F, burnin=10000)
+settings=list(iterations=20000, nrChains=3, message=F, burnin=5000)
 
 set.seed(10)
-eff.50wd.gamma=runMCMC(bayesianSetup = setup.wd50.gamma, sampler = "DEzs", settings = settings)
+catch.50wd.gamma=runMCMC(bayesianSetup = setup.wd50.gamma, sampler = "DEzs", settings = settings)
 
 #### WE50 ####
-effLL.we50.gamma=function(param){
+catchLL.we50.gamma=function(param){
   shape=param[1]
   rate=param[2]
 
-  efs=rgamma(nrow(ttrExp[ttrExp$treat=="we50",]), shape = shape, rate = rate)
-  mu=mean(efs,na.rm = T)
-  sigma2=var(efs,na.rm = T)
+  cas=rgamma(nrow(ttrExp[ttrExp$treat=="we50",]), shape = shape, rate = rate)
+  mu=mean(cas,na.rm = T)
+  sigma2=var(cas,na.rm = T)
   
-  ll=dgamma(ttrExp$total.eff[ttrExp$treat=="we50"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
+  ll=dgamma(ttrExp$total.catch[ttrExp$treat=="we50"], shape = mu^2/sigma2, rate = mu/sigma2, log = T)
   return(sum(ll))
 }
 
-prior=createUniformPrior(lower=c(0,0), upper = c(3000,4000))
-setup.we50.gamma=createBayesianSetup(effLL.we50.gamma, prior = prior.gamma)
+prior.gamma=createUniformPrior(lower=c(0,0), upper = c(5,5))
+setup.we50.gamma=createBayesianSetup(catchLL.we50.gamma, prior = prior.gamma)
 
-settings=list(iterations=50000, nrChains=3, message=F, burnin=10000)
+settings=list(iterations=20000, nrChains=3, message=F, burnin=5000)
 
 set.seed(10)
-eff.50we.gamma=runMCMC(bayesianSetup = setup.we50.gamma, sampler = "DEzs", settings = settings)
+catch.50we.gamma=runMCMC(bayesianSetup = setup.we50.gamma, sampler = "DEzs", settings = settings)
 ```
 
 ```{r quickGammaFit, fig.cap="Comparison of model fits for lognormal and gamma, family of models. This rough look at the models suggests there are no obvious differences between the choice of modeling distribution. This will be evaluated statistically using bayesian p values later on."}
 # evaluating model fit
 
-pars.a.lnorm=getSample(eff.actual)
-pars.a.gamma=getSample(eff.actual.gamma)
+pars.a.lnorm=getSample(catch.actual)
+pars.a.gamma=getSample(catch.actual.gamma)
 
 set.seed(10)
-aComp.lnorm=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="actual"],rlnorm(n=length(ttrExp$total.eff[ttrExp$treat=="actual"]),
+aComp.lnorm=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="actual"],rlnorm(n=length(ttrExp$total.catch[ttrExp$treat=="actual"]),
                                                                     meanlog = median(pars.a.lnorm[,1]),
                                                                     sdlog = median(pars.a.lnorm[,2]))),
-                 treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="actual"]))))
+                 treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="actual"]))))
 
-aComp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="actual"]),
+aComp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="actual"]),
                                                                     shape = median(pars.a.gamma[,1]),
                                                                     rate = median(pars.a.gamma[,2]))),
-                  treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="actual"]))))
+                  treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="actual"]))))
 
 ln=ggplot(aComp.lnorm)+theme_classic()+
-  geom_density(aes(x=eff.acre, fill=treat),alpha=0.3)+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre",title = "Lognormal")+
+  geom_density(aes(x=catch.acre, fill=treat),alpha=0.3)+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre",title = "Lognormal")+
   theme(legend.position = c(0.75,0.75))
 gma=ggplot(aComp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre, fill=treat),alpha=0.3)+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre",title = "Gamma")+
+  geom_density(aes(x=catch.acre, fill=treat),alpha=0.3)+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre",title = "Gamma")+
   theme(legend.position = c(0.75,0.75))
 ggarrange(ln,gma)
 
-## It looks like the gamma models are not fitting the data very well, and are likely not a good alternative choice, so stick with lognormal
+## It looks like the gamma models are fitting the data well, and could be a good alternative choice, so stick with lognormal for now though
 ```
 
 ```{r gammaFitViz, fig.cap="Visualization of the model fit to the data for each scenario using a gamma distribution instead of a lognormal distribution."}
 # looking to see if parm estimates produce data that visually at least looks like the observed data for that scenario
-pars.a.gamma=getSample(eff.actual.gamma)
-pars.nw.gamma=getSample(eff.nw.gamma)
-pars.ma.gamma=getSample(eff.ma.gamma)
-pars.wd25.gamma=getSample(eff.25wd.gamma)
-pars.wd50.gamma=getSample(eff.50wd.gamma)
-pars.we50.gamma=getSample(eff.50we.gamma)
+pars.a.gamma=getSample(catch.actual.gamma)
+pars.nw.gamma=getSample(catch.nw.gamma)
+pars.ma.gamma=getSample(catch.ma.gamma)
+pars.wd25.gamma=getSample(catch.25wd.gamma)
+pars.wd50.gamma=getSample(catch.50wd.gamma)
+pars.we50.gamma=getSample(catch.50we.gamma)
 set.seed(10)
-aComp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="actual"]),
+aComp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="actual"]),
                                                                     shape = median(pars.a.gamma[,1]),
                                                                     rate = median(pars.a.gamma[,2]))),
-                  treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="actual"]))))
-nwComp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="noWinter"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="noWinter"]),
+                  treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="actual"]))))
+nwComp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="noWinter"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="noWinter"]),
                                                                       shape = median(pars.nw.gamma[,1]),
                                                                       rate = median(pars.nw.gamma[,2]))),
-                  treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="noWinter"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="noWinter"]))))
+                  treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="noWinter"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="noWinter"]))))
 
-maComp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="mayAug"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="mayAug"]),
+maComp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="mayAug"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="mayAug"]),
                                                                     shape = median(pars.ma.gamma[,1]),
                                                                     rate = median(pars.ma.gamma[,2]))),
-                  treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="mayAug"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="mayAug"]))))
+                  treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="mayAug"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="mayAug"]))))
 
-wd25Comp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="wd25"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="wd25"]),
+wd25Comp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="wd25"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="wd25"]),
                                                                     shape = median(pars.wd25.gamma[,1]),
                                                                     rate = median(pars.wd25.gamma[,2]))),
-                    treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="wd25"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="wd25"]))))
+                    treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="wd25"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="wd25"]))))
 
-wd50Comp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="wd50"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="wd50"]),
+wd50Comp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="wd50"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="wd50"]),
                                                                     shape = median(pars.wd50.gamma[,1]),
                                                                     rate = median(pars.wd50.gamma[,2]))),
-                    treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="wd50"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="wd50"]))))
+                    treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="wd50"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="wd50"]))))
 
-we50Comp.gamma=data.frame(eff.acre=c(ttrExp$total.eff[ttrExp$treat=="we50"],rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="we50"]),
+we50Comp.gamma=data.frame(catch.acre=c(ttrExp$total.catch[ttrExp$treat=="we50"],rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="we50"]),
                                                                     shape = median(pars.we50.gamma[,1]),
                                                                     rate = median(pars.we50.gamma[,2]))),
-                    treat=c(rep("observed",length(ttrExp$total.eff[ttrExp$treat=="we50"])),rep("pred",length(ttrExp$total.eff[ttrExp$treat=="we50"]))))
+                    treat=c(rep("observed",length(ttrExp$total.catch[ttrExp$treat=="we50"])),rep("pred",length(ttrExp$total.catch[ttrExp$treat=="we50"]))))
 
 a.p.gamma=ggplot(aComp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre", y="Density", title = "Actual", fill=element_blank())
+  geom_density(aes(x=catch.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre", y="Density", title = "Actual", fill=element_blank())
 nw.p.gamma=ggplot(nwComp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre", y="Density", title = "No Winter Data \n(April - October)", fill=element_blank())
+  geom_density(aes(x=catch.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre", y="Density", title = "No Winter Data \n(April - October)", fill=element_blank())
 ma.p.gamma=ggplot(maComp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre", y="Density", title = "May - August \nData Only", fill=element_blank())
+  geom_density(aes(x=catch.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre", y="Density", title = "May - August \nData Only", fill=element_blank())
 wd25.p.gamma=ggplot(wd25Comp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre", y="Density", title = "25% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
+  geom_density(aes(x=catch.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre", y="Density", title = "25% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 wd50.p.gamma=ggplot(wd25Comp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre", y="Density", title = "50% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
+  geom_density(aes(x=catch.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre", y="Density", title = "50% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 we50.p.gamma=ggplot(we50Comp.gamma)+theme_classic()+
-  geom_density(aes(x=eff.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
-  scale_fill_viridis_d()+labs(x="Annual Effort per Acre", y="Density", title = "50% of Weekdend \nCreel Visits/Month \nRemoved", fill=element_blank())
+  geom_density(aes(x=catch.acre,fill=treat),alpha=0.2)+coord_cartesian(xlim = c(0,250))+
+  scale_fill_viridis_d()+labs(x="Annual Catch per Acre", y="Density", title = "50% of Weekdend \nCreel Visits/Month \nRemoved", fill=element_blank())
 
 ggarrange(a.p.gamma,nw.p.gamma,ma.p.gamma,wd25.p.gamma,wd50.p.gamma,we50.p.gamma, common.legend = T)
 ```
@@ -2005,12 +2005,12 @@ Seems like the gamma models could be a potential alternative, the bayesian p val
 ```{r betaGRDiagnostics, eval=F, echo=T}
 ### MODEL CHECKNG ####
 
-gelmanDiagnostics(eff.actual.gamma) # 1 converged
-gelmanDiagnostics(eff.nw.gamma) # 1 converged
-gelmanDiagnostics(eff.ma.gamma) # 1 converged
-gelmanDiagnostics(eff.25wd.gamma) # 1 converged
-gelmanDiagnostics(eff.50wd.gamma) # 1.01 converged
-gelmanDiagnostics(eff.50we.gamma) # 1 converged
+gelmanDiagnostics(catch.actual.gamma) # 1.02 converged
+gelmanDiagnostics(catch.nw.gamma) # 1.01 converged
+gelmanDiagnostics(catch.ma.gamma) # 1.01 converged
+gelmanDiagnostics(catch.25wd.gamma) # 1.01 converged
+gelmanDiagnostics(catch.50wd.gamma) # 1.01 converged
+gelmanDiagnostics(catch.50we.gamma) # 1.03 converged
 
 ```
 
@@ -2027,7 +2027,7 @@ pval.actual=data.frame(shape=rep(NA,nrow(pars.a.gamma)),
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.a.gamma)){
-  tempdat=rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="actual"]),
+  tempdat=rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="actual"]),
                  shape = pars.a.gamma[i,1],
                  rate = pars.a.gamma[i,2])
   pval.actual$shape[i]=pars.a.gamma[i,1]
@@ -2041,8 +2041,8 @@ for(i in 1:nrow(pars.a.gamma)){
 pval.actual$cvExceed=0
 pval.actual$sdExceed=0
 
-actual.cv=sd(ttrExp$total.eff[ttrExp$treat=="actual"])/mean(ttrExp$total.eff[ttrExp$treat=="actual"])
-actual.sd=sd(ttrExp$total.eff[ttrExp$treat=="actual"])
+actual.cv=sd(ttrExp$total.catch[ttrExp$treat=="actual"])/mean(ttrExp$total.catch[ttrExp$treat=="actual"])
+actual.sd=sd(ttrExp$total.catch[ttrExp$treat=="actual"])
 
 pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
@@ -2058,7 +2058,7 @@ pval.noWinter=data.frame(shape=rep(NA,nrow(pars.nw.gamma)),
                          sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.nw.gamma)){
-  tempdat=rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="noWinter"]),
+  tempdat=rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="noWinter"]),
                 shape = pars.nw.gamma[i,1],
                 rate = pars.nw.gamma[i,2])
   pval.noWinter$shape[i]=pars.nw.gamma[i,1]
@@ -2072,8 +2072,8 @@ for(i in 1:nrow(pars.nw.gamma)){
 pval.noWinter$cvExceed=0
 pval.noWinter$sdExceed=0
 
-noWinter.cv=sd(ttrExp$total.eff[ttrExp$treat=="noWinter"])/mean(ttrExp$total.eff[ttrExp$treat=="noWinter"])
-noWinter.sd=sd(ttrExp$total.eff[ttrExp$treat=="noWinter"])
+noWinter.cv=sd(ttrExp$total.catch[ttrExp$treat=="noWinter"])/mean(ttrExp$total.catch[ttrExp$treat=="noWinter"])
+noWinter.sd=sd(ttrExp$total.catch[ttrExp$treat=="noWinter"])
 
 pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
 pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
@@ -2088,7 +2088,7 @@ pval.mayAug=data.frame(shape=rep(NA,nrow(pars.ma.gamma)),
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.ma.gamma)){
-  tempdat=rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="mayAug"]),
+  tempdat=rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="mayAug"]),
                 shape = pars.ma.gamma[i,1],
                 rate = pars.ma.gamma[i,2])
   pval.mayAug$shape[i]=pars.ma.gamma[i,1]
@@ -2102,8 +2102,8 @@ for(i in 1:nrow(pars.ma.gamma)){
 pval.mayAug$cvExceed=0
 pval.mayAug$sdExceed=0
 
-mayAug.cv=sd(ttrExp$total.eff[ttrExp$treat=="mayAug"])/mean(ttrExp$total.eff[ttrExp$treat=="mayAug"])
-mayAug.sd=sd(ttrExp$total.eff[ttrExp$treat=="mayAug"])
+mayAug.cv=sd(ttrExp$total.catch[ttrExp$treat=="mayAug"])/mean(ttrExp$total.catch[ttrExp$treat=="mayAug"])
+mayAug.sd=sd(ttrExp$total.catch[ttrExp$treat=="mayAug"])
 
 pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
 pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
@@ -2118,7 +2118,7 @@ pval.wd25=data.frame(shape=rep(NA,nrow(pars.wd25.gamma)),
                      sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd25.gamma)){
-  tempdat=rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="wd25"]),
+  tempdat=rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="wd25"]),
                 shape = pars.wd25.gamma[i,1],
                 rate = pars.wd25.gamma[i,2])
   pval.wd25$shape[i]=pars.wd25.gamma[i,1]
@@ -2132,8 +2132,8 @@ for(i in 1:nrow(pars.wd25.gamma)){
 pval.wd25$cvExceed=0
 pval.wd25$sdExceed=0
 
-wd25.cv=sd(ttrExp$total.eff[ttrExp$treat=="wd25"])/mean(ttrExp$total.eff[ttrExp$treat=="wd25"])
-wd25.sd=sd(ttrExp$total.eff[ttrExp$treat=="wd25"])
+wd25.cv=sd(ttrExp$total.catch[ttrExp$treat=="wd25"])/mean(ttrExp$total.catch[ttrExp$treat=="wd25"])
+wd25.sd=sd(ttrExp$total.catch[ttrExp$treat=="wd25"])
 
 pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
 pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
@@ -2148,7 +2148,7 @@ pval.wd50=data.frame(shape=rep(NA,nrow(pars.wd50.gamma)),
                      sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd50.gamma)){
-  tempdat=rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="wd50"]),
+  tempdat=rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="wd50"]),
                 shape = pars.wd50.gamma[i,1],
                 rate = pars.wd50.gamma[i,2])
   pval.wd50$shape[i]=pars.wd50.gamma[i,1]
@@ -2162,8 +2162,8 @@ for(i in 1:nrow(pars.wd50.gamma)){
 pval.wd50$cvExceed=0
 pval.wd50$sdExceed=0
 
-wd50.cv=sd(ttrExp$total.eff[ttrExp$treat=="wd50"])/mean(ttrExp$total.eff[ttrExp$treat=="wd50"])
-wd50.sd=sd(ttrExp$total.eff[ttrExp$treat=="wd50"])
+wd50.cv=sd(ttrExp$total.catch[ttrExp$treat=="wd50"])/mean(ttrExp$total.catch[ttrExp$treat=="wd50"])
+wd50.sd=sd(ttrExp$total.catch[ttrExp$treat=="wd50"])
 
 pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
 pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
@@ -2178,7 +2178,7 @@ pval.we50=data.frame(shape=rep(NA,nrow(pars.we50.gamma)),
                      sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.we50.gamma)){
-  tempdat=rgamma(n=length(ttrExp$total.eff[ttrExp$treat=="we50"]),
+  tempdat=rgamma(n=length(ttrExp$total.catch[ttrExp$treat=="we50"]),
                 shape = pars.we50.gamma[i,1],
                 rate = pars.we50.gamma[i,2])
   pval.we50$shape[i]=pars.we50.gamma[i,1]
@@ -2192,8 +2192,8 @@ for(i in 1:nrow(pars.we50.gamma)){
 pval.we50$cvExceed=0
 pval.we50$sdExceed=0
 
-we50.cv=sd(ttrExp$total.eff[ttrExp$treat=="we50"])/mean(ttrExp$total.eff[ttrExp$treat=="we50"])
-we50.sd=sd(ttrExp$total.eff[ttrExp$treat=="we50"])
+we50.cv=sd(ttrExp$total.catch[ttrExp$treat=="we50"])/mean(ttrExp$total.catch[ttrExp$treat=="we50"])
+we50.sd=sd(ttrExp$total.catch[ttrExp$treat=="we50"])
 
 pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
@@ -2258,7 +2258,7 @@ kable(bpval.self.gamma, digits = 3, col.names = c("Scenario", "CV p-value","SD p
 The Bayesian p-values in the table presented here suggests the gamma models do a poor job of reproducing the data they were fit to (Table \@ref(tab:gammaPVals)).
 This inference comes from the lack of p-values between 0.1 - 0.9 for the CV and SD metrics.
 Because this model is unable to reproduce the data it was fit to, we know that this model is not a useful one for fitting these data.
-This means that the gamma distribution not likely to be appropriate for making comparisons between the actual data and the reduced data to understand whether or not creel effort reductions result in significantly different annual angler effort per acre estimates or not.
+This means that the gamma distribution not likely to be appropriate for making comparisons between the actual data and the reduced data to understand whether or not creel effort reductions result in significantly different annual angler catch per acre estimates or not.
 
 ### P-value sensitivity analysis
 
@@ -2343,12 +2343,12 @@ tab=data.frame(statistic=c("CV","SD","Median","Kurtosis","X2","F"),
 ```{r bpValCalcsAlternateMetrics}
 
 # bayesian p-value for each model
-pars.a=getSample(eff.actual)
-pars.nw=getSample(eff.nw)
-pars.ma=getSample(eff.ma)
-pars.wd25=getSample(eff.25wd)
-pars.wd50=getSample(eff.50wd)
-pars.we50=getSample(eff.50we)
+pars.a=getSample(catch.actual)
+pars.nw=getSample(catch.nw)
+pars.ma=getSample(catch.ma)
+pars.wd25=getSample(catch.25wd)
+pars.wd50=getSample(catch.50wd)
+pars.we50=getSample(catch.50we)
 
 #### Pb ACTUAL ####
 pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
@@ -2361,7 +2361,7 @@ pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
                        f=NA)
 set.seed(10)
 for(i in 1:nrow(pars.a)){
-  tempdat=rlnorm(n=length(modDat$exp.rate[modDat$treat=="actual"]),
+  tempdat=rlnorm(n=length(modDat$total.catch[modDat$treat=="actual"]),
                  meanlog = pars.a[i,1],
                  sdlog = pars.a[i,2])
   pval.actual$alpha[i]=pars.a[i,1]
@@ -2370,9 +2370,9 @@ for(i in 1:nrow(pars.a)){
   pval.actual$sd[i]=sd(log(tempdat))
   pval.actual$med[i]=median(log(tempdat))
   pval.actual$kurt[i]=kurtosis(log(tempdat))
-  ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="actual"], rescale.p = T)
+  ct=chisq.test(tempdat, p=modDat$total.catch[modDat$treat=="actual"], rescale.p = T)
   pval.actual$x2[i]=ct$p.value
-  f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="actual"]))
+  f.test=var.test(log(tempdat),log(modDat$total.catch[modDat$treat=="actual"]))
   pval.actual$f[i]=f.test$statistic
   
 }
@@ -2387,12 +2387,12 @@ pval.actual$x2SigDiff=0
 pval.actual$fStatExceed=0
 
 
-actual.cv=sd(log(modDat$exp.rate[modDat$treat=="actual"]))/mean(log(modDat$exp.rate[modDat$treat=="actual"]))
-actual.sd=sd(log(modDat$exp.rate[modDat$treat=="actual"]))
-actual.med=median(log(modDat$exp.rate[modDat$treat=="actual"]))
-actual.kurt=kurtosis(log(modDat$exp.rate[modDat$treat=="actual"]))
-actual.x2=chisq.test(modDat$exp.rate[modDat$treat=="actual"],p=modDat$exp.rate[modDat$treat=="actual"],rescale.p = T)
-actual.f=var.test(log(modDat$exp.rate[modDat$treat=="actual"]),log(modDat$exp.rate[modDat$treat=="actual"]))
+actual.cv=sd(log(modDat$total.catch[modDat$treat=="actual"]))/mean(log(modDat$total.catch[modDat$treat=="actual"]))
+actual.sd=sd(log(modDat$total.catch[modDat$treat=="actual"]))
+actual.med=median(log(modDat$total.catch[modDat$treat=="actual"]))
+actual.kurt=kurtosis(log(modDat$total.catch[modDat$treat=="actual"]))
+actual.x2=chisq.test(modDat$total.catch[modDat$treat=="actual"],p=modDat$total.catch[modDat$treat=="actual"],rescale.p = T)
+actual.f=var.test(log(modDat$total.catch[modDat$treat=="actual"]),log(modDat$total.catch[modDat$treat=="actual"]))
 
 pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
@@ -2413,7 +2413,7 @@ pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
                        f=NA)
 set.seed(10)
 for(i in 1:nrow(pars.nw)){
-  tempdat=rlnorm(n=length(modDat$exp.rate[modDat$treat=="noWinter"]),
+  tempdat=rlnorm(n=length(modDat$total.catch[modDat$treat=="noWinter"]),
                  meanlog = pars.nw[i,1],
                  sdlog = pars.nw[i,2])
   pval.noWinter$alpha[i]=pars.nw[i,1]
@@ -2422,9 +2422,9 @@ for(i in 1:nrow(pars.nw)){
   pval.noWinter$sd[i]=sd(log(tempdat))
   pval.noWinter$med[i]=median(log(tempdat))
   pval.noWinter$kurt[i]=kurtosis(log(tempdat))
-  ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="noWinter"], rescale.p = T)
+  ct=chisq.test(tempdat, p=modDat$total.catch[modDat$treat=="noWinter"], rescale.p = T)
   pval.noWinter$x2[i]=ct$p.value
-  f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="noWinter"]))
+  f.test=var.test(log(tempdat),log(modDat$total.catch[modDat$treat=="noWinter"]))
   pval.noWinter$f[i]=f.test$statistic
   
 }
@@ -2439,12 +2439,12 @@ pval.noWinter$x2SigDiff=0
 pval.noWinter$fStatExceed=0
 
 
-noWinter.cv=sd(log(modDat$exp.rate[modDat$treat=="noWinter"]))/mean(log(modDat$exp.rate[modDat$treat=="noWinter"]))
-noWinter.sd=sd(log(modDat$exp.rate[modDat$treat=="noWinter"]))
-noWinter.med=median(log(modDat$exp.rate[modDat$treat=="noWinter"]))
-noWinter.kurt=kurtosis(log(modDat$exp.rate[modDat$treat=="noWinter"]))
-noWinter.x2=chisq.test(modDat$exp.rate[modDat$treat=="noWinter"],p=modDat$exp.rate[modDat$treat=="noWinter"],rescale.p = T)
-noWinter.f=var.test(log(modDat$exp.rate[modDat$treat=="noWinter"]),log(modDat$exp.rate[modDat$treat=="noWinter"]))
+noWinter.cv=sd(log(modDat$total.catch[modDat$treat=="noWinter"]))/mean(log(modDat$total.catch[modDat$treat=="noWinter"]))
+noWinter.sd=sd(log(modDat$total.catch[modDat$treat=="noWinter"]))
+noWinter.med=median(log(modDat$total.catch[modDat$treat=="noWinter"]))
+noWinter.kurt=kurtosis(log(modDat$total.catch[modDat$treat=="noWinter"]))
+noWinter.x2=chisq.test(modDat$total.catch[modDat$treat=="noWinter"],p=modDat$total.catch[modDat$treat=="noWinter"],rescale.p = T)
+noWinter.f=var.test(log(modDat$total.catch[modDat$treat=="noWinter"]),log(modDat$total.catch[modDat$treat=="noWinter"]))
 
 pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
 pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
@@ -2464,7 +2464,7 @@ pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
                        f=NA)
 set.seed(10)
 for(i in 1:nrow(pars.ma)){
-  tempdat=rlnorm(n=length(modDat$exp.rate[modDat$treat=="mayAug"]),
+  tempdat=rlnorm(n=length(modDat$total.catch[modDat$treat=="mayAug"]),
                  meanlog = pars.ma[i,1],
                  sdlog = pars.ma[i,2])
   pval.mayAug$alpha[i]=pars.ma[i,1]
@@ -2473,9 +2473,9 @@ for(i in 1:nrow(pars.ma)){
   pval.mayAug$sd[i]=sd(log(tempdat))
   pval.mayAug$med[i]=median(log(tempdat))
   pval.mayAug$kurt[i]=kurtosis(log(tempdat))
-  ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="mayAug"], rescale.p = T)
+  ct=chisq.test(tempdat, p=modDat$total.catch[modDat$treat=="mayAug"], rescale.p = T)
   pval.mayAug$x2[i]=ct$p.value
-  f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="mayAug"]))
+  f.test=var.test(log(tempdat),log(modDat$total.catch[modDat$treat=="mayAug"]))
   pval.mayAug$f[i]=f.test$statistic
   
 }
@@ -2490,12 +2490,12 @@ pval.mayAug$x2SigDiff=0
 pval.mayAug$fStatExceed=0
 
 
-mayAug.cv=sd(log(modDat$exp.rate[modDat$treat=="mayAug"]))/mean(log(modDat$exp.rate[modDat$treat=="mayAug"]))
-mayAug.sd=sd(log(modDat$exp.rate[modDat$treat=="mayAug"]))
-mayAug.med=median(log(modDat$exp.rate[modDat$treat=="mayAug"]))
-mayAug.kurt=kurtosis(log(modDat$exp.rate[modDat$treat=="mayAug"]))
-mayAug.x2=chisq.test(modDat$exp.rate[modDat$treat=="mayAug"],p=modDat$exp.rate[modDat$treat=="mayAug"],rescale.p = T)
-mayAug.f=var.test(log(modDat$exp.rate[modDat$treat=="mayAug"]),log(modDat$exp.rate[modDat$treat=="mayAug"]))
+mayAug.cv=sd(log(modDat$total.catch[modDat$treat=="mayAug"]))/mean(log(modDat$total.catch[modDat$treat=="mayAug"]))
+mayAug.sd=sd(log(modDat$total.catch[modDat$treat=="mayAug"]))
+mayAug.med=median(log(modDat$total.catch[modDat$treat=="mayAug"]))
+mayAug.kurt=kurtosis(log(modDat$total.catch[modDat$treat=="mayAug"]))
+mayAug.x2=chisq.test(modDat$total.catch[modDat$treat=="mayAug"],p=modDat$total.catch[modDat$treat=="mayAug"],rescale.p = T)
+mayAug.f=var.test(log(modDat$total.catch[modDat$treat=="mayAug"]),log(modDat$total.catch[modDat$treat=="mayAug"]))
 
 pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
 pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
@@ -2515,7 +2515,7 @@ pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
                        f=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd25)){
-  tempdat=rlnorm(n=length(modDat$exp.rate[modDat$treat=="wd25"]),
+  tempdat=rlnorm(n=length(modDat$total.catch[modDat$treat=="wd25"]),
                  meanlog = pars.wd25[i,1],
                  sdlog = pars.wd25[i,2])
   pval.wd25$alpha[i]=pars.wd25[i,1]
@@ -2524,9 +2524,9 @@ for(i in 1:nrow(pars.wd25)){
   pval.wd25$sd[i]=sd(log(tempdat))
   pval.wd25$med[i]=median(log(tempdat))
   pval.wd25$kurt[i]=kurtosis(log(tempdat))
-  ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="wd25"], rescale.p = T)
+  ct=chisq.test(tempdat, p=modDat$total.catch[modDat$treat=="wd25"], rescale.p = T)
   pval.wd25$x2[i]=ct$p.value
-  f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="wd25"]))
+  f.test=var.test(log(tempdat),log(modDat$total.catch[modDat$treat=="wd25"]))
   pval.wd25$f[i]=f.test$statistic
   
 }
@@ -2541,12 +2541,12 @@ pval.wd25$x2SigDiff=0
 pval.wd25$fStatExceed=0
 
 
-wd25.cv=sd(log(modDat$exp.rate[modDat$treat=="wd25"]))/mean(log(modDat$exp.rate[modDat$treat=="wd25"]))
-wd25.sd=sd(log(modDat$exp.rate[modDat$treat=="wd25"]))
-wd25.med=median(log(modDat$exp.rate[modDat$treat=="wd25"]))
-wd25.kurt=kurtosis(log(modDat$exp.rate[modDat$treat=="wd25"]))
-wd25.x2=chisq.test(modDat$exp.rate[modDat$treat=="wd25"],p=modDat$exp.rate[modDat$treat=="wd25"],rescale.p = T)
-wd25.f=var.test(log(modDat$exp.rate[modDat$treat=="wd25"]),log(modDat$exp.rate[modDat$treat=="wd25"]))
+wd25.cv=sd(log(modDat$total.catch[modDat$treat=="wd25"]))/mean(log(modDat$total.catch[modDat$treat=="wd25"]))
+wd25.sd=sd(log(modDat$total.catch[modDat$treat=="wd25"]))
+wd25.med=median(log(modDat$total.catch[modDat$treat=="wd25"]))
+wd25.kurt=kurtosis(log(modDat$total.catch[modDat$treat=="wd25"]))
+wd25.x2=chisq.test(modDat$total.catch[modDat$treat=="wd25"],p=modDat$total.catch[modDat$treat=="wd25"],rescale.p = T)
+wd25.f=var.test(log(modDat$total.catch[modDat$treat=="wd25"]),log(modDat$total.catch[modDat$treat=="wd25"]))
 
 pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
 pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
@@ -2566,7 +2566,7 @@ pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
                        f=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd50)){
-  tempdat=rlnorm(n=length(modDat$exp.rate[modDat$treat=="wd50"]),
+  tempdat=rlnorm(n=length(modDat$total.catch[modDat$treat=="wd50"]),
                  meanlog = pars.wd50[i,1],
                  sdlog = pars.wd50[i,2])
   pval.wd50$alpha[i]=pars.wd50[i,1]
@@ -2575,9 +2575,9 @@ for(i in 1:nrow(pars.wd50)){
   pval.wd50$sd[i]=sd(log(tempdat))
   pval.wd50$med[i]=median(log(tempdat))
   pval.wd50$kurt[i]=kurtosis(log(tempdat))
-  ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="wd50"], rescale.p = T)
+  ct=chisq.test(tempdat, p=modDat$total.catch[modDat$treat=="wd50"], rescale.p = T)
   pval.wd50$x2[i]=ct$p.value
-  f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="wd50"]))
+  f.test=var.test(log(tempdat),log(modDat$total.catch[modDat$treat=="wd50"]))
   pval.wd50$f[i]=f.test$statistic
   
 }
@@ -2592,12 +2592,12 @@ pval.wd50$x2SigDiff=0
 pval.wd50$fStatExceed=0
 
 
-wd50.cv=sd(log(modDat$exp.rate[modDat$treat=="wd50"]))/mean(log(modDat$exp.rate[modDat$treat=="wd50"]))
-wd50.sd=sd(log(modDat$exp.rate[modDat$treat=="wd50"]))
-wd50.med=median(log(modDat$exp.rate[modDat$treat=="wd50"]))
-wd50.kurt=kurtosis(log(modDat$exp.rate[modDat$treat=="wd50"]))
-wd50.x2=chisq.test(modDat$exp.rate[modDat$treat=="wd50"],p=modDat$exp.rate[modDat$treat=="wd50"],rescale.p = T)
-wd50.f=var.test(log(modDat$exp.rate[modDat$treat=="wd50"]),log(modDat$exp.rate[modDat$treat=="wd50"]))
+wd50.cv=sd(log(modDat$total.catch[modDat$treat=="wd50"]))/mean(log(modDat$total.catch[modDat$treat=="wd50"]))
+wd50.sd=sd(log(modDat$total.catch[modDat$treat=="wd50"]))
+wd50.med=median(log(modDat$total.catch[modDat$treat=="wd50"]))
+wd50.kurt=kurtosis(log(modDat$total.catch[modDat$treat=="wd50"]))
+wd50.x2=chisq.test(modDat$total.catch[modDat$treat=="wd50"],p=modDat$total.catch[modDat$treat=="wd50"],rescale.p = T)
+wd50.f=var.test(log(modDat$total.catch[modDat$treat=="wd50"]),log(modDat$total.catch[modDat$treat=="wd50"]))
 
 pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
 pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
@@ -2617,7 +2617,7 @@ pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
                        f=NA)
 set.seed(10)
 for(i in 1:nrow(pars.we50)){
-  tempdat=rlnorm(n=length(modDat$exp.rate[modDat$treat=="we50"]),
+  tempdat=rlnorm(n=length(modDat$total.catch[modDat$treat=="we50"]),
                  meanlog = pars.we50[i,1],
                  sdlog = pars.we50[i,2])
   pval.we50$alpha[i]=pars.we50[i,1]
@@ -2626,9 +2626,9 @@ for(i in 1:nrow(pars.we50)){
   pval.we50$sd[i]=sd(log(tempdat))
   pval.we50$med[i]=median(log(tempdat))
   pval.we50$kurt[i]=kurtosis(log(tempdat))
-  ct=chisq.test(tempdat, p=modDat$exp.rate[modDat$treat=="we50"], rescale.p = T)
+  ct=chisq.test(tempdat, p=modDat$total.catch[modDat$treat=="we50"], rescale.p = T)
   pval.we50$x2[i]=ct$p.value
-  f.test=var.test(log(tempdat),log(modDat$exp.rate[modDat$treat=="we50"]))
+  f.test=var.test(log(tempdat),log(modDat$total.catch[modDat$treat=="we50"]))
   pval.we50$f[i]=f.test$statistic
   
 }
@@ -2643,12 +2643,12 @@ pval.we50$x2SigDiff=0
 pval.we50$fStatExceed=0
 
 
-we50.cv=sd(log(modDat$exp.rate[modDat$treat=="we50"]))/mean(log(modDat$exp.rate[modDat$treat=="we50"]))
-we50.sd=sd(log(modDat$exp.rate[modDat$treat=="we50"]))
-we50.med=median(log(modDat$exp.rate[modDat$treat=="we50"]))
-we50.kurt=kurtosis(log(modDat$exp.rate[modDat$treat=="we50"]))
-we50.x2=chisq.test(modDat$exp.rate[modDat$treat=="we50"],p=modDat$exp.rate[modDat$treat=="we50"],rescale.p = T)
-we50.f=var.test(log(modDat$exp.rate[modDat$treat=="we50"]),log(modDat$exp.rate[modDat$treat=="we50"]))
+we50.cv=sd(log(modDat$total.catch[modDat$treat=="we50"]))/mean(log(modDat$total.catch[modDat$treat=="we50"]))
+we50.sd=sd(log(modDat$total.catch[modDat$treat=="we50"]))
+we50.med=median(log(modDat$total.catch[modDat$treat=="we50"]))
+we50.kurt=kurtosis(log(modDat$total.catch[modDat$treat=="we50"]))
+we50.x2=chisq.test(modDat$total.catch[modDat$treat=="we50"],p=modDat$total.catch[modDat$treat=="we50"],rescale.p = T)
+we50.f=var.test(log(modDat$total.catch[modDat$treat=="we50"]),log(modDat$total.catch[modDat$treat=="we50"]))
 
 pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
@@ -2695,10 +2695,7 @@ ggplot(all.self.pvals[all.self.pvals$measure!="x2Sig",])+theme_classic()+
 
 Figure \@ref(fig:bpValCalcPLOT) shows the p-values resulting from each metric for each data scenario.
 Aside from kurtosis, the p-values are quite similar across metrics withing a specific data scenario.
-This suggests that while kurtosis may not be a good choice here, the choice between f statistic, cv, sd, or median should have minimal impact on the inference drawn from these models.
-Digging into kurtosis a bit more, it's not immediately clear why so many of the simulated data sets have thinner tails than observed data.
-This may have to do with the random sampling function `rlnorm()` which samples randomly from a distribution informed by the MCMC output parameters (as the mean and standard deviation respectively).
-It may be that the variance term in the function is a tad low and that's preventing some of the outliers from being chosen and creating those thicker tails that are seen in the observed data.
+This suggests that several metrics are showing significant differences for the percentage reductions while few do so for the seasonal reductions.
 
 Finally, the choice of 0.1 and 0.9 as the cutoff values for significance here do not seem to influence the outcomes.
 A narrower range could be chosen and, unless it were extremely narrow (e.g. 0.4-0.6), the p-values here would all still indicate our models are accurately representing the observed data for all measures except kurtosis.

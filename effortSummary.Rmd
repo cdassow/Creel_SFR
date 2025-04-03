@@ -46,7 +46,7 @@ ctwiWBIC.creel=ctwiWBIC$wbic[ctwiWBIC$wbic%in%cserv$wbic] # wbics in CTWI that h
 
 The main question this analysis seeks to answer:
 
-> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce exploitation rate ($u$) estimates that are NOT significantly different from exploitation rates obtained using the current creel survey design?**
+> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce effort estimates that are NOT significantly different from exploitation rates obtained using the current creel survey design?**
 
 The data informing these analyses has all been pulled from the Fisheries Management Information System (FMIS) using the `wdnr.fmdb` `R` package built to interface with this database.
 All analyses were conducted in `R` using `r version$version.string`.
