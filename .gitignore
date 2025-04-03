@@ -2,12 +2,7 @@
 
 .Rhistory
 tags_and_marks.csv
-titrationOutput.RData
-creelDataSet_all.RData
 "lake class predictions.csv"
-creelTitrationSummary.pdf
-exploitationRateSummary.pdf
-exploitationRateSummary_MarchFMPTUpdate.pdf
 creelTitrationSummary_cache/
 creelTitrationSummary_files/
 exploitationRateSummary_cache/
@@ -19,3 +14,9 @@ effortSummary_cache/
 *.RData
 catchSummary_files/
 catchSummary_cache/
+*.pdf
+harvestSummary_files/
+harvestSummary_cache/
+harvestRateSummary_files/
+harvestRateSummary_cache/
+*.log

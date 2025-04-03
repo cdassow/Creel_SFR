@@ -804,7 +804,7 @@ we50.p=ggplot(we50Comp)+theme_classic()+
 ggarrange(a.p,nw.p,ma.p,wd25.p,wd50.p,we50.p, common.legend = T)
 ```
 
-```{r u-gelman-rubin-diagnostics, echo=T, eval=FALSE}
+```{r eff-gelman-rubin-diagnostics, echo=T, eval=FALSE}
 
 gelmanDiagnostics(eff.actual) # 1.02 converged
 gelmanDiagnostics(eff.nw) # 1.02 converged
