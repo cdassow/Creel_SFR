@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.11.28)  17 MAR 2025 15:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.11.28)  5 APR 2025 06:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -496,13 +496,13 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 157.
 [1
 
-{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
-<effortSummary_files/figure-latex/monthlyEff-1.pdf, id=47, 578.16pt x 325.215pt>
+{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
+<effortSummary_files/figure-latex/monthlyEff-1.pdf, id=46, 578.16pt x 325.215pt>
 File: effortSummary_files/figure-latex/monthlyEff-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/monthlyEff-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/monthlyEff-1.pdf  used on input line 206.
 (pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
-<effortSummary_files/figure-latex/uRatePlot-1.pdf, id=48, 469.755pt x 325.215pt>
+<effortSummary_files/figure-latex/uRatePlot-1.pdf, id=47, 469.755pt x 325.215pt>
 File: effortSummary_files/figure-latex/uRatePlot-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/uRatePlot-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/uRatePlot-1.pdf  used on input line 212.
@@ -541,33 +541,33 @@ Underfull \vbox (badness 10000) detected at line 438
  []
 
 [7]
-<effortSummary_files/figure-latex/effDataReproduction-1.pdf, id=105, 578.16pt x 433.62pt>
+<effortSummary_files/figure-latex/effDataReproduction-1.pdf, id=104, 578.16pt x 433.62pt>
 File: effortSummary_files/figure-latex/effDataReproduction-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/effDataReproduction-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/effDataReproduction-1.pdf  used on input line 466.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
-<effortSummary_files/figure-latex/effDataComparisonToActual-1.pdf, id=106, 578.16pt x 433.62pt>
+<effortSummary_files/figure-latex/effDataComparisonToActual-1.pdf, id=105, 578.16pt x 433.62pt>
 File: effortSummary_files/figure-latex/effDataComparisonToActual-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/effDataComparisonToActual-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/effDataComparisonToActual-1.pdf  used on input line 511.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
 [8] [9 <./effortSummary_files/figure-latex/effDataReproduction-1.pdf>] [10 <./effortSummary_files/figure-latex/effDataComparisonToActual-1.pdf>]
-<effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf, id=148, 578.16pt x 325.215pt>
+<effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf, id=147, 578.16pt x 325.215pt>
 File: effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf  used on input line 559.
 (pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
-<effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf, id=149, 469.755pt x 325.215pt>
+<effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf, id=148, 469.755pt x 325.215pt>
 File: effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf  used on input line 565.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-<effortSummary_files/figure-latex/yearNRCode-1.pdf, id=150, 469.755pt x 325.215pt>
+<effortSummary_files/figure-latex/yearNRCode-1.pdf, id=149, 469.755pt x 325.215pt>
 File: effortSummary_files/figure-latex/yearNRCode-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/yearNRCode-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/yearNRCode-1.pdf  used on input line 569.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-<effortSummary_files/figure-latex/yearLakeClass-1.pdf, id=151, 469.755pt x 325.215pt>
+<effortSummary_files/figure-latex/yearLakeClass-1.pdf, id=150, 469.755pt x 325.215pt>
 File: effortSummary_files/figure-latex/yearLakeClass-1.pdf Graphic file (type pdf)
 <use effortSummary_files/figure-latex/yearLakeClass-1.pdf>
 Package pdftex.def Info: effortSummary_files/figure-latex/yearLakeClass-1.pdf  used on input line 570.
@@ -577,7 +577,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 569--571
 [][]
  []
 
-[11{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}] [12 <./effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf>] [13 <./effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf>] [14 <./effortSummary_files/figure-latex/yearNRCode-1.pdf>] [15 <./effortSummary_files/figure-latex/yearLakeClass-1.pdf>]
+[11{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}] [12 <./effortSummary_files/figure-latex/yearAnalysisExampleLakes-1.pdf>] [13 <./effortSummary_files/figure-latex/year-analysis-diff-actual-1.pdf>] [14 <./effortSummary_files/figure-latex/yearNRCode-1.pdf>] [15 <./effortSummary_files/figure-latex/yearLakeClass-1.pdf>]
 Underfull \vbox (badness 10000) detected at line 998
  []
 
@@ -718,13 +718,13 @@ Package rerunfilecheck Info: File `effortSummary.out' has not changed.
 Here is how much of TeX's memory you used:
  11891 strings out of 476226
  190469 string characters out of 5794560
- 1973558 words of memory out of 5000000
+ 1972558 words of memory out of 5000000
  33546 multiletter control sequences out of 15000+600000
  609963 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,8n,79p,821b,532s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtko10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/dassocju/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on effortSummary.pdf (34 pages, 1072124 bytes).
+Output written on effortSummary.pdf (34 pages, 1070214 bytes).
 PDF statistics:
  460 PDF objects out of 1000 (max. 8388607)
  362 compressed objects within 4 object streams

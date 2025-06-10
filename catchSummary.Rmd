@@ -25,13 +25,13 @@ setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
 #reading in objects that take a long time to produce to improve rendering speed of this document
 call=readRDS("creelDataSet_all.RData")
-# unlist, etc. to get back to individual dfs
+# unlist, etc. to get back to individual dfs, filtering to completed trips only
 cserv=call[[1]]
 cvis=call[[2]]
 ccou=call[[3]]
-cint=call[[4]]
-cfish=call[[5]]
-cfish.i=call[[6]]
+cint=call[[4]]; cint=cint[cint$trip.completed=='y',]
+cfish=call[[5]]; cfish=cfish[cfish$trip.complete=='y',]
+cfish.i=call[[6]]; cfish.i=cfish.i[cfish.i$trip.complete.flag=='y',] 
 
 
 # making list of CTWI lakes with creels
@@ -47,7 +47,7 @@ ctwiWBIC.creel=ctwiWBIC$wbic[ctwiWBIC$wbic%in%cserv$wbic] # wbics in CTWI that h
 
 The main question this analysis seeks to answer:
 
-> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce catch estimates that are NOT significantly different from exploitation rates obtained using the current creel survey design?**
+> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce catch estimates that are NOT significantly different from catch estimates obtained using the current creel survey design?**
 
 The data informing these analyses has all been pulled from the Fisheries Management Information System (FMIS) using the `wdnr.fmdb` `R` package built to interface with this database.
 All analyses were conducted in `R` using `r version$version.string`.
@@ -55,7 +55,7 @@ All analyses were conducted in `R` using `r version$version.string`.
 ## Current Creel Data as Baseline
 
 DNR has amassed a large amount of inland creel information over many decades (`r range(cserv$year)`) across many waterbodies (n=`r length(unique(cserv$wbic))`).
-Using this data and functionality of `wdnr.fmdb` it is possible to calculate effort, catch, harvest, and harvest rate for multiple species for each unique creel survey conducted.
+Using this data and functionality of `wdnr.fmdb` it is possible to calculate catch, catch, harvest, and harvest rate for multiple species for each unique creel survey conducted.
 This information can be further grouped by month, season, day type, etc. to provide insight into important temporal patterns in the fisheries metrics of interest.
 These calculations are accomplished fairly easily using the following code:
 
@@ -179,7 +179,6 @@ ang.exp=ang.exp%>%
 
 ```{r thinning data}
 ## CREATING REDUCED DATASETS ####
-# now I have 'actual' exploitation rates
 
 # next I want to make a few scenarios with 'reduced' data, a 'noWinter' scenario, 'May-August' scenario, and 3 % removals (0.25 weekdays, 0.5 weekdays, 0.5 weekend)
 
@@ -240,7 +239,7 @@ ang.exp.nw=markHarvEst.nw%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.nw=ang.exp.nw[!is.na(ang.exp.nw$exp.rate) & ang.exp.nw$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level catch estimate
 ang.exp.nw=ang.exp.nw%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -281,7 +280,7 @@ ang.exp.ma=markHarvEst.ma%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.ma=ang.exp.ma[!is.na(ang.exp.ma$exp.rate) & ang.exp.ma$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level catch estimates
 ang.exp.ma=ang.exp.ma%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -359,7 +358,7 @@ ang.exp.25wd=markHarvEst.25wd%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.25wd=ang.exp.25wd[!is.na(ang.exp.25wd$exp.rate) & ang.exp.25wd$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level catch estimates
 ang.exp.25wd=ang.exp.25wd%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -438,7 +437,7 @@ ang.exp.50wd=markHarvEst.50wd%>%
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.50wd=ang.exp.50wd[!is.na(ang.exp.50wd$exp.rate) & ang.exp.50wd$exp.rate<1.0,]
 
-# creating survey-level exploitation rates
+# creating survey-level catch estimates
 ang.exp.50wd=ang.exp.50wd%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -517,7 +516,7 @@ ang.exp.50we=markHarvEst.50we%>%
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.50we=ang.exp.50we[!is.na(ang.exp.50we$exp.rate) & ang.exp.50we$exp.rate<1.0,]
 
-# creating survey-level exploitation rates
+# creating survey-level catch estimates
 ang.exp.50we=ang.exp.50we%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -527,17 +526,17 @@ ang.exp.50we=ang.exp.50we%>%
 
 
 
-```{r monthlyCatch,fig.width=8,fig.cap="Distribution of catch estimates by month (panel a) for all years of CTWI creel data. Horizontal red line is overall mean effort. Black points are outliers. Panel B is the same information presented on a log-scale. "}
+```{r monthlyCatch,fig.width=8,fig.cap="Distribution of catch estimates by month (panel a) for all years of CTWI creel data. Horizontal red line is overall mean catch. Black points are outliers. Panel B is the same information presented on a log-scale. "}
 
 
-# plot of exploitation rate by month
+# plot of catch estimate by month
 ccatch.ct$plot.month=month(ccatch.ct$month,label = T)
 p1=ggplot(ccatch.ct)+theme_classic()+
   geom_boxplot(aes(y=ccatch.ct$annual.catch.acre, x=plot.month), fill="grey")+
   geom_hline(yintercept = mean(ccatch.ct$annual.catch.acre, na.rm = T), color="red")+
   labs(y=" Annual Catch per Acre", x="Month")
 
-# plot of exploitation rate by month - logged
+# plot of catch estimate by month - logged
 p2=ggplot(ccatch.ct)+theme_classic()+
   geom_boxplot(aes(y=log(ccatch.ct$annual.catch.acre), x=plot.month), fill="grey")+
   geom_hline(yintercept = log(mean(ccatch.ct$annual.catch.acre)), color="red")+ # setting this manually since the 0 exp rates mess up the logging here
@@ -596,9 +595,9 @@ All models were fit using Differential Evolution Markov-Chain-Monte-Carlo algori
 
 ```{r catch-bt-model-fits, echo=T}
 # one likelihood to estimate parms for using the 6 different treatments
-# creating data frame to model with effort estimates
+# creating data frame to model with catch estimates
 
-#removing 0s since they can't be logged and if I were to make them a small number they would throw off the data and make it bimodal which would probably mean switching to a gamma distribution to model the data. There are 8 0's accounting for 1% of the data. I'm going to operate under the assumption that if a survey gives a 0 effort estimate with the full survey, then efs collecting less data isn't going to change that number. 
+#removing 0s since they can't be logged and if I were to make them a small number they would throw off the data and make it bimodal which would probably mean switching to a gamma distribution to model the data. There are 8 0's accounting for 1% of the data. I'm going to operate under the assumption that if a survey gives a 0 catch estimate with the full survey, then efs collecting less data isn't going to change that number. 
 zeros.actual=sum(ttrExp$total.catch[ttrExp$treat=="actual"]==0)
 zeros.nw=sum(ttrExp$total.catch[ttrExp$treat=="noWinter"]==0)
 zeros.ma=sum(ttrExp$total.catch[ttrExp$treat=="mayAug"]==0)
@@ -610,7 +609,7 @@ Ztab=data.frame(Scenario=c("Actual","No Winter","May-August","25% Weekday Reduct
                 Zeros=c(zeros.actual,zeros.nw,zeros.ma,zeros.wd25,zeros.wd50,zeros.we50))
 kable(Ztab,
       format='latex',
-      caption="Table of the number of surveys with effort estimates equal to 0 for each data scenario.")
+      caption="Table of the number of surveys with catch estimates equal to 0 for each data scenario.")
 
 # removing 0s here as described in the text.
 modDat=ttrExp[ttrExp$total.catch!=0,]
@@ -1033,7 +1032,7 @@ kable(bpValues, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value")
 
 ### Inference
 
-Having established that the models are fitting the data well, some inference can be gained as to whether or not the reductions in creel effort proposed here would result in a meaningful change in the total annual effort per acre estimated from the reduced data.
+Having established that the models are fitting the data well, some inference can be gained as to whether or not the reductions in creel effort proposed here would result in a meaningful change in the total annual catch per acre estimated from the reduced data.
 
 ```{r catchDataComparisonToActual, fig.width=8,fig.height=6,fig.cap="Comparison of the distribution of actual annual catch per acre estimates calculated from creel data and annual catch per acre estimated calculated from simulated creel data for each data reduction scenario and the resulting median parameter values for their respective model fits."}
 
@@ -1151,17 +1150,17 @@ bpval.comp$sd.pval=c(sum(pval.actual$sdComp)/nrow(pval.actual),
                            sum(pval.wd50$sdComp)/nrow(pval.wd50),
                            sum(pval.we50$sdComp)/nrow(pval.we50))
 
-kable(bpval.comp, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value"), align="lcc",caption = "Bayesian p-values for the comparison between the actual data and the scenario-specific model fit to a lognormal distribution. This test is asking whether the scenario-specific model can approximate the actual data. When true this signals no effect of the data reduction for that scenario on the resulting annual effort per acre estimate. Two metrics are assessed here, coefficient of variation (CV) and standard devidation (SD).")
+kable(bpval.comp, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value"), align="lcc",caption = "Bayesian p-values for the comparison between the actual data and the scenario-specific model fit to a lognormal distribution. This test is asking whether the scenario-specific model can approximate the actual data. When true this signals no effect of the data reduction for that scenario on the resulting annual catch per acre estimate. Two metrics are assessed here, coefficient of variation (CV) and standard devidation (SD).")
 ```
 
 ### Year Specific Analyses
 
-Instead of modeling the full population of annual catch estimates as was done above, here I have done the model fitting on individual creel-years so that I can see how the removal of data for a creel-year (which is a comparatively large amount of missing data since only 16-20 lakes are creeled each year) impacts the annual effort per acre estimated that year.
+Instead of modeling the full population of annual catch estimates as was done above, here I have done the model fitting on individual creel-years so that I can see how the removal of data for a creel-year (which is a comparatively large amount of missing data since only 16-20 lakes are creeled each year) impacts the annual catch per acre estimated that year.
 This analysis will follow the same routine as the whole-population analyses above but only consider one creel-year at a time.
 
 I first started with some basic analyses of the data on a year by year basis to understand how the data changes from year to year and if any lake characteristics explained variation (if there is any) in annual catch per acre estimates across data reduction scenarios for specific creel-years (Figure \@ref(fig:yearAnalysisExampleLakes)).
 
-```{r yearAnalysisExampleLakes, fig.width=8,fig.cap="Comparison of the annual catch per acre estimated from the reduced data for a handful of creel surveys. Most data reductions do not result in annual catch per acre estimates that are much different from the actual data (most are within 1 SD of the effort estimate for that treatment). Colors represent data reduction scenarios, points are mean annual effort per acre estimates across all months of that creel survey and vertical lines represent 1 standard deviation."}
+```{r yearAnalysisExampleLakes, fig.width=8,fig.cap="Comparison of the annual catch per acre estimated from the reduced data for a handful of creel surveys. Most data reductions do not result in annual catch per acre estimates that are much different from the actual data (most are within 1 SD of the catch estimate for that treatment). Colors represent data reduction scenarios, points are mean annual catch per acre estimates across all months of that creel survey and vertical lines represent 1 standard deviation."}
 ttrExp=ttrExp%>%
   left_join(cserv[,2:5])%>%
   left_join(lchar[,c(1:3,15)])
@@ -1178,7 +1177,7 @@ ggplot(pdat)+theme_classic()+
 
 ```
 
-```{r year-analysis-diff-actual, fig.cap="Boxplot of the difference between the actual annual catch per acre estimate and the data-reduced annual effort per acre estimate for each creel survey in the creel dataset. Most of the data exhibits differences very near 0 except the seasonal reductions, dots represent outliers (x<|> x's percentile-1.5*interquartile range)"}
+```{r year-analysis-diff-actual, fig.cap="Boxplot of the difference between the actual annual catch per acre estimate and the data-reduced annual catch per acre estimate for each creel survey in the creel dataset. Most of the data exhibits differences very near 0 except the seasonal reductions, dots represent outliers (x<|> x's percentile-1.5*interquartile range)"}
 
 # metrics comparing differences in individual lake estimates
 
@@ -1657,15 +1656,15 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-#saveRDS(yearLoopOutput, file = "yearLoopOutput_catch_3.18.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_catch_4.4.25.RData")
 
 
 ```
 
-```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of exploitation rates across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
+```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of catch estimates across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_catch_3.18.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_catch_4.4.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]
@@ -1695,7 +1694,7 @@ ggplot(bpval.comp.y)+theme_classic()+
   geom_hline(yintercept = c(0.9,0.5,0.1),color="red")+
   coord_cartesian(ylim=c(0,1))
 ```
-```{r yearByyearConvergence, fig.cap="Gelman-Rubin diagnostic results for the year-by-year model fitting. All years with  available data  (more than one non-zero exploitation rate) had models successfully converge with a Gelman-Rubin score below the 1.1 threshold required for convergence (red horizonal line)."}
+```{r yearByyearConvergence, fig.cap="Gelman-Rubin diagnostic results for the year-by-year model fitting. All years with  available data had models successfully converge with a Gelman-Rubin score below the 1.1 threshold required for convergence (red horizonal line)."}
 # model convergence
 ggplot(grMetrics.y)+theme_classic()+
   geom_point(aes(x=year, y=gr.prsf))+facet_wrap(~scenario)+
@@ -1703,12 +1702,12 @@ ggplot(grMetrics.y)+theme_classic()+
   geom_hline(yintercept = 1.1, color='red')+
   labs(y='Gelman-Rubin Score',x='Year')
 ```
-The results of these creel-year specific analyses suggest that even on an individual creel year level, the estimated annual effort per acre from the data-reduced scenario generally is not significantly different from the annual effort per acres calculated from the full data set (Figure \@ref(fig:yearLoopComparisonToActual)).
-Compared to the same analysis for the full population of creel data all at once instead of on a year-by-year basis, the estimated exploitation rates from the reduced data here don't match the actual quite as well for the seasonal data removals, but the majority of years still fall within the typical bounds of acceptance for this test. All models do appear to  fit well and converge (Figure \@ref(fig:yearByyearConvergence)).
+The results of these creel-year specific analyses suggest that even on an individual creel year level, the estimated annual catch per acre from the data-reduced scenario generally is not significantly different from the annual catch per acres calculated from the full data set (Figure \@ref(fig:yearLoopComparisonToActual)).
+Compared to the same analysis for the full population of creel data all at once instead of on a year-by-year basis, the estimated catch from the reduced data here don't match the actual quite as well for the seasonal data removals, but the majority of years still fall within the typical bounds of acceptance for this test. All models do appear to  fit well and converge (Figure \@ref(fig:yearByyearConvergence)).
 
-There did not appear to be any obvious characteristics of the lakes themselves or their walleye populations that correlated with the magnitude of the difference between the actual estimated annual effort per acre and the reduced-data estimation.
+There did not appear to be any obvious characteristics of the lakes themselves or their walleye populations that correlated with the magnitude of the difference between the actual estimated annual catch per acre and the reduced-data estimation.
 Walleye recruitment code (Figure \@ref(fig:yearAnalysisRecCode)) and lake class (Figure \@ref(fig:yearAnalysisLakeClass)) were examined and showed no clear trend.
-This may be in large part due to the relatively small differences between each estimate of annual effort per acre and the reduced-data estimate that could make it hard to see an effects, which would further point towards there being minimal effect of data reductions on annual effort per acre estimate even at the individual creel-year level.
+This may be in large part due to the relatively small differences between each estimate of annual catch per acre and the reduced-data estimate that could make it hard to see an effects, which would further point towards there being minimal effect of data reductions on annual catch per acre estimate even at the individual creel-year level.
 
 ### Important Caveats
 
@@ -1720,9 +1719,9 @@ These don't have 'right' answers in the way that the other two do.
 Here the 'right' answer will be values-based and likely depends on what the group, or legal system, decides.
 
 
-1.  Accuracy measure. In order to compare the exploitation rate estimates from the reduced data to the actual data I used 1 standard deviation as my measure. This means that a reduced-data exploitation rate estimate that is within 1 SD of the actual data exploitation rate estimate was considered to be 'the same'. There may be better metrics to use here, and different people may have different opinions about the best metric to use. My rationale for using this metric has been outlined above.
+1.  Accuracy measure. In order to compare the catch estimates from the reduced data to the actual data I used 1 standard deviation as my measure. This means that a reduced-data catch estimate that is within 1 SD of the actual data catch estimate was considered to be 'the same'. There may be better metrics to use here, and different people may have different opinions about the best metric to use. My rationale for using this metric has been outlined above.
 2.  Bayesian p-value metrics. when calculating the Bayesian p-value to understand if the data from the reduced scenarios resembled that of the actual data I used the coefficient of variation and standard deviation. In reality any variance metric could be used to compare the two data sets. I chose these two because I felt that were intuitive enough for anyone to understand and defensible. But that may be others that should be explored and the results of the p-value tests may differ based on the metric used.
-3.  Related to the p-value metric are the cutoffs to use to decide whether there is a meaningful difference between the actual exploitation rate and the data reduced rate. The rule of thumb for this test is values \<0.1 or \>0.9 indicate a significant difference between the actual data estimate and the reduced data estimate. In reality it is up to the user to decide what those cutoffs should be based on the context of their problem. Whether or not we consider the reduced data exploitation rates similar or different from the actual can obviously be influenced by the cutoff numbers we chose.
+3.  Related to the p-value metric are the cutoffs to use to decide whether there is a meaningful difference between the actual catch and the data reduced catch. The rule of thumb for this test is values \<0.1 or \>0.9 indicate a significant difference between the actual data estimate and the reduced data estimate. In reality it is up to the user to decide what those cutoffs should be based on the context of their problem. Whether or not we consider the reduced data catch similar or different from the actual can obviously be influenced by the cutoff numbers we chose.
 
 ## Appendix
 
@@ -2258,7 +2257,7 @@ kable(bpval.self.gamma, digits = 3, col.names = c("Scenario", "CV p-value","SD p
 The Bayesian p-values in the table presented here suggests the gamma models do a poor job of reproducing the data they were fit to (Table \@ref(tab:gammaPVals)).
 This inference comes from the lack of p-values between 0.1 - 0.9 for the CV and SD metrics.
 Because this model is unable to reproduce the data it was fit to, we know that this model is not a useful one for fitting these data.
-This means that the gamma distribution not likely to be appropriate for making comparisons between the actual data and the reduced data to understand whether or not creel effort reductions result in significantly different annual angler catch per acre estimates or not.
+This means that the gamma distribution not likely to be appropriate for making comparisons between the actual data and the reduced data to understand whether or not creel catch reductions result in significantly different annual angler catch per acre estimates or not.
 
 ### P-value sensitivity analysis
 

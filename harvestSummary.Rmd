@@ -25,13 +25,13 @@ setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
 #reading in objects that take a long time to produce to improve rendering speed of this document
 call=readRDS("creelDataSet_all.RData")
-# unlist, etc. to get back to individual dfs
+# unlist, etc. to get back to individual dfs, filtering to completed trips only
 cserv=call[[1]]
 cvis=call[[2]]
 ccou=call[[3]]
-cint=call[[4]]
-cfish=call[[5]]
-cfish.i=call[[6]]
+cint=call[[4]]; cint=cint[cint$trip.completed=='y',]
+cfish=call[[5]]; cfish=cfish[cfish$trip.complete=='y',]
+cfish.i=call[[6]]; cfish.i=cfish.i[cfish.i$trip.complete.flag=='y',] 
 
 
 # making list of CTWI lakes with creels
@@ -184,7 +184,6 @@ ang.exp=ang.exp%>%
 
 ```{r thinning data}
 ## CREATING REDUCED DATASETS ####
-# now I have 'actual' exploitation rates
 
 # next I want to make a few scenarios with 'reduced' data, a 'noWinter' scenario, 'May-August' scenario, and 3 % removals (0.25 weekdays, 0.5 weekdays, 0.5 weekend)
 
@@ -247,7 +246,7 @@ ang.exp.nw=markHarvEst.nw%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.nw=ang.exp.nw[!is.na(ang.exp.nw$exp.rate) & ang.exp.nw$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level harvest
 ang.exp.nw=ang.exp.nw%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -290,7 +289,7 @@ ang.exp.ma=markHarvEst.ma%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.ma=ang.exp.ma[!is.na(ang.exp.ma$exp.rate) & ang.exp.ma$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level harvest
 ang.exp.ma=ang.exp.ma%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -370,7 +369,7 @@ ang.exp.25wd=markHarvEst.25wd%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.25wd=ang.exp.25wd[!is.na(ang.exp.25wd$exp.rate) & ang.exp.25wd$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level harvest
 ang.exp.25wd=ang.exp.25wd%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -451,7 +450,7 @@ ang.exp.50wd=markHarvEst.50wd%>%
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.50wd=ang.exp.50wd[!is.na(ang.exp.50wd$exp.rate) & ang.exp.50wd$exp.rate<1.0,]
 
-# creating survey-level exploitation rates
+# creating survey-level harvest
 ang.exp.50wd=ang.exp.50wd%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -532,7 +531,7 @@ ang.exp.50we=markHarvEst.50we%>%
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.50we=ang.exp.50we[!is.na(ang.exp.50we$exp.rate) & ang.exp.50we$exp.rate<1.0,]
 
-# creating survey-level exploitation rates
+# creating survey-level harvest
 ang.exp.50we=ang.exp.50we%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -1669,7 +1668,7 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvest_3.28.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvest_4.4.25.RData")
 
 
 ```
@@ -1677,7 +1676,7 @@ yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
 ```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of harvest across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_harvest_3.28.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_harvest_4.4.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]

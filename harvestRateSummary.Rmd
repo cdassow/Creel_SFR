@@ -25,13 +25,13 @@ setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
 #reading in objects that take a long time to produce to improve rendering speed of this document
 call=readRDS("creelDataSet_all.RData")
-# unlist, etc. to get back to individual dfs
+# unlist, etc. to get back to individual dfs, filtering to completed trips only
 cserv=call[[1]]
 cvis=call[[2]]
 ccou=call[[3]]
-cint=call[[4]]
-cfish=call[[5]]
-cfish.i=call[[6]]
+cint=call[[4]]; cint=cint[cint$trip.completed=='y',]
+cfish=call[[5]]; cfish=cfish[cfish$trip.complete=='y',]
+cfish.i=call[[6]]; cfish.i=cfish.i[cfish.i$trip.complete.flag=='y',] 
 
 
 # making list of CTWI lakes with creels
@@ -1244,7 +1244,7 @@ exceedSummary=trLake%>%
             nFalse=sum(a.exceed==F,na.rm = T),
             nNA=sum(is.na(a.exceed)))
 kable(exceedSummary,
-      col.names = c("Data Reduction Scenario","Catch estimates exceeding actual","Catch estimates not exceeding actual","NAs"),
+      col.names = c("Data Reduction Scenario","Harvet estimates exceeding actual","Harvest estimates not exceeding actual","NAs"),
       caption = "Counts of the number of times the harvest rate for the reduced data scenario differs from the actual harvest rate for that treatment by more than 1 standard deviation. NAs ocurred where there was no variance in the harvest rate estimate and thus no standard deviation could be calculated for the actual data.")
 
 ```
@@ -1696,7 +1696,7 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvestR_4.1.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvestR_4.4.25.RData")
 
 
 ```
@@ -1704,7 +1704,7 @@ yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
 ```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of harvest across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_harvestR_4.1.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_harvestR_4.4.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]

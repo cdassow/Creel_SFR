@@ -25,13 +25,13 @@ setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
 #reading in objects that take a long time to produce to improve rendering speed of this document
 call=readRDS("creelDataSet_all.RData")
-# unlist, etc. to get back to individual dfs
+# unlist, etc. to get back to individual dfs, filtering to completed trips only
 cserv=call[[1]]
 cvis=call[[2]]
 ccou=call[[3]]
-cint=call[[4]]
-cfish=call[[5]]
-cfish.i=call[[6]]
+cint=call[[4]]; cint=cint[cint$trip.completed=='y',]
+cfish=call[[5]]; cfish=cfish[cfish$trip.complete=='y',]
+cfish.i=call[[6]]; cfish.i=cfish.i[cfish.i$trip.complete.flag=='y',] 
 
 # making list of CTWI lakes with creels
 lchar=get_fmdb_lakechar()
@@ -46,7 +46,7 @@ ctwiWBIC.creel=ctwiWBIC$wbic[ctwiWBIC$wbic%in%cserv$wbic] # wbics in CTWI that h
 
 The main question this analysis seeks to answer:
 
-> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce effort estimates that are NOT significantly different from exploitation rates obtained using the current creel survey design?**
+> **How much less creel data could be collected, on an individual survey basis while still maintaining the stratified random sampling design, and still produce effort estimates that are NOT significantly different from effort estimates obtained using the current creel survey design?**
 
 The data informing these analyses has all been pulled from the Fisheries Management Information System (FMIS) using the `wdnr.fmdb` `R` package built to interface with this database.
 All analyses were conducted in `R` using `r version$version.string`.
@@ -177,7 +177,6 @@ ang.exp=ang.exp%>%
 
 ```{r thinning data}
 ## CREATING REDUCED DATASETS ####
-# now I have 'actual' exploitation rates
 
 # next I want to make a few scenarios with 'reduced' data, a 'noWinter' scenario, 'May-August' scenario, and 3 % removals (0.25 weekdays, 0.5 weekdays, 0.5 weekend)
 
@@ -232,7 +231,7 @@ ang.exp.nw=markHarvEst.nw%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.nw=ang.exp.nw[!is.na(ang.exp.nw$exp.rate) & ang.exp.nw$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level effort estimates
 ang.exp.nw=ang.exp.nw%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -272,7 +271,7 @@ ang.exp.ma=markHarvEst.ma%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.ma=ang.exp.ma[!is.na(ang.exp.ma$exp.rate) & ang.exp.ma$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level effort estimates
 ang.exp.ma=ang.exp.ma%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -344,7 +343,7 @@ ang.exp.25wd=markHarvEst.25wd%>%
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.25wd=ang.exp.25wd[!is.na(ang.exp.25wd$exp.rate) & ang.exp.25wd$exp.rate<1.0,]
-# creating survey-level exploitation rates
+# creating survey-level effort estimates
 ang.exp.25wd=ang.exp.25wd%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -417,7 +416,7 @@ ang.exp.50wd=markHarvEst.50wd%>%
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.50wd=ang.exp.50wd[!is.na(ang.exp.50wd$exp.rate) & ang.exp.50wd$exp.rate<1.0,]
 
-# creating survey-level exploitation rates
+# creating survey-level effort estimates
 ang.exp.50wd=ang.exp.50wd%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -490,7 +489,7 @@ ang.exp.50we=markHarvEst.50we%>%
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
 ang.exp.50we=ang.exp.50we[!is.na(ang.exp.50we$exp.rate) & ang.exp.50we$exp.rate<1.0,]
 
-# creating survey-level exploitation rates
+# creating survey-level effort estimates
 ang.exp.50we=ang.exp.50we%>%
   group_by(survey.seq.no)%>%
   summarise(meanU=mean(exp.rate,na.rm = T),
@@ -503,14 +502,14 @@ ang.exp.50we=ang.exp.50we%>%
 ```{r monthlyEff,fig.width=8,fig.cap="Distribution of effort estimates by month (panel a) for all years of CTWI creel data. Horizontal red line is overall mean effort. Black points are outliers. Panel B is the same information presented on a log-scale. "}
 
 
-# plot of exploitation rate by month
+# plot of effort by month
 ceff.ct$plot.month=month(ceff.ct$month,label = T)
 p1=ggplot(ceff.ct)+theme_classic()+
   geom_boxplot(aes(y=ceff.ct$annual.eff.acre, x=plot.month), fill="grey")+
   geom_hline(yintercept = mean(ceff.ct$annual.eff.acre, na.rm = T), color="red")+
   labs(y=" Annual Effort per Acre", x="Month")
 
-# plot of exploitation rate by month - logged
+# plot of effort by month - logged
 p2=ggplot(ceff.ct)+theme_classic()+
   geom_boxplot(aes(y=log(ceff.ct$annual.eff.acre), x=plot.month), fill="grey")+
   geom_hline(yintercept = log(mean(ceff.ct$annual.eff.acre)), color="red")+ # setting this manually since the 0 exp rates mess up the logging here
@@ -521,7 +520,7 @@ ggarrange(p1,p2,nrow = 1,ncol=2,labels = 'auto')
 
 ```{r uRatePlot, fig.cap="Distribution, on a log scale, of effort for the full data set plus 5 scenarios with reduced data. Actual = full data set, mayAug = May to August creel data only, noWinter = winter creel data removed, wd25 = 25% of weekday creel visits per month removed, wd50 = 50% of weekday creel visits per month removed, we50 = 50% of weekend creel visits per month removed."}
 
-# creating survey-level exploitation rates for the actual data
+# creating survey-level effort for the actual data
 eff.surv.a=ceff.ct%>%
   group_by(survey.seq.no)%>%
   summarise(total.eff=sum(annual.eff.acre,na.rm = T))
@@ -1200,7 +1199,7 @@ ggplot(stClass)+theme_classic()+
   geom_pointrange(aes(x=wae.code,y=meanDiff,ymin=meanDiff-sdDiff,ymax=meanDiff+sdDiff,color=treat),position = position_dodge(width = 1))+
   scale_color_viridis_d()+theme(legend.position = c(0.7,0.8))+
   coord_cartesian(ylim = c(-10,200))+
-  labs(x="WAE Recruitment Code",y="Mean Difference from Actual Exploitation Rate",color="Scenario")
+  labs(x="WAE Recruitment Code",y="Mean Difference from Actual Effort Estimate",color="Scenario")
 
 
 ```
@@ -1213,7 +1212,7 @@ ggplot(lcSum)+theme_classic()+
   geom_pointrange(aes(x=LakeClass,y=meanDiff, ymin=meanDiff-sdDiff,ymax=meanDiff+sdDiff,color=treat),position = position_dodge(width = 1))+
   scale_color_viridis_d()+
   theme(axis.text.x = element_text(angle=45,hjust = 1), legend.position = c(0.8,0.75))+
-  labs(x="Lake Class",y="Mean Difference from Actual Exploitation Rate", color="Scenario")
+  labs(x="Lake Class",y="Mean Difference from Actual Effort Estimate", color="Scenario")
 ```
 
 
@@ -1629,15 +1628,15 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-#saveRDS(yearLoopOutput, file = "yearLoopOutput_effort_3.13.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_effort_4.4.25.RData")
 
 
 ```
 
-```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of exploitation rates across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
+```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of effort estimates across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_effort_3.13.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_effort_4.4.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]
@@ -1667,7 +1666,7 @@ ggplot(bpval.comp.y)+theme_classic()+
   geom_hline(yintercept = c(0.9,0.5,0.1),color="red")+
   coord_cartesian(ylim=c(0,1))
 ```
-```{r yearGRmetric, fig.cap="Gelman-Rubin diagnostic results for the year-by-year model fitting. All years with  available data  (more than one non-zero exploitation rate) had models successfully converge with a Gelman-Rubin score below the 1.1 threshold required for convergence (red horizonal line)."}
+```{r yearGRmetric, fig.cap="Gelman-Rubin diagnostic results for the year-by-year model fitting. All years with  available data had models successfully converge with a Gelman-Rubin score below the 1.1 threshold required for convergence (red horizonal line)."}
 # model convergence
 ggplot(grMetrics.y)+theme_classic()+
   geom_point(aes(x=year, y=gr.prsf))+facet_wrap(~scenario)+
@@ -1676,7 +1675,7 @@ ggplot(grMetrics.y)+theme_classic()+
   labs(y='Gelman-Rubin Score',x='Year')
 ```
 The results of these creel-year specific analyses suggest that even on an individual creel year level, the estimated annual effort per acre from the data-reduced scenario generally is not significantly different from the annual effort per acres calculated from the full data set (Figure \@ref(fig:yearLoopComp)).
-Compared to the same analysis for the full population of creel data all at once instead of on a year-by-year basis, the estimated exploitation rates from the reduced data here don't match the actual quite as well for the seasonal data removals, but the majority of years still fall within the typical bounds of acceptance for this test. All models do appear to  fit well and converge (Figure \@ref(fig:yearGRmetric)).
+Compared to the same analysis for the full population of creel data all at once instead of on a year-by-year basis, the estimated effort from the reduced data here don't match the actual quite as well for the seasonal data removals, but the majority of years still fall within the typical bounds of acceptance for this test. All models do appear to  fit well and converge (Figure \@ref(fig:yearGRmetric)).
 
 There did not appear to be any obvious characteristics of the lakes themselves or their walleye populations that correlated with the magnitude of the difference between the actual estimated annual effort per acre and the reduced-data estimation.
 Walleye recruitment code (Figure \@ref(fig:yearNRCode)) and lake class (Figure \@ref(fig:yearLakeClass)) were examined and showed no clear trend.
@@ -1692,9 +1691,9 @@ These don't have 'right' answers in the way that the other two do.
 Here the 'right' answer will be values-based and likely depends on what the group, or legal system, decides.
 
 
-1.  Accuracy measure. In order to compare the exploitation rate estimates from the reduced data to the actual data I used 1 standard deviation as my measure. This means that a reduced-data exploitation rate estimate that is within 1 SD of the actual data exploitation rate estimate was considered to be 'the same'. There may be better metrics to use here, and different people may have different opinions about the best metric to use. My rationale for using this metric has been outlined above.
+1.  Accuracy measure. In order to compare the effort estimates from the reduced data to the actual data I used 1 standard deviation as my measure. This means that a reduced-data effort estimate that is within 1 SD of the actual data effort estimate was considered to be 'the same'. There may be better metrics to use here, and different people may have different opinions about the best metric to use. My rationale for using this metric has been outlined above.
 2.  Bayesian p-value metrics. when calculating the Bayesian p-value to understand if the data from the reduced scenarios resembled that of the actual data I used the coefficient of variation and standard deviation. In reality any variance metric could be used to compare the two data sets. I chose these two because I felt that were intuitive enough for anyone to understand and defensible. But that may be others that should be explored and the results of the p-value tests may differ based on the metric used.
-3.  Related to the p-value metric are the cutoffs to use to decide whether there is a meaningful difference between the actual exploitation rate and the data reduced rate. The rule of thumb for this test is values \<0.1 or \>0.9 indicate a significant difference between the actual data estimate and the reduced data estimate. In reality it is up to the user to decide what those cutoffs should be based on the context of their problem. Whether or not we consider the reduced data exploitation rates similar or different from the actual can obviously be influenced by the cutoff numbers we chose.
+3.  Related to the p-value metric are the cutoffs to use to decide whether there is a meaningful difference between the actual effort estimate and the data reduced rate. The rule of thumb for this test is values \<0.1 or \>0.9 indicate a significant difference between the actual data estimate and the reduced data estimate. In reality it is up to the user to decide what those cutoffs should be based on the context of their problem. Whether or not we consider the reduced data effort estimate similar or different from the actual can obviously be influenced by the cutoff numbers we chose.
 
 ## Appendix
 

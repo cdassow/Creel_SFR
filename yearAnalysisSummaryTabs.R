@@ -9,10 +9,10 @@ library(tidyverse)
 setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
 expR=readRDS('yearLoopOutput_3.6.25.RData')
-harvR=readRDS('yearLoopOutput_harvestR_4.1.25.RData')
-eff=readRDS('yearLoopOutput_effort_3.13.25.RData')
-catch=readRDS('yearLoopOutput_catch_3.18.25.RData')
-hrv=readRDS('yearLoopOutput_harvest_3.28.25.RData')
+harvR=readRDS('yearLoopOutput_harvestR_4.4.25.RData')
+eff=readRDS('yearLoopOutput_effort_4.4.25.RData')
+catch=readRDS('yearLoopOutput_catch_4.4.25.RData')
+hrv=readRDS('yearLoopOutput_harvest_4.4.25.RData')
 
 # calculate a percentage of years with non-sig diffs by data scenario to present in a table.
 
