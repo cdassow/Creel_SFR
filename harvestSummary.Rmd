@@ -152,8 +152,8 @@ crRecap=crRecap%>% # now throwing out mark type and just taking overall number o
 # I think spp.harvest is the column that has the estimate of the harvest for that species in that strata
 harvestEstimates=charv%>%
   filter(species.code=="X22" & wbic%in%ctwiWBIC.creel)%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(harvAcre=spp.harvest/lake.area)
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
@@ -163,7 +163,7 @@ markHarvEst=crRecap%>%
   mutate(markHarvEstimate=(n.marks.recapped/totalFishExamined)*spp.harvest)
 
 ang.exp=markHarvEst%>%
-  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year","waterbody.name"="Waterbody.Name"))%>%
+  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year"))%>%
   mutate(exp.rate=markHarvEstimate/nFN.marked) # checked against the Nebagamon example provided by Tom and I'm really close with these estimates. It looks like my # of clipped fish counts are different from what Tom has in his exploitation DB. Not sure why that is but that's what appears to be causing the slight different in our exploitation rate estimates.
 # writing this detailed dataset to a .csv for ashley and steph
 # write.csv(ang.exp[,c(1:11,15:17)],"exploitation_rates_actual_creel_data.csv",row.names = F)
@@ -189,17 +189,17 @@ ang.exp=ang.exp%>%
 
 ceff.ct=ceff%>%
   filter(wbic%in%ctwiWBIC.creel)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.eff.acre=total.effort/lake.area)
 
 ccatch.ct=charv%>%
-  filter(wbic%in%ctwiWBIC.creel)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  filter(wbic%in%ctwiWBIC.creel, species=='walleye')%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.catch.acre=catch/lake.area) # catch is the estimated total catch for that strata (total.effort * catch rate), while 'total.catch' is the actually number of fish in the interviews for that strata
 
 ifish=cfish.i%>% # making a data frame to add my groupings too so I can leave cfish.i alone
   filter(species.code=="X22" & wbic%in%ctwiWBIC.creel)%>%
-  mutate(daytype=ifelse(wday(sample.date)%in%c(1,7),"weekday","weekend"),
+  mutate(daytype=ifelse(wday(sample.date)%in%c(1,7),"weekend","weekday"),
          month=month(sample.date),
          season=ifelse(month%in%4:10,"openwater","winter"))
 
@@ -230,8 +230,8 @@ ifish.nw=ifish.nw%>% # now throwing out mark type and just taking overall number
 # spp.harvest is the column that has the estimate of the harvest for that species in that strata
 harvestEstimates.nw=iharv%>%
   filter(season=="openwater")%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(harvAcre=spp.harvest/lake.area)
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
@@ -241,7 +241,7 @@ markHarvEst.nw=ifish.nw%>%
   mutate(markHarvEstimate=(n.marks.recapped/totalFishExamined)*spp.harvest)
 
 ang.exp.nw=markHarvEst.nw%>%
-  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year","waterbody.name"="Waterbody.Name"))%>%
+  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year"))%>%
   mutate(exp.rate=markHarvEstimate/nFN.marked)
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
@@ -273,8 +273,8 @@ ifish.ma=ifish.ma%>% # now throwing out mark type and just taking overall number
 # spp.harvest is the column that has the estimate of the harvest for that species in that strata
 harvestEstimates.ma=iharv%>%
   filter(month%in%c(5:8))%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(harvAcre=spp.harvest/lake.area)
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
@@ -284,7 +284,7 @@ markHarvEst.ma=ifish.ma%>%
   mutate(markHarvEstimate=(n.marks.recapped/totalFishExamined)*spp.harvest)
 
 ang.exp.ma=markHarvEst.ma%>%
-  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year","waterbody.name"="Waterbody.Name"))%>%
+  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year"))%>%
   mutate(exp.rate=markHarvEstimate/nFN.marked)
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
@@ -332,13 +332,13 @@ iharv.25wd=calc_creel_harvest(creel_count_data = icou.25wd,
                               creel_fish_data = ifishAg.25wd) # harvest estimates from the reduced data
 eff.25wd=calc_creel_effort(creel_count_data = icou.25wd, creel_int_data = iint.25wd)
 eff.25wd=eff.25wd%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.eff.acre=total.effort/lake.area)
 
 catch.25wd=iharv.25wd%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
+  select(year,wbic,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
   filter(species=='walleye')%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.catch.acre=catch/lake.area)
 
 wd25=ifish.25wd%>%
@@ -353,8 +353,8 @@ wd25=wd25%>% # now throwing out mark type and just taking overall number of mark
 # spp.harvest is the column that has the estimate of the harvest for that species in that strata
 harvestEstimates.25wd=iharv.25wd%>%
   filter(species.code=="X22")%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(harvAcre=spp.harvest/lake.area)
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
@@ -364,7 +364,7 @@ markHarvEst.25wd=wd25%>%
   mutate(markHarvEstimate=(n.marks.recapped/totalFishExamined)*spp.harvest)
 
 ang.exp.25wd=markHarvEst.25wd%>%
-  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year","waterbody.name"="Waterbody.Name"))%>%
+  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year"))%>%
   mutate(exp.rate=markHarvEstimate/nFN.marked)
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
@@ -412,13 +412,13 @@ iharv.50wd=calc_creel_harvest(creel_count_data = icou.50wd,
                               creel_fish_data = ifishAg.50wd) # harvest estimates from the reduced data
 eff.50wd=calc_creel_effort(creel_count_data = icou.50wd, creel_int_data = iint.50wd)
 eff.50wd=eff.50wd%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.eff.acre=total.effort/lake.area)
 
 catch.50wd=iharv.50wd%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
+  select(year,wbic,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
   filter(species=='walleye')%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.catch.acre=catch/lake.area)
 
 wd50=ifish.50wd%>%
@@ -433,8 +433,8 @@ wd50=wd50%>% # now throwing out mark type and just taking overall number of mark
 # spp.harvest is the column that has the estimate of the harvest for that species in that strata
 harvestEstimates.50wd=iharv.50wd%>%
   filter(species.code=="X22")%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(harvAcre=spp.harvest/lake.area)
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
@@ -444,7 +444,7 @@ markHarvEst.50wd=wd50%>%
   mutate(markHarvEstimate=(n.marks.recapped/totalFishExamined)*spp.harvest)
 
 ang.exp.50wd=markHarvEst.50wd%>%
-  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year","waterbody.name"="Waterbody.Name"))%>%
+  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year"))%>%
   mutate(exp.rate=markHarvEstimate/nFN.marked)
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
@@ -464,7 +464,7 @@ ifish.surv=unique(ifish$survey.seq.no)
 
 set.seed(3)
 for(i in 1:length(ifish.surv)){ # survey loop
-  full=ifish[ifish$survey.seq.no==ifish.surv[i] & ifish$daytype=="weekdend",]
+  full=ifish[ifish$survey.seq.no==ifish.surv[i] & ifish$daytype=="weekend",]
   ms=unique(full$month)
   if(nrow(full)>0){
     for(m in 1:length(ms)){ # month loop
@@ -492,13 +492,13 @@ iharv.50we=calc_creel_harvest(creel_count_data = icou.50we,
                               creel_fish_data = ifishAg.50we) # harvest estimates from the reduced data
 eff.50we=calc_creel_effort(creel_count_data = icou.50we, creel_int_data = iint.50we)
 eff.50we=eff.50we%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.eff.acre=total.effort/lake.area)
 
 catch.50we=iharv.50we%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
+  select(year,wbic,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
   filter(species=='walleye')%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(annual.catch.acre=catch/lake.area)
 
 we50=ifish.50we%>%
@@ -513,8 +513,8 @@ we50=we50%>% # now throwing out mark type and just taking overall number of mark
 # spp.harvest is the column that has the estimate of the harvest for that species in that strata
 harvestEstimates.50we=iharv.50we%>%
   filter(species.code=="X22")%>%
-  select(year,wbic,waterbody.name,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
-  left_join(lchar[,c(1:3,15)])%>%
+  select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
+  left_join(lchar[,c(1,15)])%>%
   mutate(harvAcre=spp.harvest/lake.area)
 
 
@@ -525,7 +525,7 @@ markHarvEst.50we=we50%>%
   mutate(markHarvEstimate=(n.marks.recapped/totalFishExamined)*spp.harvest)
 
 ang.exp.50we=markHarvEst.50we%>%
-  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year","waterbody.name"="Waterbody.Name"))%>%
+  left_join(fdat, by=c("wbic"="WBIC","year"="Survey.Year"))%>%
   mutate(exp.rate=markHarvEstimate/nFN.marked)
 
 # Throwing out NA u's and those >1 (NAs from lack of walleye harvest per strata or missing FN marks, >1's is 6 observations where # marks in creel exceeds # marks at large)
@@ -1176,7 +1176,7 @@ I first started with some basic analyses of the data on a year by year basis to 
 ```{r yearAnalysisExampleLakes, fig.width=8,fig.cap="Comparison of the annual harvest per acre estimated from the reduced data for a handful of creel surveys. Most data reductions do not result in annual harvest per acre estimates that are much different from the actual data (most are within 1 SD of the harvest estimate for that treatment). Colors represent data reduction scenarios, points are mean annual harvest per acre estimates across all months of that creel survey and vertical lines represent 1 standard deviation."}
 ttrExp=ttrExp%>%
   left_join(cserv[,2:5])%>%
-  left_join(lchar[,c(1:3,15)])
+  left_join(lchar[,c(1,3,15)])
 
 pdat=ttrExp[ttrExp$year%in%c(2015,2019,2022),]
 ggplot(pdat)+theme_classic()+
@@ -1668,7 +1668,7 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvest_4.4.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvest_8.20.25.RData")
 
 
 ```
@@ -1676,7 +1676,7 @@ yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
 ```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of harvest across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_harvest_4.4.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_harvest_8.20.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]
@@ -2665,7 +2665,7 @@ pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
 pval.we50$medExceed[pval.we50$med>we50.med]=1
 pval.we50$kurtExceed[pval.we50$kurt>we50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.we50$x2SigDiff[pval.we50$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the we50 data
+pval.we50$x2SigDiff[pval.we50$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probability distribution of the we50 data
 pval.we50$fStatExceed[pval.we50$f>we50.f$statistic]=1 # how often the f statistic is bigger than the we50
 
 ```

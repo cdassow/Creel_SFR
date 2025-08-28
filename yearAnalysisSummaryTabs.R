@@ -8,11 +8,11 @@ library(tidyverse)
 # read in year by year RDS objects
 setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
-expR=readRDS('yearLoopOutput_3.6.25.RData')
-harvR=readRDS('yearLoopOutput_harvestR_4.4.25.RData')
-eff=readRDS('yearLoopOutput_effort_4.4.25.RData')
-catch=readRDS('yearLoopOutput_catch_4.4.25.RData')
-hrv=readRDS('yearLoopOutput_harvest_4.4.25.RData')
+expR=readRDS('yearLoopOutput_explRate_8.19.25.RData')
+harvR=readRDS('yearLoopOutput_harvestR_8.20.25.RData')
+eff=readRDS('yearLoopOutput_effort_8.20.25.RData')
+catch=readRDS('yearLoopOutput_walleyecatch_8.19.25.RData')
+hrv=readRDS('yearLoopOutput_harvest_8.20.25.RData')
 
 # calculate a percentage of years with non-sig diffs by data scenario to present in a table.
 
@@ -94,10 +94,10 @@ selfCompTabl=global.bpval.self.y%>%
   group_by(metric,scenario)%>%
   summarise(percNONsig.cv=(sum(coef.var.pval>=0.1 & coef.var.pval<=0.9)/n())*100,
             percNONsig.sd=(sum(sd.pval>=0.1 & sd.pval<=0.9)/n())*100)
-wideSelfCompTab.cv=pivot_wider(selfCompTabl,
+wideSelfCompTab.sd=pivot_wider(selfCompTabl,
                                  id_cols = scenario,
                                  names_from = metric,
-                                 values_from = percNONsig.cv)
+                                 values_from = percNONsig.sd)
 actualCompTabl=global.bpval.comp.y%>%
   group_by(metric,scenario)%>%
   summarise(percNONsig.cv=(sum(coef.var.pval>=0.1 & coef.var.pval<=0.9)/n())*100,
