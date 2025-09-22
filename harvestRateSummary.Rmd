@@ -2430,7 +2430,9 @@ pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
                        med=NA,
                        kurt=NA,
                        x2=NA,
-                       f=NA)
+                       f=NA,
+                       lcl=NA,
+                       ucl=NA)
 set.seed(10)
 for(i in 1:nrow(pars.a)){
   tempdat=rlnorm(n=length(modDat$meanHarvR[modDat$treat=="actual"]),
@@ -2446,6 +2448,9 @@ for(i in 1:nrow(pars.a)){
   pval.actual$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$meanHarvR[modDat$treat=="actual"]))
   pval.actual$f[i]=f.test$statistic
+  cis=quantile(log(tempdat), probs=c(0.025, 0.975))
+  pval.actual$lcl[i]=cis[1]
+  pval.actual$ucl[i]=cis[2]
   
 }
 
@@ -2457,7 +2462,7 @@ pval.actual$medExceed=0
 pval.actual$kurtExceed=0
 pval.actual$x2SigDiff=0
 pval.actual$fStatExceed=0
-
+pval.actual$coverageExceed=0
 
 actual.cv=sd(log(modDat$meanHarvR[modDat$treat=="actual"]))/mean(log(modDat$meanHarvR[modDat$treat=="actual"]))
 actual.sd=sd(log(modDat$meanHarvR[modDat$treat=="actual"]))
@@ -2470,19 +2475,22 @@ pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
 pval.actual$medExceed[pval.actual$med>actual.med]=1
 pval.actual$kurtExceed[pval.actual$kurt>actual.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
-pval.actual$x2SigDiff[pval.actual$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the actual data
+pval.actual$x2SigDiff[pval.actual$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probability distribution of the actual data
 pval.actual$fStatExceed[pval.actual$f>actual.f$statistic]=1 # how often the f statistic is bigger than the actual
+pval.actual$coverageExceed[pval.actual$lcl<=mean(log(modDat$meanHarvR[modDat$treat=="actual"])) & pval.actual$ucl>=mean(log(modDat$meanHarvR[modDat$treat=="actual"]))]=1 # how often the cis from the temp data contain the mean of the actual data
 
 
 #### Pb NoWinter ####
 pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
-                       beta=NA,
-                       cv=NA,
-                       sd=NA,
-                       med=NA,
-                       kurt=NA,
-                       x2=NA,
-                       f=NA)
+                         beta=NA,
+                         cv=NA,
+                         sd=NA,
+                         med=NA,
+                         kurt=NA,
+                         x2=NA,
+                         f=NA,
+                         lcl=NA,
+                         ucl=NA)
 set.seed(10)
 for(i in 1:nrow(pars.nw)){
   tempdat=rlnorm(n=length(modDat$meanHarvR[modDat$treat=="noWinter"]),
@@ -2498,7 +2506,9 @@ for(i in 1:nrow(pars.nw)){
   pval.noWinter$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$meanHarvR[modDat$treat=="noWinter"]))
   pval.noWinter$f[i]=f.test$statistic
-  
+  cis=quantile(log(tempdat), probs=c(0.025, 0.975))
+  pval.noWinter$lcl[i]=cis[1]
+  pval.noWinter$ucl[i]=cis[2]
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
@@ -2509,7 +2519,7 @@ pval.noWinter$medExceed=0
 pval.noWinter$kurtExceed=0
 pval.noWinter$x2SigDiff=0
 pval.noWinter$fStatExceed=0
-
+pval.noWinter$coverageExceed=0
 
 noWinter.cv=sd(log(modDat$meanHarvR[modDat$treat=="noWinter"]))/mean(log(modDat$meanHarvR[modDat$treat=="noWinter"]))
 noWinter.sd=sd(log(modDat$meanHarvR[modDat$treat=="noWinter"]))
@@ -2524,6 +2534,7 @@ pval.noWinter$medExceed[pval.noWinter$med>noWinter.med]=1
 pval.noWinter$kurtExceed[pval.noWinter$kurt>noWinter.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
 pval.noWinter$x2SigDiff[pval.noWinter$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the noWinter data
 pval.noWinter$fStatExceed[pval.noWinter$f>noWinter.f$statistic]=1 # how often the f statistic is bigger than the noWinter
+pval.noWinter$coverageExceed[pval.noWinter$lcl<=mean(log(modDat$meanHarvR[modDat$treat=="noWinter"])) & pval.noWinter$ucl>=mean(log(modDat$meanHarvR[modDat$treat=="noWinter"]))]=1 # how often the cis from the temp data contain the mean of the noWinter data
 
 #### Pb MayAug ####
 pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
@@ -2533,7 +2544,9 @@ pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
                        med=NA,
                        kurt=NA,
                        x2=NA,
-                       f=NA)
+                       f=NA,
+                       lcl=NA,
+                       ucl=NA)
 set.seed(10)
 for(i in 1:nrow(pars.ma)){
   tempdat=rlnorm(n=length(modDat$meanHarvR[modDat$treat=="mayAug"]),
@@ -2549,7 +2562,9 @@ for(i in 1:nrow(pars.ma)){
   pval.mayAug$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$meanHarvR[modDat$treat=="mayAug"]))
   pval.mayAug$f[i]=f.test$statistic
-  
+  cis=quantile(log(tempdat), probs=c(0.025, 0.975))
+  pval.mayAug$lcl[i]=cis[1]
+  pval.mayAug$ucl[i]=cis[2]
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
@@ -2560,7 +2575,7 @@ pval.mayAug$medExceed=0
 pval.mayAug$kurtExceed=0
 pval.mayAug$x2SigDiff=0
 pval.mayAug$fStatExceed=0
-
+pval.mayAug$coverageExceed=0
 
 mayAug.cv=sd(log(modDat$meanHarvR[modDat$treat=="mayAug"]))/mean(log(modDat$meanHarvR[modDat$treat=="mayAug"]))
 mayAug.sd=sd(log(modDat$meanHarvR[modDat$treat=="mayAug"]))
@@ -2575,16 +2590,19 @@ pval.mayAug$medExceed[pval.mayAug$med>mayAug.med]=1
 pval.mayAug$kurtExceed[pval.mayAug$kurt>mayAug.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
 pval.mayAug$x2SigDiff[pval.mayAug$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the mayAug data
 pval.mayAug$fStatExceed[pval.mayAug$f>mayAug.f$statistic]=1 # how often the f statistic is bigger than the mayAug
+pval.mayAug$coverageExceed[pval.mayAug$lcl<=mean(log(modDat$meanHarvR[modDat$treat=="mayAug"])) & pval.mayAug$ucl>=mean(log(modDat$meanHarvR[modDat$treat=="mayAug"]))]=1 # how often the cis from the temp data contain the mean of the mayAug data
 
 #### Pb WD25 ####
 pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
-                       beta=NA,
-                       cv=NA,
-                       sd=NA,
-                       med=NA,
-                       kurt=NA,
-                       x2=NA,
-                       f=NA)
+                     beta=NA,
+                     cv=NA,
+                     sd=NA,
+                     med=NA,
+                     kurt=NA,
+                     x2=NA,
+                     f=NA,
+                     lcl=NA,
+                     ucl=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd25)){
   tempdat=rlnorm(n=length(modDat$meanHarvR[modDat$treat=="wd25"]),
@@ -2600,7 +2618,9 @@ for(i in 1:nrow(pars.wd25)){
   pval.wd25$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$meanHarvR[modDat$treat=="wd25"]))
   pval.wd25$f[i]=f.test$statistic
-  
+  cis=quantile(log(tempdat), probs=c(0.025, 0.975))
+  pval.wd25$lcl[i]=cis[1]
+  pval.wd25$ucl[i]=cis[2]
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
@@ -2611,7 +2631,7 @@ pval.wd25$medExceed=0
 pval.wd25$kurtExceed=0
 pval.wd25$x2SigDiff=0
 pval.wd25$fStatExceed=0
-
+pval.wd25$coverageExceed=0
 
 wd25.cv=sd(log(modDat$meanHarvR[modDat$treat=="wd25"]))/mean(log(modDat$meanHarvR[modDat$treat=="wd25"]))
 wd25.sd=sd(log(modDat$meanHarvR[modDat$treat=="wd25"]))
@@ -2626,16 +2646,19 @@ pval.wd25$medExceed[pval.wd25$med>wd25.med]=1
 pval.wd25$kurtExceed[pval.wd25$kurt>wd25.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
 pval.wd25$x2SigDiff[pval.wd25$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the wd25 data
 pval.wd25$fStatExceed[pval.wd25$f>wd25.f$statistic]=1 # how often the f statistic is bigger than the wd25
+pval.wd25$coverageExceed[pval.wd25$lcl<=mean(log(modDat$meanHarvR[modDat$treat=="wd25"])) & pval.wd25$ucl>=mean(log(modDat$meanHarvR[modDat$treat=="wd25"]))]=1 # how often the cis from the temp data contain the mean of the wd25 data
 
 #### Pb WD50 ####
 pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
-                       beta=NA,
-                       cv=NA,
-                       sd=NA,
-                       med=NA,
-                       kurt=NA,
-                       x2=NA,
-                       f=NA)
+                     beta=NA,
+                     cv=NA,
+                     sd=NA,
+                     med=NA,
+                     kurt=NA,
+                     x2=NA,
+                     f=NA,
+                     lcl=NA,
+                     ucl=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd50)){
   tempdat=rlnorm(n=length(modDat$meanHarvR[modDat$treat=="wd50"]),
@@ -2651,7 +2674,9 @@ for(i in 1:nrow(pars.wd50)){
   pval.wd50$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$meanHarvR[modDat$treat=="wd50"]))
   pval.wd50$f[i]=f.test$statistic
-  
+  cis=quantile(log(tempdat), probs=c(0.025, 0.975))
+  pval.wd50$lcl[i]=cis[1]
+  pval.wd50$ucl[i]=cis[2]
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
@@ -2662,7 +2687,7 @@ pval.wd50$medExceed=0
 pval.wd50$kurtExceed=0
 pval.wd50$x2SigDiff=0
 pval.wd50$fStatExceed=0
-
+pval.wd50$coverageExceed=0
 
 wd50.cv=sd(log(modDat$meanHarvR[modDat$treat=="wd50"]))/mean(log(modDat$meanHarvR[modDat$treat=="wd50"]))
 wd50.sd=sd(log(modDat$meanHarvR[modDat$treat=="wd50"]))
@@ -2677,16 +2702,19 @@ pval.wd50$medExceed[pval.wd50$med>wd50.med]=1
 pval.wd50$kurtExceed[pval.wd50$kurt>wd50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
 pval.wd50$x2SigDiff[pval.wd50$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the wd50 data
 pval.wd50$fStatExceed[pval.wd50$f>wd50.f$statistic]=1 # how often the f statistic is bigger than the wd50
+pval.wd50$coverageExceed[pval.wd50$lcl<=mean(log(modDat$meanHarvR[modDat$treat=="wd50"])) & pval.wd50$ucl>=mean(log(modDat$meanHarvR[modDat$treat=="wd50"]))]=1 # how often the cis from the temp data contain the mean of the wd50 data
 
 #### Pb WE50 ####
 pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
-                       beta=NA,
-                       cv=NA,
-                       sd=NA,
-                       med=NA,
-                       kurt=NA,
-                       x2=NA,
-                       f=NA)
+                     beta=NA,
+                     cv=NA,
+                     sd=NA,
+                     med=NA,
+                     kurt=NA,
+                     x2=NA,
+                     f=NA,
+                     lcl=NA,
+                     ucl=NA)
 set.seed(10)
 for(i in 1:nrow(pars.we50)){
   tempdat=rlnorm(n=length(modDat$meanHarvR[modDat$treat=="we50"]),
@@ -2702,7 +2730,9 @@ for(i in 1:nrow(pars.we50)){
   pval.we50$x2[i]=ct$p.value
   f.test=var.test(log(tempdat),log(modDat$meanHarvR[modDat$treat=="we50"]))
   pval.we50$f[i]=f.test$statistic
-  
+  cis=quantile(log(tempdat), probs=c(0.025, 0.975))
+  pval.we50$lcl[i]=cis[1]
+  pval.we50$ucl[i]=cis[2]
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
@@ -2713,7 +2743,7 @@ pval.we50$medExceed=0
 pval.we50$kurtExceed=0
 pval.we50$x2SigDiff=0
 pval.we50$fStatExceed=0
-
+pval.we50$coverageExceed=0
 
 we50.cv=sd(log(modDat$meanHarvR[modDat$treat=="we50"]))/mean(log(modDat$meanHarvR[modDat$treat=="we50"]))
 we50.sd=sd(log(modDat$meanHarvR[modDat$treat=="we50"]))
@@ -2728,7 +2758,16 @@ pval.we50$medExceed[pval.we50$med>we50.med]=1
 pval.we50$kurtExceed[pval.we50$kurt>we50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
 pval.we50$x2SigDiff[pval.we50$x2<0.05]=1 # looking at how often we would say the simmed data did not come from the probabilit distribution of the we50 data
 pval.we50$fStatExceed[pval.we50$f>we50.f$statistic]=1 # how often the f statistic is bigger than the we50
+pval.we50$coverageExceed[pval.we50$lcl<=mean(log(modDat$meanHarvR[modDat$treat=="we50"])) & pval.we50$ucl>=mean(log(modDat$meanHarvR[modDat$treat=="we50"]))]=1 # how often the cis from the temp data contain the mean of the we50 data
 
+
+# the following will all be 1 if all parm values in the chain produce data with a CI that covers the mean from the actual creel data.
+(sum(pval.actual$coverageExceed)/nrow(pval.actual))*100
+(sum(pval.noWinter$coverageExceed)/nrow(pval.noWinter))*100
+(sum(pval.mayAug$coverageExceed)/nrow(pval.mayAug))*100
+(sum(pval.wd25$coverageExceed)/nrow(pval.wd25))*100
+(sum(pval.wd50$coverageExceed)/nrow(pval.wd50))*100
+(sum(pval.we50$coverageExceed)/nrow(pval.we50))*100
 ```
 
 ```{r bpValCalcPLOT, fig.cap="Comparison of multiple metrics for calculating Bayesian p-values. Each panel is a different data scenario. The comparisons in each panel are comparing the model simulated data to the observed data for that same sencario, NOT comparing model simulated data from a reduction scenario to the actual data. This comparison to self is to understand whether the model is adequately representing the data and whether the choice of statistic influences the answer to that question. Values close to 0.5 are ideal, values more extreme than 0.1 or 0.9 are considered evidence for a poor model fit (i.e. significant difference betweek model simulated data and the observed data)."}
