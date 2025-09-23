@@ -154,7 +154,7 @@ harvestEstimates=charv%>%
   filter(species.code=="X22" & wbic%in%ctwiWBIC.creel)%>%
   select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(harvAcre=spp.harvest/lake.area)
+  mutate(harvAcre=spp.harvest/(lake.area/2.47))
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
 
@@ -190,12 +190,12 @@ ang.exp=ang.exp%>%
 ceff.ct=ceff%>%
   filter(wbic%in%ctwiWBIC.creel)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.eff.acre=total.effort/lake.area)
+  mutate(annual.eff.hectare=total.effort/(lake.area/2.47))
 
 ccatch.ct=charv%>%
   filter(wbic%in%ctwiWBIC.creel, species=='walleye')%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.catch.acre=catch/lake.area) # catch is the estimated total catch for that strata (total.effort * catch rate), while 'total.catch' is the actually number of fish in the interviews for that strata
+  mutate(annual.catch.hectare=catch/(lake.area/2.47)) # catch is the estimated total catch for that strata (total.effort * catch rate), while 'total.catch' is the actually number of fish in the interviews for that strata
 
 ifish=cfish.i%>% # making a data frame to add my groupings too so I can leave cfish.i alone
   filter(species.code=="X22" & wbic%in%ctwiWBIC.creel)%>%
@@ -232,7 +232,7 @@ harvestEstimates.nw=iharv%>%
   filter(season=="openwater")%>%
   select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(harvAcre=spp.harvest/lake.area)
+  mutate(harvAcre=spp.harvest/(lake.area/2.47))
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
 
@@ -275,7 +275,7 @@ harvestEstimates.ma=iharv%>%
   filter(month%in%c(5:8))%>%
   select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(harvAcre=spp.harvest/lake.area)
+  mutate(harvAcre=spp.harvest/(lake.area/2.47))
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
 
@@ -333,13 +333,13 @@ iharv.25wd=calc_creel_harvest(creel_count_data = icou.25wd,
 eff.25wd=calc_creel_effort(creel_count_data = icou.25wd, creel_int_data = iint.25wd)
 eff.25wd=eff.25wd%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.eff.acre=total.effort/lake.area)
+  mutate(annual.eff.hectare=total.effort/(lake.area/2.47))
 
 catch.25wd=iharv.25wd%>%
   select(year,wbic,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
   filter(species=='walleye')%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.catch.acre=catch/lake.area)
+  mutate(annual.catch.hectare=catch/(lake.area/2.47))
 
 wd25=ifish.25wd%>%
   group_by(wbic, year,survey.seq.no,survey.begin.date,survey.end.date, mark.found,month,daytype)%>%
@@ -355,7 +355,7 @@ harvestEstimates.25wd=iharv.25wd%>%
   filter(species.code=="X22")%>%
   select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(harvAcre=spp.harvest/lake.area)
+  mutate(harvAcre=spp.harvest/(lake.area/2.47))
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
 
@@ -413,13 +413,13 @@ iharv.50wd=calc_creel_harvest(creel_count_data = icou.50wd,
 eff.50wd=calc_creel_effort(creel_count_data = icou.50wd, creel_int_data = iint.50wd)
 eff.50wd=eff.50wd%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.eff.acre=total.effort/lake.area)
+  mutate(annual.eff.hectare=total.effort/(lake.area/2.47))
 
 catch.50wd=iharv.50wd%>%
   select(year,wbic,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
   filter(species=='walleye')%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.catch.acre=catch/lake.area)
+  mutate(annual.catch.hectare=catch/(lake.area/2.47))
 
 wd50=ifish.50wd%>%
   group_by(wbic, year,survey.seq.no,survey.begin.date,survey.end.date, mark.found,month,daytype)%>%
@@ -435,7 +435,7 @@ harvestEstimates.50wd=iharv.50wd%>%
   filter(species.code=="X22")%>%
   select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(harvAcre=spp.harvest/lake.area)
+  mutate(harvAcre=spp.harvest/(lake.area/2.47))
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
 
@@ -493,13 +493,13 @@ iharv.50we=calc_creel_harvest(creel_count_data = icou.50we,
 eff.50we=calc_creel_effort(creel_count_data = icou.50we, creel_int_data = iint.50we)
 eff.50we=eff.50we%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.eff.acre=total.effort/lake.area)
+  mutate(annual.eff.hectare=total.effort/(lake.area/2.47))
 
 catch.50we=iharv.50we%>%
   select(year,wbic,survey.seq.no, month, daytype, species, species.code, catch, spp.effort, spp.harvest, spp.catch)%>%
   filter(species=='walleye')%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(annual.catch.acre=catch/lake.area)
+  mutate(annual.catch.hectare=catch/(lake.area/2.47))
 
 we50=ifish.50we%>%
   group_by(wbic, year,survey.seq.no,survey.begin.date,survey.end.date, mark.found,month,daytype)%>%
@@ -515,7 +515,7 @@ harvestEstimates.50we=iharv.50we%>%
   filter(species.code=="X22")%>%
   select(year,wbic,survey.seq.no, month, daytype,spp.harvest,harvest,total.harvest,total.spp.harvest)%>%
   left_join(lchar[,c(1,15)])%>%
-  mutate(harvAcre=spp.harvest/lake.area)
+  mutate(harvAcre=spp.harvest/(lake.area/2.47))
 
 
 # combining harvest estimates with marked proportion estimate to get total number of marks harvested
@@ -793,53 +793,53 @@ pars.wd50=getSample(harv.50wd)
 pars.we50=getSample(harv.50we)
 
 set.seed(3)
-aComp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+aComp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                          meanlog = median(pars.a[,1]),
                                                                          sdlog = median(pars.a[,2]))),
                     treat=c(rep("observed",length(modDat$total.harv[modDat$treat=="actual"])),rep("pred",length(modDat$total.harv[modDat$treat=="actual"]))))
 set.seed(3)
-nwComp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="noWinter"],rlnorm(n=length(modDat$total.harv[modDat$treat=="noWinter"]),
+nwComp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="noWinter"],rlnorm(n=length(modDat$total.harv[modDat$treat=="noWinter"]),
                                                                     meanlog = median(pars.nw[,1]),
                                                                     sdlog = median(pars.nw[,2]))),
                  treat=c(rep("observed",length(modDat$total.harv[modDat$treat=="noWinter"])),rep("pred",length(modDat$total.harv[modDat$treat=="noWinter"]))))
 set.seed(3)
-maComp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="mayAug"],rlnorm(n=length(modDat$total.harv[modDat$treat=="mayAug"]),
+maComp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="mayAug"],rlnorm(n=length(modDat$total.harv[modDat$treat=="mayAug"]),
                                                                     meanlog = median(pars.ma[,1]),
                                                                     sdlog = median(pars.ma[,2]))),
                  treat=c(rep("observed",length(modDat$total.harv[modDat$treat=="mayAug"])),rep("pred",length(modDat$total.harv[modDat$treat=="mayAug"]))))
 set.seed(3)
-wd25Comp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="wd25"],rlnorm(n=length(modDat$total.harv[modDat$treat=="wd25"]),
+wd25Comp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="wd25"],rlnorm(n=length(modDat$total.harv[modDat$treat=="wd25"]),
                                                                     meanlog = median(pars.wd25[,1]),
                                                                     sdlog = median(pars.wd25[,2]))),
                  treat=c(rep("observed",length(modDat$total.harv[modDat$treat=="wd25"])),rep("pred",length(modDat$total.harv[modDat$treat=="wd25"]))))
 set.seed(3)
-wd50Comp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="wd50"],rlnorm(n=length(modDat$total.harv[modDat$treat=="wd50"]),
+wd50Comp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="wd50"],rlnorm(n=length(modDat$total.harv[modDat$treat=="wd50"]),
                                                                     meanlog = median(pars.wd50[,1]),
                                                                     sdlog = median(pars.wd50[,2]))),
                  treat=c(rep("observed",length(modDat$total.harv[modDat$treat=="wd50"])),rep("pred",length(modDat$total.harv[modDat$treat=="wd50"]))))
 set.seed(3)
-we50Comp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="we50"],rlnorm(n=length(modDat$total.harv[modDat$treat=="we50"]),
+we50Comp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="we50"],rlnorm(n=length(modDat$total.harv[modDat$treat=="we50"]),
                                                                     meanlog = median(pars.we50[,1]),
                                                                     sdlog = median(pars.we50[,2]))),
                  treat=c(rep("observed",length(modDat$total.harv[modDat$treat=="we50"])),rep("pred",length(modDat$total.harv[modDat$treat=="we50"]))))
 
 a.p=ggplot(aComp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "Actual", fill=element_blank())
 nw.p=ggplot(nwComp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "No Winter Data \n(April - October)", fill=element_blank())
 ma.p=ggplot(maComp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "May - August \nData Only", fill=element_blank())
 wd25.p=ggplot(wd25Comp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "25% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 wd50.p=ggplot(wd25Comp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "50% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 we50.p=ggplot(we50Comp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "50% of Weekdend \nCreel Visits/Month \nRemoved", fill=element_blank())
 
 ggarrange(a.p,nw.p,ma.p,wd25.p,wd50.p,we50.p, common.legend = T)
@@ -847,12 +847,12 @@ ggarrange(a.p,nw.p,ma.p,wd25.p,wd50.p,we50.p, common.legend = T)
 
 ```{r harv-gelman-rubin-diagnostics, echo=T, eval=FALSE}
 
-gelmanDiagnostics(harv.actual) # 1.02 converged
-gelmanDiagnostics(harv.nw) # 1.01 converged
-gelmanDiagnostics(harv.ma) # 1.03 converged
-gelmanDiagnostics(harv.25wd) # 1.02 converged
-gelmanDiagnostics(harv.50wd) # 1.02 converged
-gelmanDiagnostics(harv.50we) # 1.02 converged
+gelmanDiagnostics(harv.actual) # converged
+gelmanDiagnostics(harv.nw) # converged
+gelmanDiagnostics(harv.ma) # converged
+gelmanDiagnostics(harv.25wd) # converged
+gelmanDiagnostics(harv.50wd) # converged
+gelmanDiagnostics(harv.50we) # converged
 
 ```
 
@@ -860,12 +860,10 @@ gelmanDiagnostics(harv.50we) # 1.02 converged
 
 # dataframe to hold output
 bpValues=data.frame(scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-                    coef.var.pval=NA,
                     sd.pval=NA)
 #### Pb ACTUAL ####
 pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.a)){
@@ -874,28 +872,22 @@ for(i in 1:nrow(pars.a)){
                  sdlog = pars.a[i,2])
   pval.actual$alpha[i]=pars.a[i,1]
   pval.actual$beta[i]=pars.a[i,2]
-  pval.actual$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.actual$sd[i]=sd(log(tempdat))
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.actual$cvExceed=0
 pval.actual$sdExceed=0
 
-actual.cv=sd(log(modDat$total.harv[modDat$treat=="actual"]))/mean(log(modDat$total.harv[modDat$treat=="actual"]))
 actual.sd=sd(log(modDat$total.harv[modDat$treat=="actual"]))
 
-pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
 
-bpValues$coef.var.pval[1]=sum(pval.actual$cvExceed==1)/nrow(pval.actual) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpValues$sd.pval[1]=sum(pval.actual$sdExceed==1)/nrow(pval.actual) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb NO WINTER ####
 pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.nw)){
@@ -904,28 +896,22 @@ for(i in 1:nrow(pars.nw)){
                  sdlog = pars.nw[i,2])
   pval.noWinter$alpha[i]=pars.nw[i,1]
   pval.noWinter$beta[i]=pars.nw[i,2]
-  pval.noWinter$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.noWinter$sd[i]=sd(log(tempdat))
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.noWinter$cvExceed=0
 pval.noWinter$sdExceed=0
 
-noWinter.cv=sd(log(modDat$total.harv[modDat$treat=="noWinter"]))/mean(log(modDat$total.harv[modDat$treat=="noWinter"]))
 noWinter.sd=sd(log(modDat$total.harv[modDat$treat=="noWinter"]))
 
-pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
 pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
 
-bpValues$coef.var.pval[2]=sum(pval.noWinter$cvExceed==1)/nrow(pval.noWinter) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpValues$sd.pval[2]=sum(pval.noWinter$sdExceed==1)/nrow(pval.noWinter) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb MAYAUGUST ####
 pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.ma)){
@@ -934,28 +920,22 @@ for(i in 1:nrow(pars.ma)){
                  sdlog = pars.ma[i,2])
   pval.mayAug$alpha[i]=pars.ma[i,1]
   pval.mayAug$beta[i]=pars.ma[i,2]
-  pval.mayAug$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.mayAug$sd[i]=sd(log(tempdat))
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.mayAug$cvExceed=0
 pval.mayAug$sdExceed=0
 
-mayAug.cv=sd(log(modDat$total.harv[modDat$treat=="mayAug"]))/mean(log(modDat$total.harv[modDat$treat=="mayAug"]))
 mayAug.sd=sd(log(modDat$total.harv[modDat$treat=="mayAug"]))
 
-pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
 pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
 
-bpValues$coef.var.pval[3]=sum(pval.mayAug$cvExceed==1)/nrow(pval.mayAug) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpValues$sd.pval[3]=sum(pval.mayAug$sdExceed==1)/nrow(pval.mayAug) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb WD25 ####
 pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd25)){
@@ -964,28 +944,22 @@ for(i in 1:nrow(pars.wd25)){
                  sdlog = pars.wd25[i,2])
   pval.wd25$alpha[i]=pars.wd25[i,1]
   pval.wd25$beta[i]=pars.wd25[i,2]
-  pval.wd25$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.wd25$sd[i]=sd(log(tempdat))
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.wd25$cvExceed=0
 pval.wd25$sdExceed=0
 
-wd25.cv=sd(log(modDat$total.harv[modDat$treat=="wd25"]))/mean(log(modDat$total.harv[modDat$treat=="wd25"]))
 wd25.sd=sd(log(modDat$total.harv[modDat$treat=="wd25"]))
 
-pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
 pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
 
-bpValues$coef.var.pval[4]=sum(pval.wd25$cvExceed==1)/nrow(pval.wd25) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpValues$sd.pval[4]=sum(pval.wd25$sdExceed==1)/nrow(pval.wd25) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb WD50 ####
 pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd50)){
@@ -994,28 +968,22 @@ for(i in 1:nrow(pars.wd50)){
                  sdlog = pars.wd50[i,2])
   pval.wd50$alpha[i]=pars.wd50[i,1]
   pval.wd50$beta[i]=pars.wd50[i,2]
-  pval.wd50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.wd50$sd[i]=sd(log(tempdat))
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.wd50$cvExceed=0
 pval.wd50$sdExceed=0
 
-wd50.cv=sd(log(modDat$total.harv[modDat$treat=="wd50"]))/mean(log(modDat$total.harv[modDat$treat=="wd50"]))
 wd50.sd=sd(log(modDat$total.harv[modDat$treat=="wd50"]))
 
-pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
 pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
 
-bpValues$coef.var.pval[5]=sum(pval.wd50$cvExceed==1)/nrow(pval.wd50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpValues$sd.pval[5]=sum(pval.wd50$sdExceed==1)/nrow(pval.wd50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb WE50 ####
 pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.we50)){
@@ -1024,25 +992,20 @@ for(i in 1:nrow(pars.we50)){
                  sdlog = pars.we50[i,2])
   pval.we50$alpha[i]=pars.we50[i,1]
   pval.we50$beta[i]=pars.we50[i,2]
-  pval.we50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.we50$sd[i]=sd(log(tempdat))
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.we50$cvExceed=0
 pval.we50$sdExceed=0
 
-we50.cv=sd(log(modDat$total.harv[modDat$treat=="we50"]))/mean(log(modDat$total.harv[modDat$treat=="we50"]))
 we50.sd=sd(log(modDat$total.harv[modDat$treat=="we50"]))
 
-pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
 
-bpValues$coef.var.pval[6]=sum(pval.we50$cvExceed==1)/nrow(pval.we50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpValues$sd.pval[6]=sum(pval.we50$sdExceed==1)/nrow(pval.we50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
-kable(bpValues, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value"), align="lcc",caption = "Bayesian p-values for a lognormal distributed model. Each p-value describes whether or not there is a significant difference between data generated by the fitted model and the actual data for that scenario. Two metrics are assessed here, coefficient of variation (CV) and standard devidation (SD).")
+kable(bpValues, digits = 3, col.names = c("Scenario", "SD p-value"), align="lcc",caption = "Bayesian p-values for a lognormal distributed model. Each p-value describes whether or not there is a significant difference between data generated by the fitted model and the actual data for that scenario. Standard devidation (SD) was the variance metric assessed here.")
 ```
 
 ### Inference
@@ -1051,54 +1014,54 @@ Having established that the models are fitting the data well, some inference can
 
 ```{r harvDataComparisonToActual, fig.width=8,fig.height=6,fig.cap="Comparison of the distribution of actual annual harvest per acre estimates calculated from creel data and annual harvest per acre estimated calculated from simulated creel data for each data reduction scenario and the resulting median parameter values for their respective model fits."}
 
-aComp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+aComp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                     meanlog = median(pars.a[,1]),
                                                                     sdlog = median(pars.a[,2]))),
                  treat=c(rep("actual",length(modDat$total.harv[modDat$treat=="actual"])),rep("model",length(modDat$total.harv[modDat$treat=="actual"]))))
 
-nwComp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+nwComp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                        meanlog = median(pars.nw[,1]),
                                                                        sdlog = median(pars.nw[,2]))),
                   treat=c(rep("actual",length(modDat$total.harv[modDat$treat=="actual"])),rep("model",length(modDat$total.harv[modDat$treat=="actual"]))))
 
-maComp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+maComp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                      meanlog = median(pars.ma[,1]),
                                                                      sdlog = median(pars.ma[,2]))),
                   treat=c(rep("actual",length(modDat$total.harv[modDat$treat=="actual"])),rep("model",length(modDat$total.harv[modDat$treat=="actual"]))))
 
-wd25Comp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+wd25Comp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                      meanlog = median(pars.wd25[,1]),
                                                                      sdlog = median(pars.wd25[,2]))),
                     treat=c(rep("actual",length(modDat$total.harv[modDat$treat=="actual"])),rep("model",length(modDat$total.harv[modDat$treat=="actual"]))))
 
-wd50Comp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+wd50Comp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                      meanlog = median(pars.wd50[,1]),
                                                                      sdlog = median(pars.wd50[,2]))),
                     treat=c(rep("actual",length(modDat$total.harv[modDat$treat=="actual"])),rep("model",length(modDat$total.harv[modDat$treat=="actual"]))))
 
-we50Comp=data.frame(harv.acre=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
+we50Comp=data.frame(harv.hectare=c(modDat$total.harv[modDat$treat=="actual"],rlnorm(n=length(modDat$total.harv[modDat$treat=="actual"]),
                                                                      meanlog = median(pars.we50[,1]),
                                                                      sdlog = median(pars.we50[,2]))),
                     treat=c(rep("actual",length(modDat$total.harv[modDat$treat=="actual"])),rep("model",length(modDat$total.harv[modDat$treat=="actual"]))))
 
 a.p=ggplot(aComp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
-  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "Actual", fill=element_blank())
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
+  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Hectare)", y="Density", title = "Actual", fill=element_blank())
 nw.p=ggplot(nwComp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
-  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "No Winter Data \n(April - October)", fill=element_blank())
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
+  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Hectare)", y="Density", title = "No Winter Data \n(April - October)", fill=element_blank())
 ma.p=ggplot(maComp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
-  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "May - August \nData Only", fill=element_blank())
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
+  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Hectare)", y="Density", title = "May - August \nData Only", fill=element_blank())
 wd25.p=ggplot(wd25Comp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
-  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "25% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
+  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Hectare)", y="Density", title = "25% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 wd50.p=ggplot(wd25Comp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
-  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "50% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
+  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Hectare)", y="Density", title = "50% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 we50.p=ggplot(we50Comp)+theme_classic()+
-  geom_density(aes(x=log(harv.acre),fill=treat),alpha=0.2)+
-  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Acre)", y="Density", title = "50% of Weekdend \nCreel Visits/Month \nRemoved", fill=element_blank())
+  geom_density(aes(x=log(harv.hectare),fill=treat),alpha=0.2)+
+  scale_fill_viridis_d()+labs(x="Log(Annual Harvest per Hectare)", y="Density", title = "50% of Weekdend \nCreel Visits/Month \nRemoved", fill=element_blank())
 
 ggarrange(a.p,nw.p,ma.p,wd25.p,wd50.p,we50.p, common.legend = T)
 ```
@@ -1117,44 +1080,24 @@ The results of these tests suggest that when using either coefficient of variati
 ## p-value tests comparing the scenarios to actual to show that some scenarios approximate the actual quite well.
 
 bpval.comp=data.frame(scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-                      coef.var.pval=NA,
                       sd.pval=NA)
-pval.actual$cvComp=0
 pval.actual$sdComp=0
-pval.actual$cvComp[pval.actual$cv>actual.cv]=1
 pval.actual$sdComp[pval.actual$sd>actual.sd]=1
 
-pval.noWinter$cvComp=0
 pval.noWinter$sdComp=0
-pval.noWinter$cvComp[pval.noWinter$cv>actual.cv]=1
 pval.noWinter$sdComp[pval.noWinter$sd>actual.sd]=1
 
-pval.mayAug$cvComp=0
 pval.mayAug$sdComp=0
-pval.mayAug$cvComp[pval.mayAug$cv>actual.cv]=1
 pval.mayAug$sdComp[pval.mayAug$sd>actual.sd]=1
 
-pval.wd25$cvComp=0
 pval.wd25$sdComp=0
-pval.wd25$cvComp[pval.wd25$cv>actual.cv]=1
 pval.wd25$sdComp[pval.wd25$sd>actual.sd]=1
 
-pval.wd50$cvComp=0
 pval.wd50$sdComp=0
-pval.wd50$cvComp[pval.wd50$cv>actual.cv]=1
 pval.wd50$sdComp[pval.wd50$sd>actual.sd]=1
 
-pval.we50$cvComp=0
 pval.we50$sdComp=0
-pval.we50$cvComp[pval.we50$cv>actual.cv]=1
 pval.we50$sdComp[pval.we50$sd>actual.sd]=1
-
-bpval.comp$coef.var.pval=c(sum(pval.actual$cvComp)/nrow(pval.actual),
-                           sum(pval.noWinter$cvComp)/nrow(pval.noWinter),
-                           sum(pval.mayAug$cvComp)/nrow(pval.mayAug),
-                           sum(pval.wd25$cvComp)/nrow(pval.wd25),
-                           sum(pval.wd50$cvComp)/nrow(pval.wd50),
-                           sum(pval.we50$cvComp)/nrow(pval.we50))
 
 bpval.comp$sd.pval=c(sum(pval.actual$sdComp)/nrow(pval.actual),
                            sum(pval.noWinter$sdComp)/nrow(pval.noWinter),
@@ -1163,7 +1106,7 @@ bpval.comp$sd.pval=c(sum(pval.actual$sdComp)/nrow(pval.actual),
                            sum(pval.wd50$sdComp)/nrow(pval.wd50),
                            sum(pval.we50$sdComp)/nrow(pval.we50))
 
-kable(bpval.comp, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value"), align="lcc",caption = "Bayesian p-values for the comparison between the actual data and the scenario-specific model fit to a lognormal distribution. This test is asking whether the scenario-specific model can approximate the actual data. When true this signals no effect of the data reduction for that scenario on the resulting annual harvest per acre estimate. Two metrics are assessed here, coefficient of variation (CV) and standard devidation (SD).")
+kable(bpval.comp, digits = 3, col.names = c("Scenario", "SD p-value"), align="lcc",caption = "Bayesian p-values for the comparison between the actual data and the scenario-specific model fit to a lognormal distribution. This test is asking whether the scenario-specific model can approximate the actual data. When true this signals no effect of the data reduction for that scenario on the resulting annual harvest per hectare estimate. Standard devidation (SD) was the variance metric assessed here.")
 ```
 
 ### Year Specific Analyses
@@ -1217,7 +1160,7 @@ exceedSummary=trLake%>%
             nNA=sum(is.na(a.exceed)))
 kable(exceedSummary,
       col.names = c("Data Reduction Scenario","Catch estimates exceeding actual","Catch estimates not exceeding actual","NAs"),
-      caption = "Counts of the number of times the annual harvest per acre estimate for the reduced data scenario differs from the actual annual harvest per acre estimate for that treatment by more than 1 standard deviation. NAs ocurred where there was no variance in the harvest estimate and thus no standard deviation could be calculated for the actual data.")
+      caption = "Counts of the number of times the annual harvest per acre estimate for the reduced data scenario differs from the actual annual harvest per hectare estimate for that treatment by more than 1 standard deviation. NAs ocurred where there was no variance in the harvest estimate and thus no standard deviation could be calculated for the actual data.")
 
 ```
 
@@ -1315,12 +1258,10 @@ loopY=sort(unique(ttrExp$year))
 
 bpval.comp.y=data.frame(year=NA,
                       scenario=NA,
-                      coef.var.pval=NA,
                       sd.pval=NA)
 
 bpval.self.y=data.frame(year=NA,
                         scenario=NA,
-                        coef.var.pval=NA,
                         sd.pval=NA)
 grMetrics.y=data.frame(year=NA,
                        scenario=NA,
@@ -1427,7 +1368,6 @@ for(y in 1:length(loopY)){
   #### Pb ACTUAL ####
   pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
                          beta=NA,
-                         cv=NA,
                          sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.a)){
@@ -1436,25 +1376,20 @@ for(y in 1:length(loopY)){
                    sdlog = pars.a[i,2])
     pval.actual$alpha[i]=pars.a[i,1]
     pval.actual$beta[i]=pars.a[i,2]
-    pval.actual$cv[i]=sd(log(tempdat))/mean(log(tempdat))
     pval.actual$sd[i]=sd(log(tempdat))
   }
 
   # now calculate the number of times the cv or sd exceeds that of the real data
 
-  pval.actual$cvExceed=0
   pval.actual$sdExceed=0
 
-  actual.cv=sd(log(tdat$total.harv[tdat$treat=="actual"]))/mean(log(tdat$total.harv[tdat$treat=="actual"]))
   actual.sd=sd(log(tdat$total.harv[tdat$treat=="actual"]))
 
-  pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
   pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
 
   #### Pb NO WINTER ####
   pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
                            beta=NA,
-                           cv=NA,
                            sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.nw)){
@@ -1463,25 +1398,20 @@ for(y in 1:length(loopY)){
                    sdlog = pars.nw[i,2])
     pval.noWinter$alpha[i]=pars.nw[i,1]
     pval.noWinter$beta[i]=pars.nw[i,2]
-    pval.noWinter$cv[i]=sd(log(tempdat))/mean(log(tempdat))
     pval.noWinter$sd[i]=sd(log(tempdat))
   }
 
   # now calculate the number of times the cv or sd exceeds that of the real data
 
-  pval.noWinter$cvExceed=0
   pval.noWinter$sdExceed=0
 
-  noWinter.cv=sd(log(tdat$total.harv[tdat$treat=="noWinter"]))/mean(log(tdat$total.harv[tdat$treat=="noWinter"]))
   noWinter.sd=sd(log(tdat$total.harv[tdat$treat=="noWinter"]))
 
-  pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
   pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
 
   #### Pb MAYAUGUST ####
   pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
                          beta=NA,
-                         cv=NA,
                          sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.ma)){
@@ -1490,25 +1420,20 @@ for(y in 1:length(loopY)){
                    sdlog = pars.ma[i,2])
     pval.mayAug$alpha[i]=pars.ma[i,1]
     pval.mayAug$beta[i]=pars.ma[i,2]
-    pval.mayAug$cv[i]=sd(log(tempdat))/mean(log(tempdat))
     pval.mayAug$sd[i]=sd(log(tempdat))
   }
 
   # now calculate the number of times the cv or sd exceeds that of the real data
 
-  pval.mayAug$cvExceed=0
   pval.mayAug$sdExceed=0
 
-  mayAug.cv=sd(log(tdat$total.harv[tdat$treat=="mayAug"]))/mean(log(tdat$total.harv[tdat$treat=="mayAug"]))
   mayAug.sd=sd(log(tdat$total.harv[tdat$treat=="mayAug"]))
 
-  pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
   pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
 
   #### Pb WD25 ####
   pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.wd25)){
@@ -1517,25 +1442,20 @@ for(y in 1:length(loopY)){
                    sdlog = pars.wd25[i,2])
     pval.wd25$alpha[i]=pars.wd25[i,1]
     pval.wd25$beta[i]=pars.wd25[i,2]
-    pval.wd25$cv[i]=sd(log(tempdat))/mean(log(tempdat))
     pval.wd25$sd[i]=sd(log(tempdat))
   }
 
   # now calculate the number of times the cv or sd exceeds that of the real data
 
-  pval.wd25$cvExceed=0
   pval.wd25$sdExceed=0
 
-  wd25.cv=sd(log(tdat$total.harv[tdat$treat=="wd25"]))/mean(log(tdat$total.harv[tdat$treat=="wd25"]))
   wd25.sd=sd(log(tdat$total.harv[tdat$treat=="wd25"]))
 
-  pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
   pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
 
   #### Pb WD50 ####
   pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.wd50)){
@@ -1544,25 +1464,20 @@ for(y in 1:length(loopY)){
                    sdlog = pars.wd50[i,2])
     pval.wd50$alpha[i]=pars.wd50[i,1]
     pval.wd50$beta[i]=pars.wd50[i,2]
-    pval.wd50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
     pval.wd50$sd[i]=sd(log(tempdat))
   }
 
   # now calculate the number of times the cv or sd exceeds that of the real data
 
-  pval.wd50$cvExceed=0
   pval.wd50$sdExceed=0
 
-  wd50.cv=sd(log(tdat$total.harv[tdat$treat=="wd50"]))/mean(log(tdat$total.harv[tdat$treat=="wd50"]))
   wd50.sd=sd(log(tdat$total.harv[tdat$treat=="wd50"]))
 
-  pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
   pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
 
   #### Pb WE50 ####
   pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
                        beta=NA,
-                       cv=NA,
                        sd=NA)
   set.seed(10)
   for(i in 1:nrow(pars.we50)){
@@ -1571,33 +1486,22 @@ for(y in 1:length(loopY)){
                    sdlog = pars.we50[i,2])
     pval.we50$alpha[i]=pars.we50[i,1]
     pval.we50$beta[i]=pars.we50[i,2]
-    pval.we50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
     pval.we50$sd[i]=sd(log(tempdat))
   }
 
   # now calculate the number of times the cv or sd exceeds that of the real data
 
-  pval.we50$cvExceed=0
   pval.we50$sdExceed=0
 
-  we50.cv=sd(log(tdat$total.harv[tdat$treat=="we50"]))/mean(log(tdat$total.harv[tdat$treat=="we50"]))
   we50.sd=sd(log(tdat$total.harv[tdat$treat=="we50"]))
 
-  pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
   pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
 
   #df to hold pvals for model comparison to self, a way of knowing the model fit the data well
   t.pself=data.frame(year=rep(loopY[y],6),
                      scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-                     coef.var.pval=NA,
                      sd.pval=NA)
   # adding self comparison pvals
-  t.pself$coef.var.pval=c(sum(pval.actual$cvExceed)/nrow(pval.actual),
-                          sum(pval.noWinter$cvExceed)/nrow(pval.noWinter),
-                          sum(pval.mayAug$cvExceed)/nrow(pval.mayAug),
-                          sum(pval.wd25$cvExceed)/nrow(pval.wd25),
-                          sum(pval.wd50$cvExceed)/nrow(pval.wd50),
-                          sum(pval.we50$cvExceed)/nrow(pval.we50))
   t.pself$sd.pval=c(sum(pval.actual$sdExceed)/nrow(pval.actual),
                           sum(pval.noWinter$sdExceed)/nrow(pval.noWinter),
                           sum(pval.mayAug$sdExceed)/nrow(pval.mayAug),
@@ -1609,45 +1513,25 @@ for(y in 1:length(loopY)){
 
   t.pcomp=data.frame(year=rep(loopY[y],6),
                      scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-                     coef.var.pval=NA,
                      sd.pval=NA)
 
-  pval.actual$cvComp=0
   pval.actual$sdComp=0
-  pval.actual$cvComp[pval.actual$cv>actual.cv]=1
   pval.actual$sdComp[pval.actual$sd>actual.sd]=1
 
-  pval.noWinter$cvComp=0
   pval.noWinter$sdComp=0
-  pval.noWinter$cvComp[pval.noWinter$cv>actual.cv]=1
   pval.noWinter$sdComp[pval.noWinter$sd>actual.sd]=1
 
-  pval.mayAug$cvComp=0
   pval.mayAug$sdComp=0
-  pval.mayAug$cvComp[pval.mayAug$cv>actual.cv]=1
   pval.mayAug$sdComp[pval.mayAug$sd>actual.sd]=1
 
-  pval.wd25$cvComp=0
   pval.wd25$sdComp=0
-  pval.wd25$cvComp[pval.wd25$cv>actual.cv]=1
   pval.wd25$sdComp[pval.wd25$sd>actual.sd]=1
 
-  pval.wd50$cvComp=0
   pval.wd50$sdComp=0
-  pval.wd50$cvComp[pval.wd50$cv>actual.cv]=1
   pval.wd50$sdComp[pval.wd50$sd>actual.sd]=1
 
-  pval.we50$cvComp=0
   pval.we50$sdComp=0
-  pval.we50$cvComp[pval.we50$cv>actual.cv]=1
   pval.we50$sdComp[pval.we50$sd>actual.sd]=1
-
-  t.pcomp$coef.var.pval=c(sum(pval.actual$cvComp)/nrow(pval.actual),
-                             sum(pval.noWinter$cvComp)/nrow(pval.noWinter),
-                             sum(pval.mayAug$cvComp)/nrow(pval.mayAug),
-                             sum(pval.wd25$cvComp)/nrow(pval.wd25),
-                             sum(pval.wd50$cvComp)/nrow(pval.wd50),
-                             sum(pval.we50$cvComp)/nrow(pval.we50))
 
   t.pcomp$sd.pval=c(sum(pval.actual$sdComp)/nrow(pval.actual),
                        sum(pval.noWinter$sdComp)/nrow(pval.noWinter),
@@ -1668,7 +1552,7 @@ for(y in 1:length(loopY)){
 
 # saving big loop's output since it takes a while to run
 yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
-#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvest_8.20.25.RData")
+#saveRDS(yearLoopOutput, file = "yearLoopOutput_harvest_9.23.25.RData")
 
 
 ```
@@ -1676,7 +1560,7 @@ yearLoopOutput=list(bpval.self.y,bpval.comp.y,grMetrics.y)
 ```{r year-loop-preload, fig.width=8, fig.height=8, fig.cap="Distribution of harvest across years in the creel data set. Different data reduction scenarios are noted with varying colors."}
 # first a couple exploratory plots of u distribution by year
 # reading in model object from above
-yearLoopOutput=readRDS("yearLoopOutput_harvest_8.20.25.RData")
+yearLoopOutput=readRDS("yearLoopOutput_harvest_9.23.25.RData")
 
 bpval.self.y=yearLoopOutput[[1]]
 bpval.self.y=bpval.self.y[!is.na(bpval.self.y$scenario),]
@@ -1691,18 +1575,18 @@ ggplot(ttrExp)+theme_classic()+
   labs(y="Density",x="Log(Annual Harvest per Acre)", fill="Scenario")
 ```
 
-```{r year-loop-model-fit, fig.cap="Comparison of coefficient of variations for bayesian p-values comparing the actual data to the simulated data for the creel year and data reduction scenario."}
+```{r year-loop-model-fit, fig.cap="Comparison of standard deviation for bayesian p-values comparing the actual data to the simulated data for the creel year and data reduction scenario."}
 
 ggplot(bpval.self.y)+theme_classic()+
-  geom_point(aes(x=year, y=coef.var.pval))+facet_wrap(~scenario)+
+  geom_point(aes(x=year, y=sd.pval))+facet_wrap(~scenario)+
   geom_hline(yintercept = c(0.9,0.5,0.1),color="red")+
   coord_cartesian(ylim=c(0,1))
 ```
 
-```{r yearLoopComparisonToActual, fig.cap="Comparison of the coeffienct of variations for bayesian p-values comparing the simulated data from each creel year and data reduction scenario to the actual data for that same creel year."}
+```{r yearLoopComparisonToActual, fig.cap="Comparison of the standard deviation for bayesian p-values comparing the simulated data from each creel year and data reduction scenario to the actual data for that same creel year."}
 
 ggplot(bpval.comp.y)+theme_classic()+
-  geom_point(aes(x=year, y=coef.var.pval))+facet_wrap(~scenario)+
+  geom_point(aes(x=year, y=sd.pval))+facet_wrap(~scenario)+
   geom_hline(yintercept = c(0.9,0.5,0.1),color="red")+
   coord_cartesian(ylim=c(0,1))
 ```
@@ -1927,22 +1811,22 @@ pars.a.lnorm=getSample(harv.actual)
 pars.a.gamma=getSample(harv.actual.gamma)
 
 set.seed(10)
-aComp.lnorm=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="actual"],rlnorm(n=length(ttrExp$total.harv[ttrExp$treat=="actual"]),
+aComp.lnorm=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="actual"],rlnorm(n=length(ttrExp$total.harv[ttrExp$treat=="actual"]),
                                                                     meanlog = median(pars.a.lnorm[,1]),
                                                                     sdlog = median(pars.a.lnorm[,2]))),
                  treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="actual"]))))
 
-aComp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="actual"]),
+aComp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="actual"]),
                                                                     shape = median(pars.a.gamma[,1]),
                                                                     rate = median(pars.a.gamma[,2]))),
                   treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="actual"]))))
 
 ln=ggplot(aComp.lnorm)+theme_classic()+
-  geom_density(aes(x=harv.acre, fill=treat),alpha=0.3)+
+  geom_density(aes(x=harv.hectare, fill=treat),alpha=0.3)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre",title = "Lognormal")+
   theme(legend.position = c(0.75,0.75))
 gma=ggplot(aComp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre, fill=treat),alpha=0.3)+
+  geom_density(aes(x=harv.hectare, fill=treat),alpha=0.3)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre",title = "Gamma")+
   theme(legend.position = c(0.75,0.75))
 ggarrange(ln,gma)
@@ -1959,52 +1843,52 @@ pars.wd25.gamma=getSample(harv.25wd.gamma)
 pars.wd50.gamma=getSample(harv.50wd.gamma)
 pars.we50.gamma=getSample(harv.50we.gamma)
 set.seed(10)
-aComp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="actual"]),
+aComp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="actual"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="actual"]),
                                                                     shape = median(pars.a.gamma[,1]),
                                                                     rate = median(pars.a.gamma[,2]))),
                   treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="actual"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="actual"]))))
-nwComp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="noWinter"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="noWinter"]),
+nwComp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="noWinter"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="noWinter"]),
                                                                       shape = median(pars.nw.gamma[,1]),
                                                                       rate = median(pars.nw.gamma[,2]))),
                   treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="noWinter"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="noWinter"]))))
 
-maComp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="mayAug"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="mayAug"]),
+maComp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="mayAug"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="mayAug"]),
                                                                     shape = median(pars.ma.gamma[,1]),
                                                                     rate = median(pars.ma.gamma[,2]))),
                   treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="mayAug"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="mayAug"]))))
 
-wd25Comp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="wd25"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="wd25"]),
+wd25Comp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="wd25"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="wd25"]),
                                                                     shape = median(pars.wd25.gamma[,1]),
                                                                     rate = median(pars.wd25.gamma[,2]))),
                     treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="wd25"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="wd25"]))))
 
-wd50Comp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="wd50"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="wd50"]),
+wd50Comp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="wd50"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="wd50"]),
                                                                     shape = median(pars.wd50.gamma[,1]),
                                                                     rate = median(pars.wd50.gamma[,2]))),
                     treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="wd50"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="wd50"]))))
 
-we50Comp.gamma=data.frame(harv.acre=c(ttrExp$total.harv[ttrExp$treat=="we50"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="we50"]),
+we50Comp.gamma=data.frame(harv.hectare=c(ttrExp$total.harv[ttrExp$treat=="we50"],rgamma(n=length(ttrExp$total.harv[ttrExp$treat=="we50"]),
                                                                     shape = median(pars.we50.gamma[,1]),
                                                                     rate = median(pars.we50.gamma[,2]))),
                     treat=c(rep("observed",length(ttrExp$total.harv[ttrExp$treat=="we50"])),rep("pred",length(ttrExp$total.harv[ttrExp$treat=="we50"]))))
 
 a.p.gamma=ggplot(aComp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre,fill=treat),alpha=0.2)+
+  geom_density(aes(x=harv.hectare,fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre", y="Density", title = "Actual", fill=element_blank())
 nw.p.gamma=ggplot(nwComp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre,fill=treat),alpha=0.2)+
+  geom_density(aes(x=harv.hectare,fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre", y="Density", title = "No Winter Data \n(April - October)", fill=element_blank())
 ma.p.gamma=ggplot(maComp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre,fill=treat),alpha=0.2)+
+  geom_density(aes(x=harv.hectare,fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre", y="Density", title = "May - August \nData Only", fill=element_blank())
 wd25.p.gamma=ggplot(wd25Comp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre,fill=treat),alpha=0.2)+
+  geom_density(aes(x=harv.hectare,fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre", y="Density", title = "25% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 wd50.p.gamma=ggplot(wd25Comp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre,fill=treat),alpha=0.2)+
+  geom_density(aes(x=harv.hectare,fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre", y="Density", title = "50% of Weekday \nCreel Visits/Month \nRemoved", fill=element_blank())
 we50.p.gamma=ggplot(we50Comp.gamma)+theme_classic()+
-  geom_density(aes(x=harv.acre,fill=treat),alpha=0.2)+
+  geom_density(aes(x=harv.hectare,fill=treat),alpha=0.2)+
   scale_fill_viridis_d()+labs(x="Annual Harvest per Acre", y="Density", title = "50% of Weekdend \nCreel Visits/Month \nRemoved", fill=element_blank())
 
 ggarrange(a.p.gamma,nw.p.gamma,ma.p.gamma,wd25.p.gamma,wd50.p.gamma,we50.p.gamma, common.legend = T)
@@ -2016,12 +1900,12 @@ Seems like the gamma models could be a potential alternative, the bayesian p val
 ```{r betaGRDiagnostics, eval=F, echo=T}
 ### MODEL CHECKNG ####
 
-gelmanDiagnostics(harv.actual.gamma) # 1.01 converged
-gelmanDiagnostics(harv.nw.gamma) # 1.01 converged
-gelmanDiagnostics(harv.ma.gamma) # 1.01 converged
-gelmanDiagnostics(harv.25wd.gamma) # 1.01 converged
-gelmanDiagnostics(harv.50wd.gamma) # 1.02 converged
-gelmanDiagnostics(harv.50we.gamma) # 1.01 converged
+gelmanDiagnostics(harv.actual.gamma) # converged
+gelmanDiagnostics(harv.nw.gamma) # converged
+gelmanDiagnostics(harv.ma.gamma) # not converged
+gelmanDiagnostics(harv.25wd.gamma) # converged
+gelmanDiagnostics(harv.50wd.gamma) # converged
+gelmanDiagnostics(harv.50we.gamma) # converged
 
 ```
 
@@ -2029,12 +1913,10 @@ gelmanDiagnostics(harv.50we.gamma) # 1.01 converged
 # bayesian p-value for each model
 # dataframe to hold output
 bpval.self.gamma=data.frame(scenario=c("Actual", "No Winter", "May-August","25% weeday removal","50% weekday removal","50% weekend removal"),
-                    coef.var.pval=NA,
                     sd.pval=NA)
 #### Pb ACTUAL ####
 pval.actual=data.frame(shape=rep(NA,nrow(pars.a.gamma)),
                        rate=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.a.gamma)){
@@ -2043,29 +1925,23 @@ for(i in 1:nrow(pars.a.gamma)){
                  rate = pars.a.gamma[i,2])
   pval.actual$shape[i]=pars.a.gamma[i,1]
   pval.actual$rate[i]=pars.a.gamma[i,2]
-  pval.actual$cv[i]=sd(tempdat)/mean(tempdat)
   pval.actual$sd[i]=sd(tempdat)
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.actual$cvExceed=0
 pval.actual$sdExceed=0
 
-actual.cv=sd(ttrExp$total.harv[ttrExp$treat=="actual"])/mean(ttrExp$total.harv[ttrExp$treat=="actual"])
 actual.sd=sd(ttrExp$total.harv[ttrExp$treat=="actual"])
 
-pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
 
-bpval.self.gamma$coef.var.pval[1]=sum(pval.actual$cvExceed==1)/nrow(pval.actual) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpval.self.gamma$sd.pval[1]=sum(pval.actual$sdExceed==1)/nrow(pval.actual) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 
 #### Pb NO WINTER ####
 pval.noWinter=data.frame(shape=rep(NA,nrow(pars.nw.gamma)),
                          rate=NA,
-                         cv=NA,
                          sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.nw.gamma)){
@@ -2074,28 +1950,22 @@ for(i in 1:nrow(pars.nw.gamma)){
                 rate = pars.nw.gamma[i,2])
   pval.noWinter$shape[i]=pars.nw.gamma[i,1]
   pval.noWinter$rate[i]=pars.nw.gamma[i,2]
-  pval.noWinter$cv[i]=sd(tempdat)/mean(tempdat)
   pval.noWinter$sd[i]=sd(tempdat)
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.noWinter$cvExceed=0
 pval.noWinter$sdExceed=0
 
-noWinter.cv=sd(ttrExp$total.harv[ttrExp$treat=="noWinter"])/mean(ttrExp$total.harv[ttrExp$treat=="noWinter"])
 noWinter.sd=sd(ttrExp$total.harv[ttrExp$treat=="noWinter"])
 
-pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
 pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
 
-bpval.self.gamma$coef.var.pval[2]=sum(pval.noWinter$cvExceed==1)/nrow(pval.noWinter) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpval.self.gamma$sd.pval[2]=sum(pval.noWinter$sdExceed==1)/nrow(pval.noWinter) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb MAYAUGUST ####
 pval.mayAug=data.frame(shape=rep(NA,nrow(pars.ma.gamma)),
                        rate=NA,
-                       cv=NA,
                        sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.ma.gamma)){
@@ -2104,28 +1974,22 @@ for(i in 1:nrow(pars.ma.gamma)){
                 rate = pars.ma.gamma[i,2])
   pval.mayAug$shape[i]=pars.ma.gamma[i,1]
   pval.mayAug$rate[i]=pars.ma.gamma[i,2]
-  pval.mayAug$cv[i]=sd(tempdat)/mean(tempdat)
   pval.mayAug$sd[i]=sd(tempdat)
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.mayAug$cvExceed=0
 pval.mayAug$sdExceed=0
 
-mayAug.cv=sd(ttrExp$total.harv[ttrExp$treat=="mayAug"])/mean(ttrExp$total.harv[ttrExp$treat=="mayAug"])
 mayAug.sd=sd(ttrExp$total.harv[ttrExp$treat=="mayAug"])
 
-pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
 pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
 
-bpval.self.gamma$coef.var.pval[3]=sum(pval.mayAug$cvExceed==1)/nrow(pval.mayAug) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpval.self.gamma$sd.pval[3]=sum(pval.mayAug$sdExceed==1)/nrow(pval.mayAug) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb WD25 ####
 pval.wd25=data.frame(shape=rep(NA,nrow(pars.wd25.gamma)),
                      rate=NA,
-                     cv=NA,
                      sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd25.gamma)){
@@ -2134,28 +1998,22 @@ for(i in 1:nrow(pars.wd25.gamma)){
                 rate = pars.wd25.gamma[i,2])
   pval.wd25$shape[i]=pars.wd25.gamma[i,1]
   pval.wd25$rate[i]=pars.wd25.gamma[i,2]
-  pval.wd25$cv[i]=sd(tempdat)/mean(tempdat)
   pval.wd25$sd[i]=sd(tempdat)
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.wd25$cvExceed=0
 pval.wd25$sdExceed=0
 
-wd25.cv=sd(ttrExp$total.harv[ttrExp$treat=="wd25"])/mean(ttrExp$total.harv[ttrExp$treat=="wd25"])
 wd25.sd=sd(ttrExp$total.harv[ttrExp$treat=="wd25"])
 
-pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
 pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
 
-bpval.self.gamma$coef.var.pval[4]=sum(pval.wd25$cvExceed==1)/nrow(pval.wd25) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpval.self.gamma$sd.pval[4]=sum(pval.wd25$sdExceed==1)/nrow(pval.wd25) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb WD50 ####
 pval.wd50=data.frame(shape=rep(NA,nrow(pars.wd50.gamma)),
                      rate=NA,
-                     cv=NA,
                      sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.wd50.gamma)){
@@ -2164,28 +2022,22 @@ for(i in 1:nrow(pars.wd50.gamma)){
                 rate = pars.wd50.gamma[i,2])
   pval.wd50$shape[i]=pars.wd50.gamma[i,1]
   pval.wd50$rate[i]=pars.wd50.gamma[i,2]
-  pval.wd50$cv[i]=sd(tempdat)/mean(tempdat)
   pval.wd50$sd[i]=sd(tempdat)
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.wd50$cvExceed=0
 pval.wd50$sdExceed=0
 
-wd50.cv=sd(ttrExp$total.harv[ttrExp$treat=="wd50"])/mean(ttrExp$total.harv[ttrExp$treat=="wd50"])
 wd50.sd=sd(ttrExp$total.harv[ttrExp$treat=="wd50"])
 
-pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
 pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
 
-bpval.self.gamma$coef.var.pval[5]=sum(pval.wd50$cvExceed==1)/nrow(pval.wd50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpval.self.gamma$sd.pval[5]=sum(pval.wd50$sdExceed==1)/nrow(pval.wd50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
 #### Pb WE50 ####
 pval.we50=data.frame(shape=rep(NA,nrow(pars.we50.gamma)),
                      rate=NA,
-                     cv=NA,
                      sd=NA)
 set.seed(10)
 for(i in 1:nrow(pars.we50.gamma)){
@@ -2194,25 +2046,20 @@ for(i in 1:nrow(pars.we50.gamma)){
                 rate = pars.we50.gamma[i,2])
   pval.we50$shape[i]=pars.we50.gamma[i,1]
   pval.we50$rate[i]=pars.we50.gamma[i,2]
-  pval.we50$cv[i]=sd(tempdat)/mean(tempdat)
   pval.we50$sd[i]=sd(tempdat)
 }
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.we50$cvExceed=0
 pval.we50$sdExceed=0
 
-we50.cv=sd(ttrExp$total.harv[ttrExp$treat=="we50"])/mean(ttrExp$total.harv[ttrExp$treat=="we50"])
 we50.sd=sd(ttrExp$total.harv[ttrExp$treat=="we50"])
 
-pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
 
-bpval.self.gamma$coef.var.pval[6]=sum(pval.we50$cvExceed==1)/nrow(pval.we50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 bpval.self.gamma$sd.pval[6]=sum(pval.we50$sdExceed==1)/nrow(pval.we50) # if this value is < 0.1 for >0.9 that would suggest model is not fitting well. 0.5 is ideal
 
-kable(bpval.self.gamma, digits = 3, col.names = c("Scenario", "CV p-value","SD p-value"), align="lcc",caption = "Bayesian p-values for a gamma distributed model. Each p-value describes whether or not there is a significant difference between data generated by the fitted model and the actual data for that scenario. Two metrics are assessed here, coefficient of variation (CV) and standard devidation (SD).")
+kable(bpval.self.gamma, digits = 3, col.names = c("Scenario", "SD p-value"), align="lcc",caption = "Bayesian p-values for a gamma distributed model. Each p-value describes whether or not there is a significant difference between data generated by the fitted model and the actual data for that scenario. Standard devidation (SD) was the variance metric assessed here.")
 
 # ## p-value tests comparing the scenarios to actual to show that some scenarios approximate the actual quite well.
 # 
@@ -2364,7 +2211,6 @@ pars.we50=getSample(harv.50we)
 #### Pb ACTUAL ####
 pval.actual=data.frame(alpha=rep(NA,nrow(pars.a)),
                        beta=NA,
-                       cv=NA,
                        sd=NA,
                        med=NA,
                        kurt=NA,
@@ -2379,7 +2225,6 @@ for(i in 1:nrow(pars.a)){
                  sdlog = pars.a[i,2])
   pval.actual$alpha[i]=pars.a[i,1]
   pval.actual$beta[i]=pars.a[i,2]
-  pval.actual$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.actual$sd[i]=sd(log(tempdat))
   pval.actual$med[i]=median(log(tempdat))
   pval.actual$kurt[i]=kurtosis(log(tempdat))
@@ -2395,7 +2240,6 @@ for(i in 1:nrow(pars.a)){
 
 # now calculate the number of times the test statistic exceeds that of the real data
 
-pval.actual$cvExceed=0
 pval.actual$sdExceed=0
 pval.actual$medExceed=0
 pval.actual$kurtExceed=0
@@ -2403,14 +2247,12 @@ pval.actual$x2SigDiff=0
 pval.actual$fStatExceed=0
 pval.actual$coverageExceed=0
 
-actual.cv=sd(log(modDat$total.harv[modDat$treat=="actual"]))/mean(log(modDat$total.harv[modDat$treat=="actual"]))
 actual.sd=sd(log(modDat$total.harv[modDat$treat=="actual"]))
 actual.med=median(log(modDat$total.harv[modDat$treat=="actual"]))
 actual.kurt=kurtosis(log(modDat$total.harv[modDat$treat=="actual"]))
 actual.x2=chisq.test(modDat$total.harv[modDat$treat=="actual"],p=modDat$total.harv[modDat$treat=="actual"],rescale.p = T)
 actual.f=var.test(log(modDat$total.harv[modDat$treat=="actual"]),log(modDat$total.harv[modDat$treat=="actual"]))
 
-pval.actual$cvExceed[pval.actual$cv>actual.cv]=1
 pval.actual$sdExceed[pval.actual$sd>actual.sd]=1
 pval.actual$medExceed[pval.actual$med>actual.med]=1
 pval.actual$kurtExceed[pval.actual$kurt>actual.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
@@ -2422,7 +2264,6 @@ pval.actual$coverageExceed[pval.actual$lcl<=mean(log(modDat$total.harv[modDat$tr
 #### Pb NoWinter ####
 pval.noWinter=data.frame(alpha=rep(NA,nrow(pars.nw)),
                          beta=NA,
-                         cv=NA,
                          sd=NA,
                          med=NA,
                          kurt=NA,
@@ -2437,7 +2278,6 @@ for(i in 1:nrow(pars.nw)){
                  sdlog = pars.nw[i,2])
   pval.noWinter$alpha[i]=pars.nw[i,1]
   pval.noWinter$beta[i]=pars.nw[i,2]
-  pval.noWinter$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.noWinter$sd[i]=sd(log(tempdat))
   pval.noWinter$med[i]=median(log(tempdat))
   pval.noWinter$kurt[i]=kurtosis(log(tempdat))
@@ -2452,7 +2292,6 @@ for(i in 1:nrow(pars.nw)){
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.noWinter$cvExceed=0
 pval.noWinter$sdExceed=0
 pval.noWinter$medExceed=0
 pval.noWinter$kurtExceed=0
@@ -2460,14 +2299,12 @@ pval.noWinter$x2SigDiff=0
 pval.noWinter$fStatExceed=0
 pval.noWinter$coverageExceed=0
 
-noWinter.cv=sd(log(modDat$total.harv[modDat$treat=="noWinter"]))/mean(log(modDat$total.harv[modDat$treat=="noWinter"]))
 noWinter.sd=sd(log(modDat$total.harv[modDat$treat=="noWinter"]))
 noWinter.med=median(log(modDat$total.harv[modDat$treat=="noWinter"]))
 noWinter.kurt=kurtosis(log(modDat$total.harv[modDat$treat=="noWinter"]))
 noWinter.x2=chisq.test(modDat$total.harv[modDat$treat=="noWinter"],p=modDat$total.harv[modDat$treat=="noWinter"],rescale.p = T)
 noWinter.f=var.test(log(modDat$total.harv[modDat$treat=="noWinter"]),log(modDat$total.harv[modDat$treat=="noWinter"]))
 
-pval.noWinter$cvExceed[pval.noWinter$cv>noWinter.cv]=1
 pval.noWinter$sdExceed[pval.noWinter$sd>noWinter.sd]=1
 pval.noWinter$medExceed[pval.noWinter$med>noWinter.med]=1
 pval.noWinter$kurtExceed[pval.noWinter$kurt>noWinter.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
@@ -2478,7 +2315,6 @@ pval.noWinter$coverageExceed[pval.noWinter$lcl<=mean(log(modDat$total.harv[modDa
 #### Pb MayAug ####
 pval.mayAug=data.frame(alpha=rep(NA,nrow(pars.ma)),
                        beta=NA,
-                       cv=NA,
                        sd=NA,
                        med=NA,
                        kurt=NA,
@@ -2493,7 +2329,6 @@ for(i in 1:nrow(pars.ma)){
                  sdlog = pars.ma[i,2])
   pval.mayAug$alpha[i]=pars.ma[i,1]
   pval.mayAug$beta[i]=pars.ma[i,2]
-  pval.mayAug$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.mayAug$sd[i]=sd(log(tempdat))
   pval.mayAug$med[i]=median(log(tempdat))
   pval.mayAug$kurt[i]=kurtosis(log(tempdat))
@@ -2508,7 +2343,6 @@ for(i in 1:nrow(pars.ma)){
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.mayAug$cvExceed=0
 pval.mayAug$sdExceed=0
 pval.mayAug$medExceed=0
 pval.mayAug$kurtExceed=0
@@ -2516,14 +2350,12 @@ pval.mayAug$x2SigDiff=0
 pval.mayAug$fStatExceed=0
 pval.mayAug$coverageExceed=0
 
-mayAug.cv=sd(log(modDat$total.harv[modDat$treat=="mayAug"]))/mean(log(modDat$total.harv[modDat$treat=="mayAug"]))
 mayAug.sd=sd(log(modDat$total.harv[modDat$treat=="mayAug"]))
 mayAug.med=median(log(modDat$total.harv[modDat$treat=="mayAug"]))
 mayAug.kurt=kurtosis(log(modDat$total.harv[modDat$treat=="mayAug"]))
 mayAug.x2=chisq.test(modDat$total.harv[modDat$treat=="mayAug"],p=modDat$total.harv[modDat$treat=="mayAug"],rescale.p = T)
 mayAug.f=var.test(log(modDat$total.harv[modDat$treat=="mayAug"]),log(modDat$total.harv[modDat$treat=="mayAug"]))
 
-pval.mayAug$cvExceed[pval.mayAug$cv>mayAug.cv]=1
 pval.mayAug$sdExceed[pval.mayAug$sd>mayAug.sd]=1
 pval.mayAug$medExceed[pval.mayAug$med>mayAug.med]=1
 pval.mayAug$kurtExceed[pval.mayAug$kurt>mayAug.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
@@ -2534,7 +2366,6 @@ pval.mayAug$coverageExceed[pval.mayAug$lcl<=mean(log(modDat$total.harv[modDat$tr
 #### Pb WD25 ####
 pval.wd25=data.frame(alpha=rep(NA,nrow(pars.wd25)),
                      beta=NA,
-                     cv=NA,
                      sd=NA,
                      med=NA,
                      kurt=NA,
@@ -2549,7 +2380,6 @@ for(i in 1:nrow(pars.wd25)){
                  sdlog = pars.wd25[i,2])
   pval.wd25$alpha[i]=pars.wd25[i,1]
   pval.wd25$beta[i]=pars.wd25[i,2]
-  pval.wd25$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.wd25$sd[i]=sd(log(tempdat))
   pval.wd25$med[i]=median(log(tempdat))
   pval.wd25$kurt[i]=kurtosis(log(tempdat))
@@ -2564,7 +2394,6 @@ for(i in 1:nrow(pars.wd25)){
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.wd25$cvExceed=0
 pval.wd25$sdExceed=0
 pval.wd25$medExceed=0
 pval.wd25$kurtExceed=0
@@ -2572,14 +2401,12 @@ pval.wd25$x2SigDiff=0
 pval.wd25$fStatExceed=0
 pval.wd25$coverageExceed=0
 
-wd25.cv=sd(log(modDat$total.harv[modDat$treat=="wd25"]))/mean(log(modDat$total.harv[modDat$treat=="wd25"]))
 wd25.sd=sd(log(modDat$total.harv[modDat$treat=="wd25"]))
 wd25.med=median(log(modDat$total.harv[modDat$treat=="wd25"]))
 wd25.kurt=kurtosis(log(modDat$total.harv[modDat$treat=="wd25"]))
 wd25.x2=chisq.test(modDat$total.harv[modDat$treat=="wd25"],p=modDat$total.harv[modDat$treat=="wd25"],rescale.p = T)
 wd25.f=var.test(log(modDat$total.harv[modDat$treat=="wd25"]),log(modDat$total.harv[modDat$treat=="wd25"]))
 
-pval.wd25$cvExceed[pval.wd25$cv>wd25.cv]=1
 pval.wd25$sdExceed[pval.wd25$sd>wd25.sd]=1
 pval.wd25$medExceed[pval.wd25$med>wd25.med]=1
 pval.wd25$kurtExceed[pval.wd25$kurt>wd25.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
@@ -2590,7 +2417,6 @@ pval.wd25$coverageExceed[pval.wd25$lcl<=mean(log(modDat$total.harv[modDat$treat=
 #### Pb WD50 ####
 pval.wd50=data.frame(alpha=rep(NA,nrow(pars.wd50)),
                      beta=NA,
-                     cv=NA,
                      sd=NA,
                      med=NA,
                      kurt=NA,
@@ -2605,7 +2431,6 @@ for(i in 1:nrow(pars.wd50)){
                  sdlog = pars.wd50[i,2])
   pval.wd50$alpha[i]=pars.wd50[i,1]
   pval.wd50$beta[i]=pars.wd50[i,2]
-  pval.wd50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.wd50$sd[i]=sd(log(tempdat))
   pval.wd50$med[i]=median(log(tempdat))
   pval.wd50$kurt[i]=kurtosis(log(tempdat))
@@ -2620,7 +2445,6 @@ for(i in 1:nrow(pars.wd50)){
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.wd50$cvExceed=0
 pval.wd50$sdExceed=0
 pval.wd50$medExceed=0
 pval.wd50$kurtExceed=0
@@ -2628,14 +2452,12 @@ pval.wd50$x2SigDiff=0
 pval.wd50$fStatExceed=0
 pval.wd50$coverageExceed=0
 
-wd50.cv=sd(log(modDat$total.harv[modDat$treat=="wd50"]))/mean(log(modDat$total.harv[modDat$treat=="wd50"]))
 wd50.sd=sd(log(modDat$total.harv[modDat$treat=="wd50"]))
 wd50.med=median(log(modDat$total.harv[modDat$treat=="wd50"]))
 wd50.kurt=kurtosis(log(modDat$total.harv[modDat$treat=="wd50"]))
 wd50.x2=chisq.test(modDat$total.harv[modDat$treat=="wd50"],p=modDat$total.harv[modDat$treat=="wd50"],rescale.p = T)
 wd50.f=var.test(log(modDat$total.harv[modDat$treat=="wd50"]),log(modDat$total.harv[modDat$treat=="wd50"]))
 
-pval.wd50$cvExceed[pval.wd50$cv>wd50.cv]=1
 pval.wd50$sdExceed[pval.wd50$sd>wd50.sd]=1
 pval.wd50$medExceed[pval.wd50$med>wd50.med]=1
 pval.wd50$kurtExceed[pval.wd50$kurt>wd50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
@@ -2646,7 +2468,6 @@ pval.wd50$coverageExceed[pval.wd50$lcl<=mean(log(modDat$total.harv[modDat$treat=
 #### Pb WE50 ####
 pval.we50=data.frame(alpha=rep(NA,nrow(pars.we50)),
                      beta=NA,
-                     cv=NA,
                      sd=NA,
                      med=NA,
                      kurt=NA,
@@ -2661,7 +2482,6 @@ for(i in 1:nrow(pars.we50)){
                  sdlog = pars.we50[i,2])
   pval.we50$alpha[i]=pars.we50[i,1]
   pval.we50$beta[i]=pars.we50[i,2]
-  pval.we50$cv[i]=sd(log(tempdat))/mean(log(tempdat))
   pval.we50$sd[i]=sd(log(tempdat))
   pval.we50$med[i]=median(log(tempdat))
   pval.we50$kurt[i]=kurtosis(log(tempdat))
@@ -2676,7 +2496,6 @@ for(i in 1:nrow(pars.we50)){
 
 # now calculate the number of times the cv or sd exceeds that of the real data
 
-pval.we50$cvExceed=0
 pval.we50$sdExceed=0
 pval.we50$medExceed=0
 pval.we50$kurtExceed=0
@@ -2684,14 +2503,12 @@ pval.we50$x2SigDiff=0
 pval.we50$fStatExceed=0
 pval.we50$coverageExceed=0
 
-we50.cv=sd(log(modDat$total.harv[modDat$treat=="we50"]))/mean(log(modDat$total.harv[modDat$treat=="we50"]))
 we50.sd=sd(log(modDat$total.harv[modDat$treat=="we50"]))
 we50.med=median(log(modDat$total.harv[modDat$treat=="we50"]))
 we50.kurt=kurtosis(log(modDat$total.harv[modDat$treat=="we50"]))
 we50.x2=chisq.test(modDat$total.harv[modDat$treat=="we50"],p=modDat$total.harv[modDat$treat=="we50"],rescale.p = T)
 we50.f=var.test(log(modDat$total.harv[modDat$treat=="we50"]),log(modDat$total.harv[modDat$treat=="we50"]))
 
-pval.we50$cvExceed[pval.we50$cv>we50.cv]=1
 pval.we50$sdExceed[pval.we50$sd>we50.sd]=1
 pval.we50$medExceed[pval.we50$med>we50.med]=1
 pval.we50$kurtExceed[pval.we50$kurt>we50.kurt]=1 # kurt value great that observed data means there are more outliers, or thicker tails than the observed data
@@ -2715,15 +2532,14 @@ pval.we50$coverageExceed[pval.we50$lcl<=mean(log(modDat$total.harv[modDat$treat=
 # making a list object with all the pval objects
 self.pvals=list(pval.actual, pval.noWinter, pval.mayAug, pval.wd25, pval.wd50, pval.we50)
 
-all.self.pvals=data.frame(dataSet=c(rep("actual",6),rep("noWinter",6),rep("mayAug",6),rep("wd25",6),rep("wd50",6),rep("we50",6)),
-                          measure=rep(c("cv","sd","med","kurt","x2Sig","f"),6),
+all.self.pvals=data.frame(dataSet=c(rep("actual",5),rep("noWinter",5),rep("mayAug",5),rep("wd25",5),rep("wd50",5),rep("we50",5)),
+                          measure=rep(c("sd","med","kurt","x2Sig","f"),6),
                           pval=NA)
 
 for(i in 1:length(self.pvals)){
   tp=self.pvals[[i]]
   datSet=unique(all.self.pvals$dataSet)[i]
   
-  all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="cv"]=sum(tp$cvExceed==1)/nrow(tp)
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="sd"]=sum(tp$sdExceed==1)/nrow(tp)
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="med"]=sum(tp$medExceed==1)/nrow(tp)
   all.self.pvals$pval[all.self.pvals$dataSet==datSet & all.self.pvals$measure=="kurt"]=sum(tp$kurtExceed==1)/nrow(tp)

@@ -10,7 +10,7 @@ setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 
 expR=readRDS('yearLoopOutput_explRate_8.19.25.RData')
 harvR=readRDS('yearLoopOutput_harvestR_8.20.25.RData')
-eff=readRDS('yearLoopOutput_effort_8.20.25.RData')
+eff=readRDS('yearLoopOutput_effort_9.23.25.RData')
 catch=readRDS('yearLoopOutput_walleyecatch_8.19.25.RData')
 hrv=readRDS('yearLoopOutput_harvest_8.20.25.RData')
 
