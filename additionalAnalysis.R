@@ -4,7 +4,7 @@
 # this script is set up to work off the output of the rmd files that hold the main analysis
 
 # saving ttrExp object from each script to make the load ins easier later on
-# saveRDS(ttrExp, 'exploitationRate_ttrExp.RData')
+#saveRDS(ttrExp, 'exploitationRate_ttrExp.RData')
 #saveRDS(ttrExp, 'harvestRate_ttrExp.RData')
 #saveRDS(ttrExp, 'harvest_ttrExp.RData')
 #saveRDS(ttrExp, 'catch_ttrExp.RData')
@@ -330,36 +330,36 @@ hp.nw=ggplot(widetrL.harv, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.harv,4),sep='='), x=7,y=2.5)+
-  annotate('text',label=paste('p-value',pv.harv.nw,sep='='), x=7,y=1)+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.harv,4),sep='='), x=17,y=6)+
+  annotate('text',label=paste('p-value',pv.harv.nw,sep='='), x=17,y=2)+
   labs(x="",y='No Winter', title = 'Harvest')
 hp.ma=ggplot(widetrL.harv, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.harv,4),sep='='), x=7,y=2.5)+
-  annotate('text',label=paste('p-value',pv.harv.ma,sep='='), x=7,y=1)+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.harv,4),sep='='), x=17,y=6)+
+  annotate('text',label=paste('p-value',pv.harv.ma,sep='='), x=17,y=2)+
   labs(x="",y='May - August')
 hp.wd25=ggplot(widetrL.harv, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.harv,4),sep='='), x=7,y=2.5)+
-  annotate('text',label=paste('p-value',pv.harv.wd25,sep='='), x=7,y=1)+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.harv,4),sep='='), x=17,y=6)+
+  annotate('text',label=paste('p-value',pv.harv.wd25,sep='='), x=17,y=2)+
   labs(x="",y='25% Weekday removed')
 hp.wd50=ggplot(widetrL.harv, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.harv,4),sep='='), x=7,y=2.5)+
-  annotate('text',label=paste('p-value',pv.harv.wd50,sep='='), x=7,y=1)+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.harv,4),sep='='), x=17,y=6)+
+  annotate('text',label=paste('p-value',pv.harv.wd50,sep='='), x=17,y=2)+
   labs(x="",y='50% Weekday removed')
 hp.we50=ggplot(widetrL.harv, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.harv,4),sep='='), x=7,y=2.5)+
-  annotate('text',label=paste('p-value',pv.harv.we50,sep='='), x=7,y=1)+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.harv,4),sep='='), x=17,y=6)+
+  annotate('text',label=paste('p-value',pv.harv.we50,sep='='), x=17,y=2)+
   labs(x="Full Creel",y='50% Weekend removed')
 
 h.plots=ggpubr::ggarrange(hp.nw,hp.ma,hp.wd25,hp.wd50,hp.we50, nrow = 5)
@@ -368,36 +368,36 @@ cp.nw=ggplot(widetrL.catch, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.catch,4),sep='='), x=25,y=7)+
-  annotate('text',label=paste('p-value',pv.catch.nw,sep='='), x=25,y=4)+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.catch,4),sep='='), x=45,y=20)+
+  annotate('text',label=paste('p-value',pv.catch.nw,sep='='), x=45,y=5)+
   labs(x="",y='No Winter', title = 'Catch')
 cp.ma=ggplot(widetrL.catch, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.catch,4),sep='='), x=25,y=7)+
-  annotate('text',label=paste('p-value',pv.catch.ma,sep='='), x=25,y=4)+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.catch,4),sep='='), x=45,y=20)+
+  annotate('text',label=paste('p-value',pv.catch.ma,sep='='), x=45,y=5)+
   labs(x="",y='May - August')
 cp.wd25=ggplot(widetrL.catch, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.catch,4),sep='='), x=25,y=7)+
-  annotate('text',label=paste('p-value',pv.catch.wd25,sep='='), x=25,y=4)+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.catch,4),sep='='), x=45,y=20)+
+  annotate('text',label=paste('p-value',pv.catch.wd25,sep='='), x=45,y=5)+
   labs(x="",y='25% Weekday removed')
 cp.wd50=ggplot(widetrL.catch, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.catch,4),sep='='), x=25,y=7)+
-  annotate('text',label=paste('p-value',pv.catch.wd50,sep='='), x=25,y=4)+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.catch,4),sep='='), x=45,y=20)+
+  annotate('text',label=paste('p-value',pv.catch.wd50,sep='='), x=45,y=5)+
   labs(x="",y='50% Weekday removed')
 cp.we50=ggplot(widetrL.catch, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.catch,4),sep='='), x=25,y=7)+
-  annotate('text',label=paste('p-value',pv.catch.we50,sep='='), x=25,y=4)+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.catch,4),sep='='), x=45,y=20)+
+  annotate('text',label=paste('p-value',pv.catch.we50,sep='='), x=45,y=5)+
   labs(x="Full Creel",y='50% Weekend removed')
 
 catch.plots=ggpubr::ggarrange(cp.nw,cp.ma,cp.wd25,cp.wd50,cp.we50, nrow = 5)
@@ -406,36 +406,36 @@ efp.nw=ggplot(widetrL.eff, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercefpt = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.eff,4),sep='='), x=1200,y=250)+
-  annotate('text',label=paste('p-value',pv.eff.nw,sep='='), x=1200,y=150)+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.eff,4),sep='='), x=2500,y=900)+
+  annotate('text',label=paste('p-value',pv.eff.nw,sep='='), x=2500,y=200)+
   labs(x="",y='No Winter', title = 'Effort')
 efp.ma=ggplot(widetrL.eff, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercefpt = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.eff,4),sep='='), x=1200,y=250)+
-  annotate('text',label=paste('p-value',pv.eff.ma,sep='='), x=1200,y=150)+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.eff,4),sep='='), x=2500,y=900)+
+  annotate('text',label=paste('p-value',pv.eff.ma,sep='='), x=2500,y=200)+
   labs(x="",y='May - August')
 efp.wd25=ggplot(widetrL.eff, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercefpt = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.eff,4),sep='='), x=1200,y=250)+
-  annotate('text',label=paste('p-value',pv.eff.wd25,sep='='), x=1200,y=150)+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.eff,4),sep='='), x=2500,y=900)+
+  annotate('text',label=paste('p-value',pv.eff.wd25,sep='='), x=2500,y=200)+
   labs(x="",y='25% Weekday removed')
 efp.wd50=ggplot(widetrL.eff, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercefpt = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.eff,4),sep='='), x=1200,y=250)+
-  annotate('text',label=paste('p-value',pv.eff.wd50,sep='='), x=1200,y=150)+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.eff,4),sep='='), x=2500,y=900)+
+  annotate('text',label=paste('p-value',pv.eff.wd50,sep='='), x=2500,y=200)+
   labs(x="",y='50% Weekday removed')
 efp.we50=ggplot(widetrL.eff, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercefpt = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.eff,4),sep='='), x=1200,y=250)+
-  annotate('text',label=paste('p-value',pv.eff.we50,sep='='), x=1200,y=150)+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.eff,4),sep='='), x=2500,y=900)+
+  annotate('text',label=paste('p-value',pv.eff.we50,sep='='), x=2500,y=200)+
   labs(x="Full Creel",y='50% Weekend removed')
 
 effort.plots=ggpubr::ggarrange(efp.nw,efp.ma,efp.wd25,efp.wd50,efp.we50, nrow = 5)
@@ -705,24 +705,24 @@ d.all.sum=d.all%>%
             min=min(measure.normed,na.rm = T),
             sd=sd(measure.normed,na.rm=T))
 
-ggplot(d.exp)+theme_classic()+
-  geom_pointrange(aes(x=treat, y=mean(exp.rate)/mean(exp.rate[treat=='actual']), 
-                      ymin=quantile(exp.rate,probs=c(0.025),digits=2)/mean(exp.rate[treat=='actual']), 
-                      ymax=quantile(exp.rate,probs=c(0.975),digits=2)/mean(exp.rate[treat=='actual']),color=treat))
-
-ggplot(d.exp)+theme_classic()+
-  geom_pointrange(aes(x=treat, y=mean(exp.rate/0.014), 
-                      ymin=quantile(exp.rate/0.014,probs=c(0.025),digits=2), 
-                      ymax=quantile(exp.rate/0.014,probs=c(0.975),digits=2),color=treat))
-
-ggplot(d.all)+theme_classic()+
-  geom_pointrange(aes(x=metric,y=mean(measure.normed,na.rm=T),
-                      ymin=quantile(measure.normed, probs=0.025,digits=2,na.rm=T),
-                      ymax=quantile(measure.normed, probs=0.975,digits=2,na.rm=T),
-                      color=treat), position = position_dodge(width=0.3))+
-  scale_y_continuous(limits = c(0,15))+
-  scale_color_viridis_d()+
-  labs(y='Normalized Creel Measure',x='Creel Metric', color='Data Set')
+# ggplot(d.exp)+theme_classic()+
+#   geom_pointrange(aes(x=treat, y=mean(exp.rate)/mean(exp.rate[treat=='actual']), 
+#                       ymin=quantile(exp.rate,probs=c(0.025),digits=2)/mean(exp.rate[treat=='actual']), 
+#                       ymax=quantile(exp.rate,probs=c(0.975),digits=2)/mean(exp.rate[treat=='actual']),color=treat))
+# 
+# ggplot(d.exp)+theme_classic()+
+#   geom_pointrange(aes(x=treat, y=mean(exp.rate/0.014), 
+#                       ymin=quantile(exp.rate/0.014,probs=c(0.025),digits=2), 
+#                       ymax=quantile(exp.rate/0.014,probs=c(0.975),digits=2),color=treat))
+# 
+# ggplot(d.all)+theme_classic()+
+#   geom_pointrange(aes(x=metric,y=mean(measure.normed,na.rm=T),
+#                       ymin=quantile(measure.normed, probs=0.025,digits=2,na.rm=T),
+#                       ymax=quantile(measure.normed, probs=0.975,digits=2,na.rm=T),
+#                       color=treat), position = position_dodge(width=0.3))+
+#   scale_y_continuous(limits = c(0,15))+
+#   scale_color_viridis_d()+
+#   labs(y='Normalized Creel Measure',x='Creel Metric', color='Data Set')
 
 ggplot(d.all.sum)+theme_classic()+
   geom_pointrange(aes(x=metric,y=mu,

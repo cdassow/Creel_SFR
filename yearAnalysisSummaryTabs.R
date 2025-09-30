@@ -59,11 +59,11 @@ metric=c(rep('expR',nrow(bpval.self.y.expR)),
          rep('catch',nrow(bpval.self.y.catch)),
          rep('hrv',nrow(bpval.self.y.hrv)))
 global.bpval.self.y=as.data.frame(cbind(metric,
-                                        rbind(bpval.self.y.expR,
-                                              bpval.self.y.harvR,
-                                              bpval.self.y.eff,
-                                              bpval.self.y.catch,
-                                              bpval.self.y.hrv)))
+                                        rbind(bpval.self.y.expR[c('year','scenario','sd.pval')],
+                                              bpval.self.y.harvR[c('year','scenario','sd.pval')],
+                                              bpval.self.y.eff[c('year','scenario','sd.pval')],
+                                              bpval.self.y.catch[c('year','scenario','sd.pval')],
+                                              bpval.self.y.hrv[c('year','scenario','sd.pval')])))
 
 metric=c(rep('expR',nrow(bpval.comp.y.expR)),
          rep('harvR',nrow(bpval.comp.y.harvR)),
@@ -71,11 +71,11 @@ metric=c(rep('expR',nrow(bpval.comp.y.expR)),
          rep('catch',nrow(bpval.comp.y.catch)),
          rep('hrv',nrow(bpval.comp.y.hrv)))
 global.bpval.comp.y=as.data.frame(cbind(metric,
-                                        rbind(bpval.comp.y.expR,
-                                              bpval.comp.y.harvR,
-                                              bpval.comp.y.eff,
-                                              bpval.comp.y.catch,
-                                              bpval.comp.y.hrv)))
+                                        rbind(bpval.comp.y.expR[c('year','scenario','sd.pval')],
+                                              bpval.comp.y.harvR[c('year','scenario','sd.pval')],
+                                              bpval.comp.y.eff[c('year','scenario','sd.pval')],
+                                              bpval.comp.y.catch[c('year','scenario','sd.pval')],
+                                              bpval.comp.y.hrv[c('year','scenario','sd.pval')])))
 metric=c(rep('expR',nrow(grMetrics.y.expR)),
          rep('harvR',nrow(grMetrics.y.harvR)),
          rep('eff',nrow(grMetrics.y.eff)),
@@ -92,20 +92,14 @@ global.grMetrics.y=global.grMetrics.y[!is.na(global.grMetrics.y$gr.prsf),]
 # summary tables
 selfCompTabl=global.bpval.self.y%>%
   group_by(metric,scenario)%>%
-  summarise(percNONsig.cv=(sum(coef.var.pval>=0.1 & coef.var.pval<=0.9)/n())*100,
-            percNONsig.sd=(sum(sd.pval>=0.1 & sd.pval<=0.9)/n())*100)
+  summarise(percNONsig.sd=(sum(sd.pval>=0.1 & sd.pval<=0.9)/n())*100)
 wideSelfCompTab.sd=pivot_wider(selfCompTabl,
                                  id_cols = scenario,
                                  names_from = metric,
                                  values_from = percNONsig.sd)
 actualCompTabl=global.bpval.comp.y%>%
   group_by(metric,scenario)%>%
-  summarise(percNONsig.cv=(sum(coef.var.pval>=0.1 & coef.var.pval<=0.9)/n())*100,
-            percNONsig.sd=(sum(sd.pval>=0.1 & sd.pval<=0.9)/n())*100)
-wideActualCompTab.cv=pivot_wider(actualCompTabl,
-                              id_cols = scenario,
-                              names_from = metric,
-                              values_from = percNONsig.cv)
+  summarise(percNONsig.sd=(sum(sd.pval>=0.1 & sd.pval<=0.9)/n())*100)
 wideActualCompTab.sd=pivot_wider(actualCompTabl,
                                  id_cols = scenario,
                                  names_from = metric,
