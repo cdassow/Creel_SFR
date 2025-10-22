@@ -2,7 +2,9 @@
 ## CJD 7.22.25
 
 # this script is set up to work off the output of the rmd files that hold the main analysis
+library(tidyverse)
 
+setwd("C:/Users/dassocju/Documents/OAS_git_repos/Creel_SFR")
 # saving ttrExp object from each script to make the load ins easier later on
 #saveRDS(ttrExp, 'exploitationRate_ttrExp.RData')
 #saveRDS(ttrExp, 'harvestRate_ttrExp.RData')
@@ -252,35 +254,35 @@ ep.nw=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_noWinter))+theme_clas
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.exp,4),sep='='), x=0.3,y=0.1)+
+  annotate('text',label=paste('NRMSE',signif(nw.rmse.exp,4),sep='='), x=0.3,y=0.1)+
   annotate('text',label=paste('p-value',pv.exp.nw,sep='='), x=0.3,y=0.05)+
   labs(x="",y='No Winter', title = 'Exploitation Rate')
 ep.ma=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_mayAug))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.exp,4),sep='='), x=0.3,y=0.1)+
+  annotate('text',label=paste('NRMSE',signif(ma.rmse.exp,4),sep='='), x=0.3,y=0.1)+
   annotate('text',label=paste('p-value',pv.exp.ma,sep='='), x=0.3,y=0.05)+
   labs(x="",y='May - August')
 ep.wd25=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_wd25))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.exp,4),sep='='), x=0.3,y=0.1)+
+  annotate('text',label=paste('NRMSE',signif(wd25.rmse.exp,4),sep='='), x=0.3,y=0.1)+
   annotate('text',label=paste('p-value',pv.exp.wd25,sep='='), x=0.3,y=0.05)+
   labs(x="",y='25% Weekday removed')
 ep.wd50=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_wd50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.exp,4),sep='='), x=0.3,y=0.1)+
+  annotate('text',label=paste('NRMSE',signif(wd50.rmse.exp,4),sep='='), x=0.3,y=0.1)+
   annotate('text',label=paste('p-value',pv.exp.wd50,sep='='), x=0.3,y=0.05)+
   labs(x="",y='50% Weekday removed')
 ep.we50=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_we50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.exp,4),sep='='), x=0.3,y=0.1)+
+  annotate('text',label=paste('NRMSE',signif(we50.rmse.exp,4),sep='='), x=0.3,y=0.1)+
   annotate('text',label=paste('p-value',pv.exp.we50,sep='='), x=0.3,y=0.05)+
   labs(x="Full Creel",y='50% Weekend removed')
 
@@ -405,35 +407,35 @@ catch.plots=ggpubr::ggarrange(cp.nw,cp.ma,cp.wd25,cp.wd50,cp.we50, nrow = 5)
 efp.nw=ggplot(widetrL.eff, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
-  geom_abline(slope = 1, intercefpt = 0)+
+  geom_abline(slope = 1, intercept = 0)+
   annotate('text',label=paste('RMSE',signif(nw.rmse.eff,4),sep='='), x=2500,y=900)+
   annotate('text',label=paste('p-value',pv.eff.nw,sep='='), x=2500,y=200)+
   labs(x="",y='No Winter', title = 'Effort')
 efp.ma=ggplot(widetrL.eff, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
-  geom_abline(slope = 1, intercefpt = 0)+
+  geom_abline(slope = 1, intercept = 0)+
   annotate('text',label=paste('RMSE',signif(ma.rmse.eff,4),sep='='), x=2500,y=900)+
   annotate('text',label=paste('p-value',pv.eff.ma,sep='='), x=2500,y=200)+
   labs(x="",y='May - August')
 efp.wd25=ggplot(widetrL.eff, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
-  geom_abline(slope = 1, intercefpt = 0)+
+  geom_abline(slope = 1, intercept = 0)+
   annotate('text',label=paste('RMSE',signif(wd25.rmse.eff,4),sep='='), x=2500,y=900)+
   annotate('text',label=paste('p-value',pv.eff.wd25,sep='='), x=2500,y=200)+
   labs(x="",y='25% Weekday removed')
 efp.wd50=ggplot(widetrL.eff, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
-  geom_abline(slope = 1, intercefpt = 0)+
+  geom_abline(slope = 1, intercept = 0)+
   annotate('text',label=paste('RMSE',signif(wd50.rmse.eff,4),sep='='), x=2500,y=900)+
   annotate('text',label=paste('p-value',pv.eff.wd50,sep='='), x=2500,y=200)+
   labs(x="",y='50% Weekday removed')
 efp.we50=ggplot(widetrL.eff, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
-  geom_abline(slope = 1, intercefpt = 0)+
+  geom_abline(slope = 1, intercept = 0)+
   annotate('text',label=paste('RMSE',signif(we50.rmse.eff,4),sep='='), x=2500,y=900)+
   annotate('text',label=paste('p-value',pv.eff.we50,sep='='), x=2500,y=200)+
   labs(x="Full Creel",y='50% Weekend removed')
@@ -523,13 +525,6 @@ widetrL.0$mayAug[is.na(widetrL.0$mayAug)]=0
 
 
 # rmse, samples sizes are different after accounting for NAs and 0s for each scenario, then they should be standardized.
-nw.rmse=sqrt(mean((widetrL.0$noWinter-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$noWinter))
-ma.rmse=sqrt(mean((widetrL.0$mayAug-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$mayAug))
-wd25.rmse=sqrt(mean((widetrL.0$wd25-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$wd25))
-wd50.rmse=sqrt(mean((widetrL.0$wd50-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$wd50))
-we50.rmse=sqrt(mean((widetrL.0$we50-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$we50))
-rmse=sqrt(mean((widetrL.0$actual-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$actual))
-
 nw.rmse.catch=sqrt(mean((widetrL.0$noWinter-widetrL.0$actual)^2,na.rm = T))
 ma.rmse.catch=sqrt(mean((widetrL.0$mayAug-widetrL.0$actual)^2,na.rm = T))
 wd25.rmse.catch=sqrt(mean((widetrL.0$wd25-widetrL.0$actual)^2,na.rm = T))
@@ -568,13 +563,6 @@ widetrL.0$actual[is.na(widetrL.0$mayAug)] # just checking on the last 7 mayAugs 
 widetrL.0$mayAug[is.na(widetrL.0$mayAug)]=0
 
 # rmse, samples sizes are different after accounting for NAs and 0s for each scenario, then they should be standardized.
-nw.rmse=sqrt(mean((widetrL.0$noWinter-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$noWinter))
-ma.rmse=sqrt(mean((widetrL.0$mayAug-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$mayAug))
-wd25.rmse=sqrt(mean((widetrL.0$wd25-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$wd25))
-wd50.rmse=sqrt(mean((widetrL.0$wd50-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$wd50))
-we50.rmse=sqrt(mean((widetrL.0$we50-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$we50))
-rmse=sqrt(mean((widetrL.0$actual-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$actual))
-
 nw.rmse.harv=sqrt(mean((widetrL.0$noWinter-widetrL.0$actual)^2,na.rm = T))
 ma.rmse.harv=sqrt(mean((widetrL.0$mayAug-widetrL.0$actual)^2,na.rm = T))
 wd25.rmse.harv=sqrt(mean((widetrL.0$wd25-widetrL.0$actual)^2,na.rm = T))
@@ -611,13 +599,6 @@ widetrL.0=widetrL.0[widetrL.0$survey.seq.no!=515094142,]
 
 
 # rmse, samples sizes are different after accounting for NAs and 0s for each scenario, then they should be standardized.
-nw.rmse=sqrt(mean((widetrL.0$meanHarvR_noWinter-widetrL.0$meanHarvR_actual)^2,na.rm = T))/sum(!is.na(widetrL.0$meanHarvR_noWinter))
-ma.rmse=sqrt(mean((widetrL.0$meanHarvR_mayAug-widetrL.0$meanHarvR_actual)^2,na.rm = T))/sum(!is.na(widetrL.0$meanHarvR_mayAug))
-wd25.rmse=sqrt(mean((widetrL.0$meanHarvR_wd25-widetrL.0$meanHarvR_actual)^2,na.rm = T))/sum(!is.na(widetrL.0$meanHarvR_wd25))
-wd50.rmse=sqrt(mean((widetrL.0$meanHarvR_wd50-widetrL.0$meanHarvR_actual)^2,na.rm = T))/sum(!is.na(widetrL.0$meanHarvR_wd50))
-we50.rmse=sqrt(mean((widetrL.0$meanHarvR_we50-widetrL.0$meanHarvR_actual)^2,na.rm = T))/sum(!is.na(widetrL.0$meanHarvR_we50))
-rmse=sqrt(mean((widetrL.0$meanHarvR_actual-widetrL.0$meanHarvR_actual)^2,na.rm = T))/sum(!is.na(widetrL.0$meanHarvR_actual))
-
 nw.rmse.harvR=sqrt(mean((widetrL.0$meanHarvR_noWinter-widetrL.0$meanHarvR_actual)^2,na.rm = T))
 ma.rmse.harvR=sqrt(mean((widetrL.0$meanHarvR_mayAug-widetrL.0$meanHarvR_actual)^2,na.rm = T))
 wd25.rmse.harvR=sqrt(mean((widetrL.0$meanHarvR_wd25-widetrL.0$meanHarvR_actual)^2,na.rm = T))
@@ -644,13 +625,6 @@ widetrL.0$noWinter[is.na(widetrL.0$noWinter)]=0
 widetrL.0$mayAug[is.na(widetrL.0$mayAug)]=0
 
 # rmse, samples sizes are different after accounting for NAs and 0s for each scenario, then they should be standardized.
-nw.rmse=sqrt(mean((widetrL.0$noWinter-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$noWinter))
-ma.rmse=sqrt(mean((widetrL.0$mayAug-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$mayAug))
-wd25.rmse=sqrt(mean((widetrL.0$wd25-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$wd25))
-wd50.rmse=sqrt(mean((widetrL.0$wd50-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$wd50))
-we50.rmse=sqrt(mean((widetrL.0$we50-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$we50))
-rmse=sqrt(mean((widetrL.0$actual-widetrL.0$actual)^2,na.rm = T))/sum(!is.na(widetrL.0$actual))
-
 nw.rmse.eff=sqrt(mean((widetrL.0$noWinter-widetrL.0$actual)^2,na.rm = T))
 ma.rmse.eff=sqrt(mean((widetrL.0$mayAug-widetrL.0$actual)^2,na.rm = T))
 wd25.rmse.eff=sqrt(mean((widetrL.0$wd25-widetrL.0$actual)^2,na.rm = T))
