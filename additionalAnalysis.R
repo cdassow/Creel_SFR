@@ -252,193 +252,193 @@ pv.eff.we50=signif(summary(lm.eff.we50)$coefficients[2,4],3)
 
 ep.nw=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_noWinter))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('NRMSE',signif(nw.rmse.exp,4),sep='='), x=0.3,y=0.1)+
-  annotate('text',label=paste('p-value',pv.exp.nw,sep='='), x=0.3,y=0.05)+
+  coord_cartesian(ylim = c(0,0.4),xlim = c(0,0.4))+
+  annotate('text',label=paste('NRMSE',signif(nw.rmse.exp,3),sep='='), x=0.25,y=0.05)+
   labs(x="",y='No Winter', title = 'Exploitation Rate')
 ep.ma=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_mayAug))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('NRMSE',signif(ma.rmse.exp,4),sep='='), x=0.3,y=0.1)+
-  annotate('text',label=paste('p-value',pv.exp.ma,sep='='), x=0.3,y=0.05)+
+  coord_cartesian(ylim = c(0,0.4),xlim = c(0,0.4))+
+  annotate('text',label=paste('NRMSE',signif(ma.rmse.exp,3),sep='='), x=0.25,y=0.05)+
   labs(x="",y='May - August')
 ep.wd25=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_wd25))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('NRMSE',signif(wd25.rmse.exp,4),sep='='), x=0.3,y=0.1)+
-  annotate('text',label=paste('p-value',pv.exp.wd25,sep='='), x=0.3,y=0.05)+
-  labs(x="",y='25% Weekday removed')
+  coord_cartesian(ylim = c(0,0.4),xlim = c(0,0.4))+
+  annotate('text',label=paste('NRMSE',signif(wd25.rmse.exp,3),sep='='), x=0.25,y=0.05)+
+  labs(x="",y='25% Weekday\n removed')
 ep.wd50=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_wd50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('NRMSE',signif(wd50.rmse.exp,4),sep='='), x=0.3,y=0.1)+
-  annotate('text',label=paste('p-value',pv.exp.wd50,sep='='), x=0.3,y=0.05)+
-  labs(x="",y='50% Weekday removed')
+  coord_cartesian(ylim = c(0,0.4),xlim = c(0,0.4))+
+  annotate('text',label=paste('NRMSE',signif(wd50.rmse.exp,3),sep='='), x=0.25,y=0.05)+
+  labs(x="",y='50% Weekday\n removed')
 ep.we50=ggplot(widetrL.exp, aes(x=exp.rate_actual,y=exp.rate_we50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('NRMSE',signif(we50.rmse.exp,4),sep='='), x=0.3,y=0.1)+
-  annotate('text',label=paste('p-value',pv.exp.we50,sep='='), x=0.3,y=0.05)+
-  labs(x="Full Creel",y='50% Weekend removed')
+  coord_cartesian(ylim = c(0,0.4),xlim = c(0,0.4))+
+  annotate('text',label=paste('NRMSE',signif(we50.rmse.exp,3),sep='='), x=0.25,y=0.05)+
+  labs(x="Full Creel",y='50% Weekend\n removed')
 
 e.plots=ggpubr::ggarrange(ep.nw,ep.ma,ep.wd25,ep.wd50,ep.we50, nrow = 5)
 
 
 hrp.nw=ggplot(widetrL.harvR, aes(x=meanHarvR_actual,y=meanHarvR_noWinter))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.harvR,4),sep='='), x=0.4,y=0.15)+
-  annotate('text',label=paste('p-value',pv.harvR.nw,sep='='), x=0.4,y=0.05)+
-  labs(x="",y='No Winter', title = 'Harvest Rate')
+  coord_cartesian(ylim = c(0,0.6),xlim = c(0,0.6))+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.harvR,3),sep='='), x=0.4,y=0.1)+
+  labs(x="",y='', title = 'Harvest Rate')
 hrp.ma=ggplot(widetrL.harvR, aes(x=meanHarvR_actual,y=meanHarvR_mayAug))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.harvR,4),sep='='), x=0.4,y=0.15)+
-  annotate('text',label=paste('p-value',pv.harvR.ma,sep='='), x=0.4,y=0.05)+
-  labs(x="",y='May - August')
+  coord_cartesian(ylim = c(0,0.6),xlim = c(0,0.6))+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.harvR,3),sep='='), x=0.4,y=0.1)+
+  labs(x="",y='')
 hrp.wd25=ggplot(widetrL.harvR, aes(x=meanHarvR_actual,y=meanHarvR_wd25))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.harvR,4),sep='='), x=0.4,y=0.15)+
-  annotate('text',label=paste('p-value',pv.harvR.wd25,sep='='), x=0.4,y=0.05)+
-  labs(x="",y='25% Weekday removed')
+  coord_cartesian(ylim = c(0,0.6),xlim = c(0,0.6))+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.harvR,3),sep='='), x=0.4,y=0.1)+
+  labs(x="",y='')
 hrp.wd50=ggplot(widetrL.harvR, aes(x=meanHarvR_actual,y=meanHarvR_wd50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.harvR,4),sep='='), x=0.4,y=0.15)+
-  annotate('text',label=paste('p-value',pv.harvR.wd50,sep='='), x=0.4,y=0.05)+
-  labs(x="",y='50% Weekday removed')
+  coord_cartesian(ylim = c(0,0.6),xlim = c(0,0.6))+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.harvR,3),sep='='), x=0.4,y=0.1)+
+  labs(x="",y='')
 hrp.we50=ggplot(widetrL.harvR, aes(x=meanHarvR_actual,y=meanHarvR_we50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.harvR,4),sep='='), x=0.4,y=0.15)+
-  annotate('text',label=paste('p-value',pv.harvR.we50,sep='='), x=0.4,y=0.05)+
-  labs(x="Full Creel",y='50% Weekend removed')
+  coord_cartesian(ylim = c(0,0.6),xlim = c(0,0.6))+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.harvR,3),sep='='), x=0.4,y=0.1)+
+  labs(x="Full Creel",y='')
 
 hr.plots=ggpubr::ggarrange(hrp.nw,hrp.ma,hrp.wd25,hrp.wd50,hrp.we50, nrow = 5)
 
 
 hp.nw=ggplot(widetrL.harv, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.harv,4),sep='='), x=17,y=6)+
-  annotate('text',label=paste('p-value',pv.harv.nw,sep='='), x=17,y=2)+
-  labs(x="",y='No Winter', title = 'Harvest')
+  coord_cartesian(ylim = c(0,25),xlim = c(0,25))+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.harv,3),sep='='), x=17,y=4)+
+  labs(x="",y='', title = 'Harvest (Walleye/ha)')
 hp.ma=ggplot(widetrL.harv, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.harv,4),sep='='), x=17,y=6)+
-  annotate('text',label=paste('p-value',pv.harv.ma,sep='='), x=17,y=2)+
-  labs(x="",y='May - August')
+  coord_cartesian(ylim = c(0,25),xlim = c(0,25))+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.harv,3),sep='='), x=17,y=4)+
+  labs(x="",y='')
 hp.wd25=ggplot(widetrL.harv, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.harv,4),sep='='), x=17,y=6)+
-  annotate('text',label=paste('p-value',pv.harv.wd25,sep='='), x=17,y=2)+
-  labs(x="",y='25% Weekday removed')
+  coord_cartesian(ylim = c(0,25),xlim = c(0,25))+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.harv,3),sep='='), x=17,y=4)+
+  labs(x="",y='')
 hp.wd50=ggplot(widetrL.harv, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.harv,4),sep='='), x=17,y=6)+
-  annotate('text',label=paste('p-value',pv.harv.wd50,sep='='), x=17,y=2)+
-  labs(x="",y='50% Weekday removed')
+  coord_cartesian(ylim = c(0,25),xlim = c(0,25))+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.harv,3),sep='='), x=17,y=4)+
+  labs(x="",y='')
 hp.we50=ggplot(widetrL.harv, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.harv,4),sep='='), x=17,y=6)+
-  annotate('text',label=paste('p-value',pv.harv.we50,sep='='), x=17,y=2)+
-  labs(x="Full Creel",y='50% Weekend removed')
+  coord_cartesian(ylim = c(0,25),xlim = c(0,25))+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.harv,3),sep='='), x=17,y=4)+
+  labs(x="Full Creel",y='')
 
 h.plots=ggpubr::ggarrange(hp.nw,hp.ma,hp.wd25,hp.wd50,hp.we50, nrow = 5)
 
 cp.nw=ggplot(widetrL.catch, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.catch,4),sep='='), x=45,y=20)+
-  annotate('text',label=paste('p-value',pv.catch.nw,sep='='), x=45,y=5)+
-  labs(x="",y='No Winter', title = 'Catch')
+  coord_cartesian(ylim = c(0,80),xlim = c(0,80))+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.catch,3),sep='='), x=60,y=10)+
+  labs(x="",y='', title = 'Catch (Walleye/ha)')
 cp.ma=ggplot(widetrL.catch, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.catch,4),sep='='), x=45,y=20)+
-  annotate('text',label=paste('p-value',pv.catch.ma,sep='='), x=45,y=5)+
-  labs(x="",y='May - August')
+  coord_cartesian(ylim = c(0,80),xlim = c(0,80))+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.catch,3),sep='='), x=60,y=10)+
+  labs(x="",y='')
 cp.wd25=ggplot(widetrL.catch, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.catch,4),sep='='), x=45,y=20)+
-  annotate('text',label=paste('p-value',pv.catch.wd25,sep='='), x=45,y=5)+
-  labs(x="",y='25% Weekday removed')
+  coord_cartesian(ylim = c(0,80),xlim = c(0,80))+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.catch,3),sep='='), x=60,y=10)+
+  labs(x="",y='')
 cp.wd50=ggplot(widetrL.catch, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.catch,4),sep='='), x=45,y=20)+
-  annotate('text',label=paste('p-value',pv.catch.wd50,sep='='), x=45,y=5)+
-  labs(x="",y='50% Weekday removed')
+  coord_cartesian(ylim = c(0,80),xlim = c(0,80))+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.catch,3),sep='='), x=60,y=10)+
+  labs(x="",y='')
 cp.we50=ggplot(widetrL.catch, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.catch,4),sep='='), x=45,y=20)+
-  annotate('text',label=paste('p-value',pv.catch.we50,sep='='), x=45,y=5)+
-  labs(x="Full Creel",y='50% Weekend removed')
+  coord_cartesian(ylim = c(0,80),xlim = c(0,80))+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.catch,3),sep='='), x=60,y=10)+
+  labs(x="Full Creel",y='')
 
 catch.plots=ggpubr::ggarrange(cp.nw,cp.ma,cp.wd25,cp.wd50,cp.we50, nrow = 5)
 
 efp.nw=ggplot(widetrL.eff, aes(x=actual,y=noWinter))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(nw.rmse.eff,4),sep='='), x=2500,y=900)+
-  annotate('text',label=paste('p-value',pv.eff.nw,sep='='), x=2500,y=200)+
-  labs(x="",y='No Winter', title = 'Effort')
+  coord_cartesian(ylim = c(0,3800),xlim = c(0,3800))+
+  annotate('text',label=paste('RMSE',signif(nw.rmse.eff,3),sep='='), x=2500,y=600)+
+  labs(x="",y='', title = 'Effort (hours/ha)')
 efp.ma=ggplot(widetrL.eff, aes(x=actual,y=mayAug))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(ma.rmse.eff,4),sep='='), x=2500,y=900)+
-  annotate('text',label=paste('p-value',pv.eff.ma,sep='='), x=2500,y=200)+
-  labs(x="",y='May - August')
+  coord_cartesian(ylim = c(0,3800),xlim = c(0,3800))+
+  annotate('text',label=paste('RMSE',signif(ma.rmse.eff,3),sep='='), x=2500,y=600)+
+  labs(x="",y='')
 efp.wd25=ggplot(widetrL.eff, aes(x=actual,y=wd25))+theme_classic()+
   geom_point()+
   geom_smooth(method = 'lm')+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd25.rmse.eff,4),sep='='), x=2500,y=900)+
-  annotate('text',label=paste('p-value',pv.eff.wd25,sep='='), x=2500,y=200)+
-  labs(x="",y='25% Weekday removed')
+  coord_cartesian(ylim = c(0,3800),xlim = c(0,3800))+
+  annotate('text',label=paste('RMSE',signif(wd25.rmse.eff,3),sep='='), x=2500,y=600)+
+  labs(x="",y='')
 efp.wd50=ggplot(widetrL.eff, aes(x=actual,y=wd50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(wd50.rmse.eff,4),sep='='), x=2500,y=900)+
-  annotate('text',label=paste('p-value',pv.eff.wd50,sep='='), x=2500,y=200)+
-  labs(x="",y='50% Weekday removed')
+  coord_cartesian(ylim = c(0,3800),xlim = c(0,3800))+
+  annotate('text',label=paste('RMSE',signif(wd50.rmse.eff,3),sep='='), x=2500,y=600)+
+  labs(x="",y='')
 efp.we50=ggplot(widetrL.eff, aes(x=actual,y=we50))+theme_classic()+
   geom_point()+
-  geom_smooth(method = 'lm')+
+  geom_smooth(method = 'lm', linetype=2)+
   geom_abline(slope = 1, intercept = 0)+
-  annotate('text',label=paste('RMSE',signif(we50.rmse.eff,4),sep='='), x=2500,y=900)+
-  annotate('text',label=paste('p-value',pv.eff.we50,sep='='), x=2500,y=200)+
-  labs(x="Full Creel",y='50% Weekend removed')
+  coord_cartesian(ylim = c(0,3800),xlim = c(0,3800))+
+  annotate('text',label=paste('RMSE',signif(we50.rmse.eff,3),sep='='), x=2500,y=600)+
+  labs(x="Full Creel",y='')
 
 effort.plots=ggpubr::ggarrange(efp.nw,efp.ma,efp.wd25,efp.wd50,efp.we50, nrow = 5)
 
@@ -702,10 +702,11 @@ ggplot(d.all.sum)+theme_classic()+
   geom_pointrange(aes(x=metric,y=mu,
                       ymin=lcl,
                       ymax=ucl,
-                      color=treat), position = position_dodge(width=0.3))+
+                      color=treat), position = position_dodge(width=0.5))+
   geom_hline(yintercept = 1,linetype=2)+
-  scale_color_viridis_d(option = 'turbo')+
-  labs(y='Normalized Creel Measure',x='Creel Metric', color='Data Set')
+  scale_color_viridis_d(option = 'cividis', labels=c('Full Creel', 'May-Aug.','No Winter','Weekday 25% \n removed','Weekday 50% \n removed','Weekend 50%\n removed'))+
+  labs(y='Normalized Creel Measure',x='Creel Metric', color='Data Set')+
+  theme(legend.position = c(0.8, 0.8))
 
 ### parm values and uncertainty plot ####
 
@@ -805,25 +806,25 @@ p.all=bind_rows(p.exp,
             sdLog.lcl=quantile(sdLogpar,probs=0.025),
             sdLog.ucl=quantile(sdLogpar,probs=0.975))
 
-metNames=c('catch'='Catch (walleye/acre)',
-           'effort'='Effort (hours/acre)',
+metNames=c('catch'='Catch (walleye/ha)',
+           'effort'='Effort (hours/ha)',
            'expR'='Exploitation Rate',
-           'harv'='Harvest (wallye/acre)',
+           'harv'='Harvest (wallye/ha)',
            'harvR'='Harvest Rate')
 
 ggplot(p.all)+theme_classic()+
   geom_pointrange(aes(x=treat, y=meanLog,  ymin=meanLog.lcl, ymax=meanLog.ucl))+
-  scale_x_discrete(label=c('Actual','May-August','No Winter','25% Weekday Removed','50% Weekday Removed','50% Weekend Removed'))+
+  scale_x_discrete(label=c('Full Creel','May-August','No Winter','25% Weekday removed','50% Weekday removed','50% Weekend removed'))+
   theme(axis.text.x = element_text(angle = 45, hjust=1))+
   facet_wrap(~metric, scales = 'free', labeller = as_labeller(metNames))+
   labs(y='Mean of Lognormal Distribution', x='Data Set')
 
 ggplot(p.all)+theme_classic()+
   geom_pointrange(aes(x=treat, y=sdLog,  ymin=sdLog.lcl, ymax=sdLog.ucl))+
-  scale_x_discrete(label=c('Actual','May-August','No Winter','25% Weekday Removed','50% Weekday Removed','50% Weekend Removed'))+
+  scale_x_discrete(label=c('Full Creel','May-August','No Winter','25% Weekday removed','50% Weekday removed','50% Weekend removed'))+
   theme(axis.text.x = element_text(angle = 45, hjust=1))+
   facet_wrap(~metric, scales = 'free', labeller = as_labeller(metNames))+
-  labs(y='Stan.Dev. of Lognormal Distribution', x='Data Set')
+  labs(y='Standard Deviation of Lognormal Distribution', x='Data Set')
 
 #### other stuff ####
 ## exploring my season reduction calcs a little more to see if I've made any mistakes
